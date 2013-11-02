@@ -1,0 +1,40 @@
+﻿Build started 10/05/2013 16:33:12.
+     1>Project "C:\Users\Thomas\Desktop\[Dev]PServer\HybridCO C++ (Fixed)\HybridCO.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Debug\HybridCO.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
+         stdafx.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\HybridCO.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt Client.cpp ConquerCallbacks.cpp Cryptography.cpp DatabaseRoot.cpp DataMap.cpp Entity.cpp HybridCO.cpp Packets.cpp ServerSocket.cpp UserScreen.cpp DataPackets.cpp LoginSequence.cpp CommandProcessor.cpp PacketProcessor.cpp
+         PacketProcessor.cpp
+         CommandProcessor.cpp
+         LoginSequence.cpp
+         DataPackets.cpp
+         UserScreen.cpp
+         ServerSocket.cpp
+         Packets.cpp
+         HybridCO.cpp
+     1>c:\users\thomas\desktop\[dev]pserver\hybridco c++ (fixed)\hybridco.cpp(69): error C2065: 'Reply' : undeclared identifier
+     1>c:\users\thomas\desktop\[dev]pserver\hybridco c++ (fixed)\hybridco.cpp(70): error C2065: 'Reply' : undeclared identifier
+     1>c:\users\thomas\desktop\[dev]pserver\hybridco c++ (fixed)\hybridco.cpp(70): error C2228: left of '.Key1' must have class/struct/union
+                 type is ''unknown-type''
+     1>c:\users\thomas\desktop\[dev]pserver\hybridco c++ (fixed)\hybridco.cpp(71): error C2065: 'Reply' : undeclared identifier
+     1>c:\users\thomas\desktop\[dev]pserver\hybridco c++ (fixed)\hybridco.cpp(71): error C2228: left of '.Key2' must have class/struct/union
+                 type is ''unknown-type''
+     1>c:\users\thomas\desktop\[dev]pserver\hybridco c++ (fixed)\hybridco.cpp(72): error C2065: 'Reply' : undeclared identifier
+     1>c:\users\thomas\desktop\[dev]pserver\hybridco c++ (fixed)\hybridco.cpp(72): error C2228: left of '.Port' must have class/struct/union
+                 type is ''unknown-type''
+     1>c:\users\thomas\desktop\[dev]pserver\hybridco c++ (fixed)\hybridco.cpp(73): error C2065: 'Reply' : undeclared identifier
+     1>c:\users\thomas\desktop\[dev]pserver\hybridco c++ (fixed)\hybridco.cpp(73): error C2228: left of '.szIPAddress' must have class/struct/union
+                 type is ''unknown-type''
+     1>c:\users\thomas\desktop\[dev]pserver\hybridco c++ (fixed)\hybridco.cpp(76): error C2065: 'Reply' : undeclared identifier
+         Entity.cpp
+         DataMap.cpp
+         DatabaseRoot.cpp
+         Cryptography.cpp
+         ConquerCallbacks.cpp
+         Client.cpp
+         Generating Code...
+     1>Done Building Project "C:\Users\Thomas\Desktop\[Dev]PServer\HybridCO C++ (Fixed)\HybridCO.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:10.44

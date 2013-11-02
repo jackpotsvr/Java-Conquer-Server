@@ -1,0 +1,24 @@
+C:\COServerProject\COServerProject\bin\Debug\COServerProject.exe
+C:\COServerProject\COServerProject\bin\Debug\COServerProject.pdb
+C:\COServerProject\COServerProject\bin\Debug\MySql.Data.dll
+C:\COServerProject\COServerProject\obj\Debug\ResolveAssemblyReference.cache
+C:\COServerProject\COServerProject\obj\Debug\COServerProject.exe
+C:\COServerProject\COServerProject\obj\Debug\COServerProject.pdb
+C:\COServerProject\COServerProject\bin\Release\COServerProject.exe
+C:\COServerProject\COServerProject\bin\Release\COServerProject.pdb
+C:\COServerProject\COServerProject\bin\Release\MySql.Data.dll
+C:\COServerProject\COServerProject\obj\Release\ResolveAssemblyReference.cache
+C:\COServerProject\COServerProject\obj\Release\COServerProject.exe
+C:\COServerProject\COServerProject\obj\Release\COServerProject.pdb
+C:\Documents and Settings\Kodu\Desktop\COServerProject\COServerProject\obj\Debug\COServerProject.exe
+C:\Documents and Settings\Kodu\Desktop\COServerProject\COServerProject\obj\Debug\COServerProject.pdb
+C:\Documents and Settings\Kodu\Desktop\COServerProject\COServerProject\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\Kodu\Desktop\COServerProject\COServerProject\bin\Release\COServerProject.exe
+C:\Documents and Settings\Kodu\Desktop\COServerProject\COServerProject\bin\Release\COServerProject.pdb
+C:\Documents and Settings\Kodu\Desktop\COServerProject\COServerProject\bin\Release\MySql.Data.dll
+C:\Documents and Settings\Kodu\Desktop\COServerProject\COServerProject\obj\Release\ResolveAssemblyReference.cache
+C:\Documents and Settings\Kodu\Desktop\COServerProject\COServerProject\obj\Release\COServerProject.exe
+C:\Documents and Settings\Kodu\Desktop\COServerProject\COServerProject\obj\Release\COServerProject.pdb
+C:\Documents and Settings\Kodu\Desktop\COServerProject\COServerProject\bin\Debug\COServerProject.exe
+C:\Documents and Settings\Kodu\Desktop\COServerProject\COServerProject\bin\Debug\COServerProject.pdb
+C:\Documents and Settings\Kodu\Desktop\COServerProject\COServerProject\bin\Debug\MySql.Data.dll

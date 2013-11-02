@@ -1,0 +1,24 @@
+C:\Documents and Settings\Administrator\Desktop\DarkAngelzCO\Database\Database\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\Administrator\Desktop\DarkAngelzCO\Database\Database\bin\Debug\Database.dll
+C:\Documents and Settings\Administrator\Desktop\DarkAngelzCO\Database\Database\bin\Debug\Database.pdb
+C:\Documents and Settings\Administrator\Desktop\DarkAngelzCO\Database\Database\bin\Debug\MySql.Data.dll
+C:\Documents and Settings\Administrator\Desktop\DarkAngelzCO\Database\Database\obj\Debug\Database.dll
+C:\Documents and Settings\Administrator\Desktop\DarkAngelzCO\Database\Database\obj\Debug\Database.pdb
+C:\Documents and Settings\FuckYou\Desktop\PowerSource Updated2\PowerSource CO\Database\Database\bin\Debug\Database.dll
+C:\Documents and Settings\FuckYou\Desktop\PowerSource Updated2\PowerSource CO\Database\Database\bin\Debug\Database.pdb
+C:\Documents and Settings\FuckYou\Desktop\PowerSource Updated2\PowerSource CO\Database\Database\bin\Debug\MySql.Data.dll
+C:\Documents and Settings\FuckYou\Desktop\PowerSource Updated2\PowerSource CO\Database\Database\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\FuckYou\Desktop\PowerSource Updated2\PowerSource CO\Database\Database\obj\Debug\Database.dll
+C:\Documents and Settings\FuckYou\Desktop\PowerSource Updated2\PowerSource CO\Database\Database\obj\Debug\Database.pdb
+C:\Documents and Settings\FuckYou\Desktop\PowerSource Latest\PowerSource CO\Database\Database\bin\Debug\Database.dll
+C:\Documents and Settings\FuckYou\Desktop\PowerSource Latest\PowerSource CO\Database\Database\bin\Debug\Database.pdb
+C:\Documents and Settings\FuckYou\Desktop\PowerSource Latest\PowerSource CO\Database\Database\bin\Debug\MySql.Data.dll
+C:\Documents and Settings\FuckYou\Desktop\PowerSource Latest\PowerSource CO\Database\Database\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\FuckYou\Desktop\PowerSource Latest\PowerSource CO\Database\Database\obj\Debug\Database.dll
+C:\Documents and Settings\FuckYou\Desktop\PowerSource Latest\PowerSource CO\Database\Database\obj\Debug\Database.pdb
+C:\Documents and Settings\matthew\Desktop\STUFF\MC Source\RandomCo\Database\Database\bin\Debug\Database.dll
+C:\Documents and Settings\matthew\Desktop\STUFF\MC Source\RandomCo\Database\Database\bin\Debug\Database.pdb
+C:\Documents and Settings\matthew\Desktop\STUFF\MC Source\RandomCo\Database\Database\bin\Debug\MySql.Data.dll
+C:\Documents and Settings\matthew\Desktop\STUFF\MC Source\RandomCo\Database\Database\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\matthew\Desktop\STUFF\MC Source\RandomCo\Database\Database\obj\Debug\Database.dll
+C:\Documents and Settings\matthew\Desktop\STUFF\MC Source\RandomCo\Database\Database\obj\Debug\Database.pdb

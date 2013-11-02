@@ -1,0 +1,60 @@
+** = Done
+-- = Not Done
+
+50/55
+
+**Account Register
+**Character Register
+**Login
+**Spawning others to me and myself to others
+**Guild
+**Equiping
+**Teams
+**Trade
+--Wedding
+**Training Grounds
+**Sending HotKeys and other info
+**Item Upgrading with Meteor in TC
+**Item Upgrading with DragonBall in TC
+**Item Upgrading in Market
+**Gem Socketing
+**Composing
+**Mobs spawning
+**Attacking mobs
+**Leveling
+**Enchanting
+**Mobs drop items and money
+**Guild War
+**Plvling, VP
+**Portals
+**All Portals in Database
+**All Mobs in Database
+**NPCs spawn
+**NPcs talk
+**All NPCs in Database
+**Most of NPC dialogs
+**Skills system
+**Most of skills done
+**Friend list
+--Enemy list
+**PVP system
+**Reborn benefits(Pray and others)
+**Mining
+**Super gem effects
+**Adding sockets with drills
+**Blessing items
+--Guild dungeons
+--Houses
+**Guards that kill pkers
+**Guards that kill mobs
+**Potency
+**Prof leveling
+**Changing hair type
+**Changing hair color
+**Changing equipment color
+**Players can drop items and money
+**Mobs move
+**Mobs attack players
+**Shops
+--Guards for helping reborn characters
+**Warehouse

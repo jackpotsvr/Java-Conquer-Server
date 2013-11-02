@@ -1,0 +1,254 @@
+Format
+Name, Level, Mech, HP
+
+ MONSTER Patrol, 60, 910, 3185
+ MONSTER Guard, 200, 900, 49930
+ MONSTER CopperGuard, 90, 920, 20000
+ MONSTER SilverGuard, 110, 920, 34895
+ MONSTER GoldGuard, 120, 920, 60000
+ MONSTER Pheasant, 1, 104, 33
+ MONSTER WingedSnake, 27, 203, 667
+ MONSTER WingedSnakeL28, 28, 603, 1334
+ MONSTER WingedSnakeKing, 27, 443, 38512
+ MONSTER Bandit, 32, 201, 817
+ MONSTER BanditL33, 33, 601, 2451
+ MONSTER BanditKing, 32, 241, 45000
+ MONSTER Ratling, 37, 202, 999
+ MONSTER RatMessenger, 37, 242, 2000
+ MONSTER FireRatL38, 38, 602, 2997
+ MONSTER MinMacaque, 47, 156, 1759
+ MONSTER Macaque, 47, 156, 2199
+ MONSTER MonkeyAide, 47, 196, 4400
+ MONSTER MonkeyMessenger, 47, 196, 4400
+ MONSTER MacaqueL48, 48, 556, 6506
+ MONSTER GiantApeL53, 53, 556, 7929
+ MONSTER GiantApe, 52, 156, 2643
+ MONSTER GiantApeKing, 52, 196, 17809
+ MONSTER GiantApeMsgr, 52, 196, 5300
+ MONSTER ElfApe, 52, 156, 2114
+ MONSTER RoaringApe, 55, 356, 2643
+ MONSTER SlowApe, 57, 103, 2036
+ MONSTER ThunderApe, 57, 103, 3184
+ MONSTER ThunderApeKing, 57, 103, 45000
+ MONSTER ThunderApeL58, 58, 503, 9552
+ MONSTER ThunderApeAide, 57, 103, 6300
+ MONSTER ThunderApeMsgr, 57, 103, 3984
+ MONSTER SnowApe, 60, 303, 3184
+ MONSTER Snakeman, 62, 204, 4771
+ MONSTER SnakeMonster, 62, 204, 3817
+ MONSTER SnakemanL63, 63, 604, 14313
+ MONSTER SnakemanKing, 62, 244, 45895
+ MONSTER SnakemanMsgr, 62, 244, 9500
+ MONSTER HeresySnakeman, 62, 404, 4771
+ MONSTER SnakemanAide, 62, 244, 9500
+ MONSTER HugeApe, 82, 156, 11673
+ MONSTER SeniorApe, 88, 103, 9686
+ MONSTER HawKing, 92, 205, 15432
+ MONSTER AlienApe, 92, 503, 15432
+ MONSTER HawkL93, 93, 605, 30864
+ MONSTER BanditL97, 97, 201, 20697
+ MONSTER RobberKing, 97, 241, 64698
+ MONSTER RobberAide, 97, 241, 39672
+ MONSTER RobberMessenger, 97, 241, 16338
+ MONSTER SeniorSnakeman, 97, 204, 20697
+ MONSTER Banditti, 98, 201, 40000
+ MONSTER BanditL98, 98, 601, 41394
+ MONSTER TombBat, 102, 206, 24472
+ MONSTER Serpent, 102, 404, 24472
+ MONSTER SeniorBandit, 103, 201, 10812
+ MONSTER FlyingBat, 105, 406, 24472
+ MONSTER FlyingBat, 105, 406, 24472
+ MONSTER SeniorSerpent, 107, 604, 28140
+ MONSTER BloodyBat, 107, 148, 28140
+ MONSTER VampireBat, 108, 148, 50000
+ MONSTER BloodyBatL108, 108, 548, 56280
+ MONSTER BloodyBatMsgr, 107, 188, 6637
+ MONSTER BloodyBatAide, 107, 188, 45950
+ MONSTER BloodyKing, 110, 348, 28140
+ MONSTER AlienSerpent, 112, 244, 34624
+ MONSTER Basilisk, 117, 244, 14596
+ MONSTER RedDevilL117, 117, 197, 60427
+ MONSTER BullMonster, 112, 117, 27309
+ MONSTER BullKing, 112, 117, 45893
+ MONSTER BullAide, 112, 117, 55000
+ MONSTER BullMessenger, 112, 117, 55000
+ MONSTER VampireKing, 113, 148, 26965
+ MONSTER BullMonsterL113, 113, 517, 65535
+ MONSTER BloodyDevil, 118, 197, 60000
+ MONSTER DevilKing, 120, 197, 45226
+ MONSTER Apparition, 17, 108, ?
+ MONSTER Poltergeist, 22, 108, ?
+ MONSTER LittleBoy - 118
+ MONSTER Awesome looking one - 126
+ MONSTER Gibbon - 127
+ MONSTER SkullSword AWESOME - 129
+ MONSTER UglyFairies (Dis City, boss in 2nd reborn) - 130
+ MONSTER SandElf - 131
+ MONSTER Ganoderma - 133
+ MONSTER Robin - 132
+ MONSTER TreasureBox - 141
+ MONSTER RockMonster - 136
+ MONSTER Slinger - 145
+ MONSTER TreasureBird - 144
+Sfemale - 1
+Lfemale - 2
+smale - 3
+lmale - 4
+BloodyBat - 148
+axe cool monster - 151
+big fairy (Dis City) - 152
+titan - 153
+small spiked club - 154
+winged dragon - 155
+macaque - 156
+large bat (2nd reborn) - 157
+robot looking monster - 160
+snake human- 162
+dis city - 163
+dis city - 164
+dis city - 165
+dis city - 166
+blue axe monster - 168
+sandmonsteraide - 171
+purple Robin - 172
+cerberus? long dog - 178
+divinehare - 207
+another blue axe monster - 208
+firerat - 209
+birdman - 205
+-tough horn/blade ghost- 200
+Cateran - 211
+crystalline monster - 212
+waterelf - 213
+robot - 214
+nightdevil - 217
+male rabbit - 222
+netdragon symbol - 223
+female rabbit - 224
+talon - 225
+robotic looking monster - 226
+white ghost - 227
+big fairy - 228
+aquatic monster - 230
+blade ghost aide/msgr - 240
+bandit aide - 241
+ratling aide - 242
+winged snake aide - 243
+snake monster aide - 244
+birdman aide - 245
+tombbat msgr - 246
+ratling dura - 247
+bloody bat aide - 248
+slinger - 249
+birdman dura - 250
+red axe monster - 251
+purple fairy - 252
+flag monster - 254
+green eyes blue dragon - 255
+santa - 256
+big red bat - 257
+winged snake king - 258
+knight - 260
+scary robot snake - 262
+dis city - 263
+dis city - 265
+dis city - 266
+fixed divine hare - 267
+double axe - 268
+green fire rat - 269
+cateran aide? green - 271
+fixed water elf? - 273
+robot2 - 274
+night devil2 - 277
+long dog cerberus yellow - 279
+snow ape - 303
+turtledove - 304
+hill monster dura - 305
+rockmonster again--- - 306
+winged snake king - 307
+battle ghost - 308
+sand elf - 309
+another fairy - 310
+brown aquatic - 311
+Pheasant - 312
+blue Turtledove - 313
+red Turtledove - 314
+Dura BullMonster - 317
+blue wolf - 325
+blue aquatic monster (2nd reborn) - 326
+purple gibbon - 327
+white fairy - 328
+silver blade monster awesome - 329
+green sand monster - 331
+gamebird (robin) - 332
+multicolored pheasant - 344
+black bat - 348
+black Titan - 353
+blue aquatic animal - 354
+red double-winged dragon (2nd reborn) - 355
+purple monkey - 356
+dis city? - 360
+dis city? - 361
+4 eyed red snake - 362
+green dis city - 363
+blue divine hare - 367
+dis city? - 368
+pink warrior summon firerat - 369
+blue cateran - 371
+purple gamebird - 372
+fixed water elf? - 373
+fixed robot - 374
+blue NightDevil - 377
+multicolored Pheasant - 380
+Turtledove - 381
+blue Turtledove - 382
+red Turtledove - 383
+green RedDevil - 397
+blue Bladeghost - 400
+blue Bandit - 401
+blue Ratling - 402
+WingedSnakeKing - 403
+snakemanL68 - 404
+hawking dura mob - 405
+Dura TombBat - 406
+gray wolf - 425
+axe man (No TQ) - 426
+RatlingKing - 442
+WingedSnakeKing - 443
+Aqua Birdman - 445
+skeleton monster (No TQ) - 463
+SlowApe L63 - 503
+BlueCooer - 504
+HillMonsterL73 - 505
+HeavyGhostL23 - 508
+BullMonsterL113 - 517
+SandElfL68 - 531
+green RockMonster - 536
+purple bat - 548
+green monkey - 556
+red devil L118 - 597
+bandit L33 - 601
+firespirit/ratling L43/L38 - 602
+winged snake L28 - 603
+SnakemanL68 - 604
+BirdmanL88 - 605
+TombBatL103 - 606
+silver HawKing - 645
+orange SlowApe - 703
+red Turtledove - 704
+purple/white RockMonster - 705
+Green poltergeist - 708
+yellow bull monster - 717
+red SandElf - 731
+gray robin - 732
+blue rockmonster - 736
+yellow BloodyBat - 748
+red ElfApe - 756
+blue RedDevil - 797
+Dura Bandit - 801
+green-blue FireSpirit - 802
+blue WingedSnake - 803
+blue Snakeman - 804
+blue Birdman - 805
+blue Tombbat - 806
+gold hawking - 845

@@ -1,0 +1,12 @@
+**=started
+--=not started
+
+
+[Main Progress]
+**fix command gw end
+--put meditation in
+**fix rb guard
+--Guild dungeons
+--Houses
+--Enemy list
+--Wedding
