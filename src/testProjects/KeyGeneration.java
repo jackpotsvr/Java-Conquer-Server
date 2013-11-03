@@ -29,6 +29,10 @@ public class KeyGeneration {
 			}
 			
 			System.out.print("\n Key1:" + Keys[0] + "  and Key2:" + Keys[1] + "\n");
+			
+			
+			byte xyz = (byte)0xFE; 
+			System.out.println(xyz);
 
 			
 		}
@@ -36,6 +40,8 @@ public class KeyGeneration {
 		public static int fourBytesToInt(byte[] bytes){
 			return ((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16) | ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF);
 		}
+		
+
 		
 
 }
