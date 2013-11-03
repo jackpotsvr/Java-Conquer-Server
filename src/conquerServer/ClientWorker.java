@@ -3,10 +3,9 @@
  */
 package conquerServer;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 
 /**
@@ -29,19 +28,26 @@ public class ClientWorker implements Runnable {
 	 */
 	@Override
 	public void run() {
-		BufferedReader in = null;
-		PrintWriter out = null;
-		String line;
-		
 		try {
-			in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-			out = new PrintWriter(client.getOutputStream(), true);
-		} catch (IOException e) { }
-		try {
-			line = in.readLine();
-			//Send data back to client
-			out.println(line);
-		} catch (IOException e) { }
+			InputStream in = client.getInputStream();
+			OutputStream out = client.getOutputStream();
+			
+			byte[] dataIn = new byte[47];
+			in.read(dataIn);
+			
+			for ( byte b : dataIn )
+				System.out.print(b + " ");	
+			
+			byte[] dataOut = new byte[47];
+			dataOut[1] = -127;
+			dataOut[45] = 127;
+			out.write(dataOut);
+			
+			System.out.println();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
