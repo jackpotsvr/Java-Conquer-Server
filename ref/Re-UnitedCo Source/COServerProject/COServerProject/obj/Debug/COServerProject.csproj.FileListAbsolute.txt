@@ -136,3 +136,5 @@ C:\Users\Thomas\Desktop\[Dev]PServer\Re-UnitedCo Source\COServerProject\COServer
 C:\Users\Thomas\Desktop\[Dev]PServer\Re-UnitedCo Source\COServerProject\COServerProject\bin\Debug\Database.dll
 C:\Users\Thomas\Desktop\[Dev]PServer\Re-UnitedCo Source\COServerProject\COServerProject\bin\Debug\Database.pdb
 C:\Users\Thomas\Desktop\[Dev]PServer\Re-UnitedCo Source\COServerProject\COServerProject\obj\Debug\COServerProject.csprojResolveAssemblyReference.cache
+C:\Users\Thomas\git\Java-Conquer-Server\ref\Re-UnitedCo Source\COServerProject\COServerProject\obj\Debug\Re-UnitedCo.exe
+C:\Users\Thomas\git\Java-Conquer-Server\ref\Re-UnitedCo Source\COServerProject\COServerProject\obj\Debug\Re-UnitedCo.pdb
