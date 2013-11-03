@@ -2,23 +2,6 @@ package conquerServer;
 
 public class Cryptography {
 	
-	public class CryptCounter {
-		private short counter; 
-		public CryptCounter(){/*default CTOR */}
-		
-		public CryptCounter(short input) {
-			counter = input; 
-		}
-		
-		public short Key1(){
-			return (short)(counter & 0xFF);
-		}
-		
-		public short Key2(){
-			return (short)(counter >> 8);
-		}
-	}
-	
 	CryptCounter encryptCounter; 
 	CryptCounter decryptCounter; 
 	boolean usingAlternate;
@@ -69,8 +52,20 @@ public class Cryptography {
 	    uniqueKey3 = new byte[0x100]; 
 	    uniqueKey4 = new byte[0x100];
 	    usingAlternate = false; 
+	    encryptCounter.setCounter((short) 0);
+	    decryptCounter.setCounter((short) 0);
 	}
 	
+	public void SetKeys(int Key1, int Key2){
+		int temp1 = ((Key1 + Key2)^0x4321) ^ Key1;
+		int temp2 = (int)(Key1 * Key1);
+		
+		for(int i = 0, loop = (256/4); i < loop; i++)
+		{
+			//(((long)Key3)+i) = Key1 ^ (((long)Key1)+ i);
+		}
+		
+	}
 	
 	
 	public static int[] generateKeys()
