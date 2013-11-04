@@ -3,9 +3,13 @@ package conquerServer;
 import java.nio.ByteBuffer;
 
 public class ByteConversion {
-
+	/* TO BE REPLACED WITH BytesToInt */
 	public static int fourBytesToInt(byte[] bytes){  
 		return ((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16) | ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF);
+	}
+	
+	public static int bytesToInt(byte[] bytes){
+		return ByteBuffer.wrap(bytes).getInt();
 	}
 
 	public static byte[] intToFourBytes(int value){ /* int to byte array with length 4 */ 
