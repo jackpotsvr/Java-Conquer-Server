@@ -15,8 +15,8 @@ public class Equipment extends Item {
 	public int Dodge;
 	public int AgiGive;
 	
-	public Equipment(int itemID, String itemName, int worth, int cpWorth) {
-		super(itemID, itemName, worth, cpWorth);
+	public Equipment(int itemID, String itemName, ItemColor itemColor, ItemQuality itemQuality, ItemEffect itemEffect, int worth, int cpWorth) {
+		super(itemID, itemName, itemColor, itemQuality, itemEffect, worth, cpWorth);
 		// TODO Auto-generated constructor stub
 	}
 
