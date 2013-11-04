@@ -12,15 +12,20 @@ import java.net.Socket;
  * @author jan-willem
  *
  */
-public class ClientWorker implements Runnable {
-	private Socket client;
+public class AuthServerThread implements Runnable {
+	private Socket client = null;
+	private AuthServer authServer = null;
+	private InputStream in = null;
+	private OutputStream out = null;
 	
 	/**
 	 * 
+	 * @param client
+	 * @param authServer
 	 */
-	public ClientWorker(Socket client) {
-		// TODO Auto-generated constructor stub
+	public AuthServerThread(Socket client, AuthServer authServer) {
 		this.client = client;
+		this.authServer = authServer;
 	}
 
 	/* (non-Javadoc)
@@ -29,8 +34,8 @@ public class ClientWorker implements Runnable {
 	@Override
 	public void run() {
 		try {
-			InputStream in = client.getInputStream();
-			OutputStream out = client.getOutputStream();
+			in = client.getInputStream();
+			out = client.getOutputStream();
 			
 			byte[] dataIn = new byte[47];
 			in.read(dataIn);
@@ -45,8 +50,9 @@ public class ClientWorker implements Runnable {
 			
 			System.out.println();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			authServer.disconnect(this);
 		}
 	}
 

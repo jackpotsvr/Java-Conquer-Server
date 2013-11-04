@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Map;
 
 public class TestAuthServer {
 	
@@ -17,8 +16,6 @@ public class TestAuthServer {
 		Socket socket = new Socket(hostname, AuthPort);
 		OutputStream out = socket.getOutputStream();
 		InputStream in = socket.getInputStream();
-		
-		Map<String, byte[]> privateData = Main.sharedData;
 		
 		byte[] dataOut = new byte[47];
 		dataOut[0] = 127;
@@ -33,15 +30,4 @@ public class TestAuthServer {
 		System.out.println();
 		
 	}
-	
-	public static byte[] hexStringToByteArray(String s) {
-	    int len = s.length();
-	    byte[] data = new byte[len / 2];
-	    for (int i = 0; i < len; i += 2) {
-	        data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-	                             + Character.digit(s.charAt(i+1), 16));
-	    }
-	    return data;
-	}
-
 }
