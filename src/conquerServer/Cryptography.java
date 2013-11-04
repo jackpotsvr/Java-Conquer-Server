@@ -1,5 +1,7 @@
 package conquerServer;
 
+import java.nio.ByteBuffer;
+
 public class Cryptography {
 	
 	CryptCounter encryptCounter; 
@@ -47,6 +49,8 @@ public class Cryptography {
 	
 	byte[] uniqueKey3; 
 	byte[] uniqueKey4; 
+	byte[] inKey1; 
+	byte[] inKey2; 
 	
 	public Cryptography(){ /* CONSTRUCTOR */ 
 	    uniqueKey3 = new byte[0x100]; 
@@ -56,15 +60,61 @@ public class Cryptography {
 	    decryptCounter.setCounter((short) 0);
 	}
 	
-	public void SetKeys(int Key1, int Key2){
-		int temp1 = ((Key1 + Key2)^0x4321) ^ Key1;
-		int temp2 = (int)(Key1 * Key1);
+	public void SetKeys(int inKey1, int inKey2){
+		/* highly doubtable if this work as intented, but we'll figure it out after sending some packets */
+		int temp1 = ((inKey1 + inKey2)^0x4321) ^ inKey1;
+		int temp2 = (int)(inKey1 * inKey1);
 		
-		for(int i = 0, loop = (256/4); i < loop; i++)
-		{
-			//(((long)Key3)+i) = Key1 ^ (((long)Key1)+ i);
+		this.inKey1 = intToFourBytes(inKey1); 
+		this.inKey2 = intToFourBytes(inKey2);
+		
+		//byte[] addKey1 = intToFourBytes(temp1);
+		//byte[] addKey2 = intToFourBytes(temp2);
+		
+		//byte[] addResult = new byte[4];
+		byte[] tempKey = new byte[4]; 
+		
+		long lmuler; 
+		
+		int adder3 = temp1 + temp2; 
+		tempKey = intToFourBytes(adder3);
+		
+		tempKey[2] = (byte)(tempKey[2] ^ (byte)0x43);
+		tempKey[3] = (byte)(tempKey[3] ^ (byte)0x21);
+		
+		for(int i = 0; i<4; i++){
+			tempKey[i] = (byte)(tempKey[i] ^ this.inKey1[i]);
 		}
 		
+		//  To build the 3rd key. 
+		for(int i = 0; i<256; i++){
+			uniqueKey3[i] = (byte)(tempKey[3 - (i % 4)] ^ constKey1[i]);
+		}
+		
+		byte[] addResult = new byte[4];
+		
+		for(int i = 0; i <4; i++){
+			addResult[i] = tempKey[3 - i];
+		}
+		
+		adder3 = fourBytesToInt(addResult); 
+		lmuler = adder3*adder3;
+		lmuler = lmuler << 32;
+		lmuler = lmuler >> 32;
+		
+		adder3 = (int) (lmuler & 0xffffffff);
+		
+		addResult = intToFourBytes(adder3);
+		
+		for(int i = 3; i >= 0; i--){
+			tempKey[3 - i] = addResult[i];
+		}
+		
+		
+		//  To build the 4rd key. 
+		for(int i = 0; i < 256; i++){
+			uniqueKey4[i] = (byte)(tempKey[3 - (i % 4)] ^ constKey2[i]);
+		}		
 	}
 	
 	
@@ -98,5 +148,10 @@ public class Cryptography {
 	public static int fourBytesToInt(byte[] bytes){  
 		return ((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16) | ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF);
 	}
+	
+	public static byte[] intToFourBytes(int value){
+		return ByteBuffer.allocate(4).putInt(value).array();
+	}
+	
 
 }
