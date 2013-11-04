@@ -14,6 +14,7 @@ public class Equipment extends Item {
 	public int MAttack;
 	public int Dodge;
 	public int AgiGive;
+	public EquipmentSlot equipmentSlot;
 	
 	public Equipment(int itemID, String itemName, ItemColor itemColor, ItemQuality itemQuality, ItemEffect itemEffect, int worth, int cpWorth) {
 		super(itemID, itemName, itemColor, itemQuality, itemEffect, worth, cpWorth);
