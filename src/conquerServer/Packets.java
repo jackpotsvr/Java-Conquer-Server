@@ -11,7 +11,7 @@ public class Packets {
 		char_info_packet ((short) 0x3EE),
 		general_data_packet((short) 0x3F2);
 		
-		public final short value;
+		public short value;
 		
 		PacketType(short i) {
 			this.value = i;
@@ -36,18 +36,24 @@ public class Packets {
 			password = new char[16]; /* initialize array */
 			server = new char[16]; /* initialize array */	
 		}
+				
+		public void setPacketData(byte[] data){
+			byte[] temp = new byte[2];
+
+			System.arraycopy(data, 0, temp, 0, 2);
+			packetHeader.packetSize = ByteConversion.bytesToShort(temp);
+			
+			System.arraycopy(data, 0, temp, 2, 2);
+			packetHeader.type.value = ByteConversion.bytesToShort(temp);
+			 
+			System.arraycopy(data, 0, username, 4, 16);
+			System.arraycopy(data, 0, password, 20, 16);
+			System.arraycopy(data, 0, server, 36, 16);			
+		}
 		
-		public byte[] getPacketData(){
-			byte[] data = new byte[packetHeader.packetSize]; /* declare and initialize byte array */ 
-			
-			System.arraycopy(ToByteArray.shortToTwoBytes(packetHeader.packetSize), 0, data, 0, 2); // parse packet size
-			System.arraycopy(ToByteArray.shortToTwoBytes(packetHeader.type.value), 0, data, 2, 4); // parse packet type
-			System.arraycopy(username, 0, data, 4, 20); // parse username.
-			System.arraycopy(password, 0, data, 20, 36); // parse password.
-			System.arraycopy(server, 0, data, 36, 52); // parse server.
-			
-			return data;
-		} 
+	}
+		
+		
 		
 		class Auth_Login_Forward{
 			private Header packetHeader;
@@ -79,24 +85,22 @@ public class Packets {
 			public void setKey2(int key){
 				Key2 = key;
 			}
-			
+		
 			public byte[] getPacketData(){
 				
-				byte[] data = new byte[packetHeader.packetSize]; /* declare and initialize byte array */ 
+				byte[] data  = new byte[packetHeader.packetSize]; /* declare and initialize byte array */ 
 				
-				System.arraycopy(ToByteArray.shortToTwoBytes(packetHeader.packetSize), 0, data, 0, 2); // parse packet size
-				System.arraycopy(ToByteArray.shortToTwoBytes(packetHeader.type.value), 0, data, 2, 4); // parse packet type
-				System.arraycopy(ToByteArray.intToFourBytes(Key2), 0, data, 4, 4); // parse Key 2
-				System.arraycopy(ToByteArray.intToFourBytes(Key1), 0, data, 8, 4); // Parse Key 1
+				System.arraycopy(ByteConversion.shortToTwoBytes(packetHeader.packetSize), 0, data, 0, 2); // parse packet size
+				System.arraycopy(ByteConversion.shortToTwoBytes(packetHeader.type.value), 0, data, 2, 4); // parse packet type
+				System.arraycopy(ByteConversion.intToFourBytes(Key2), 0, data, 4, 4); // parse Key 2
+				System.arraycopy(ByteConversion.intToFourBytes(Key1), 0, data, 8, 4); // Parse Key 1
 				System.arraycopy(gameServerIP, 0, data, 12, 16); // parse gameserver ip
-				System.arraycopy(ToByteArray.intToFourBytes(gameServerPort), 0, data, 28, 4); // parse game server port.
+				System.arraycopy(ByteConversion.intToFourBytes(gameServerPort), 0, data, 28, 4); // parse game server port.
 								
 				return data;
 			}
 			
 		}
-		
-	}
 	
 	//public static PacketType packetType = PacketType.Fixed;
 	//packetType.value;
