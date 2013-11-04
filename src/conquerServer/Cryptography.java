@@ -60,6 +60,35 @@ public class Cryptography {
 	    decryptCounter.setCounter((short) 0);
 	}
 	
+	/* method to encrypt outgoing packets, should work. */	
+	public void Encrypt(byte[] data){
+		for(int i = 0; i < data.length; i++){
+			data[i] = (byte)(data[i] ^ 0xAB); 
+			data[i] = (byte)((data[i] >> 4) | (data[i] << 4));
+			
+			data[i] ^= (byte)(constKey1[encryptCounter.Key1()] ^ constKey2[encryptCounter.Key2()]);
+			
+			encryptCounter.counterIncrement();
+		}
+	}
+	
+	
+	/* method to decrypt incomming packets, should work. */	
+	public void Decrypt(byte[] data)
+	{
+		for(int i = 0; i < data.length; i++){
+			data[i] = (byte)(data[i] ^ 0xAB); 
+			data[i] = (byte)((data[i] >> 4) | (data[i] << 4));
+			
+			if(usingAlternate){
+				data[i] ^= (byte)(uniqueKey4[decryptCounter.Key2()] ^ uniqueKey3[decryptCounter.Key1()]);
+			} else {
+				data[i] ^= (byte)(constKey2[decryptCounter.Key2()] ^ constKey1[decryptCounter.Key1()]);
+			}
+			decryptCounter.counterIncrement();
+		}
+	}
+	
 	public void SetKeys(int inKey1, int inKey2){
 		/* highly doubtable if this work as intented, but we'll figure it out after sending some packets */
 		int temp1 = ((inKey1 + inKey2)^0x4321) ^ inKey1;
@@ -115,6 +144,8 @@ public class Cryptography {
 		for(int i = 0; i < 256; i++){
 			uniqueKey4[i] = (byte)(tempKey[3 - (i % 4)] ^ constKey2[i]);
 		}		
+		
+		usingAlternate = true; 
 	}
 	
 	

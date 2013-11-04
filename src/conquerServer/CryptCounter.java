@@ -29,4 +29,8 @@ public class CryptCounter {
 			this.counter = counter; 
 		}
 		
+		public void counterIncrement(){
+			counter++; 
+		}
+		
 }
