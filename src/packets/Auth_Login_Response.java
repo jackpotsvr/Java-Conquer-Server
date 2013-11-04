@@ -32,10 +32,10 @@ public class Auth_Login_Response {
 		byte[] temp = new byte[2];
 		
 		System.arraycopy(data, 0, temp, 0, 2);
-		packetHeader.packetSize = ByteConversion.bytesToShort(temp);
+		packetHeader.setPacketSize(ByteConversion.bytesToShort(temp));
 		
 		System.arraycopy(data, 0, temp, 2, 2); 
-		packetHeader.type.value = ByteConversion.bytesToShort(temp);
+		packetHeader.setType(ByteConversion.bytesToShort(temp));
 		
 		temp = new byte[4];
 		
