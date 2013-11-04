@@ -13,7 +13,6 @@ public class Main {
 	private static final int GameServerPort = 5816;
 
 	public static Map<String, byte[]> sharedData = Collections.synchronizedMap(new HashMap<String, byte[]>());
-
 	
 	private static ServerSocket AuthServer = null;
 	private static ServerSocket GameServer = null;
