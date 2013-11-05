@@ -7,9 +7,9 @@ public class ByteConversion {
 	public static int fourBytesToInt(byte[] bytes){  
 		return ((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16) | ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF);
 	}
-	
+	//todo
 	public static int bytesToInt(byte[] bytes){
-		return ByteBuffer.wrap(bytes).getInt();
+		return ByteBuffer.wrap(bytes).order(java.nio.ByteOrder.LITTLE_ENDIAN).getInt();
 	}
 
 	public static byte[] intToFourBytes(int value){ /* int to byte array with length 4 */ 
@@ -21,6 +21,6 @@ public class ByteConversion {
 	}
 	
 	public static short bytesToShort(byte[] bytes){
-		return ByteBuffer.wrap(bytes).getShort();
+		return ByteBuffer.wrap(bytes).order(java.nio.ByteOrder.LITTLE_ENDIAN).getShort();
 	}
 }

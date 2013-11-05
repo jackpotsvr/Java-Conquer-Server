@@ -5,18 +5,20 @@ package conquerServer;
 public class CryptCounter {
 		
 		private short counter; 
-		public CryptCounter(){/*default CTOR */}
+		public CryptCounter(){
+			counter = 0x00;
+		}
 		
 		public CryptCounter(short input) { /* alternative CTOR */ 
 			counter = input; 
 		}
 		
-		public short Key1(){
-			return (short)(counter & 0xFF);
+		public byte Key1(){
+			return (byte)(counter & 0xFF);
 		}
 		
-		public short Key2(){
-			return (short)(counter >> 8);
+		public byte Key2(){
+			return (byte)((counter >> 8) & 0xF);
 		}
 		
 		
