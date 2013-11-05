@@ -15,37 +15,39 @@ public class GameServerThread implements Runnable {
 	 * 
 	 * @param client
 	 * @param authServer
+	 * @throws IOException 
 	 */
-	public GameServerThread(Socket client, GameServer gameServer) {
+	public GameServerThread(Socket client, GameServer gameServer) throws IOException {
 		this.client = client;
 		this.gameServer = gameServer;
+		this.in = client.getInputStream();
+		this.out = client.getOutputStream();
 	}
 
+	public synchronized void send(byte[] data) throws IOException {
+		out.write(data);
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Runnable#run()
 	 */
 	@Override
 	public void run() {
-		try {
-			in = client.getInputStream();
-			out = client.getOutputStream();
-						
-			byte[] dataIn = new byte[47];
-			in.read(dataIn);
-			
-			for ( byte b : dataIn )
-				System.out.print(b + " ");	
-			
-			byte[] dataOut = new byte[47];
-			dataOut[1] = -127;
-			dataOut[45] = 127;
-			out.write(dataOut);
-			
-			System.out.println();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			gameServer.disconnect(this);
+		while(true) {
+			try {
+				byte[] dataIn = new byte[47];
+				in.read(dataIn);
+				
+				gameServer.broadcast(dataIn);
+				
+				for ( byte b : dataIn )
+					System.out.print((int)b + " ");
+				System.out.println();
+				
+			} catch (IOException e) {
+				gameServer.disconnect(this);
+				break;
+			}
 		}
 	}
 

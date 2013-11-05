@@ -22,9 +22,15 @@ public class GameServer implements Runnable {
 		}	
 	}
 	
+	public void broadcast(byte[] data) throws IOException {
+		for ( GameServerThread client : connections )
+			client.send(data);
+	}
+	
 	public synchronized void disconnect(GameServerThread GST) {
 		connections.remove(GST);
-		System.out.println("Current amount of connections: " + connections.size());
+		System.out.println("Client disconnected");
+		System.out.println("Connected clients: " + connections.size());
 	}
 
 	@Override
@@ -32,14 +38,15 @@ public class GameServer implements Runnable {
 	 * Run function starts a new thread for each incomming connection
 	 */
 	public void run() {
+		System.out.println("Waiting for incomming connection...");
 		while(true){
-			System.out.println("Waiting for incomming connection...");
 			try {
 				Socket client = server.accept();
 				GameServerThread GST = new GameServerThread(client, this);
 				connections.add(GST);
 				Thread thread = new Thread(GST);
 				thread.start();
+				System.out.println("Connected clients: " + connections.size());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
