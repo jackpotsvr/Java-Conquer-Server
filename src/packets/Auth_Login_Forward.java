@@ -11,8 +11,10 @@ public class Auth_Login_Forward{
 	
 	private void initialize(){
 		packetHeader = new Header(); // IMPORTANT
-		packetHeader.packetSize = 32; // ALWAYS 32 BYTES
-		packetHeader.type = PacketType.auth_login_forward;
+		//packetHeader.packetSize = 32; // ALWAYS 32 BYTES
+		packetHeader.setPacketSize((short) 32);
+		//packetHeader.type = PacketType.auth_login_forward;
+		packetHeader.setType(PacketType.auth_login_forward);
 	}
 	
 	public Auth_Login_Forward(){
@@ -45,12 +47,12 @@ public class Auth_Login_Forward{
 
 	public byte[] getPacketData(){
 		
-		byte[] data  = new byte[packetHeader.packetSize]; /* declare and initialize byte array */ 
+		byte[] data  = new byte[packetHeader.getPacketSize()]; /* declare and initialize byte array */ 
 		
 		String ip = new String(gameServerIP);
 		
-		System.arraycopy(ByteConversion.shortToTwoBytes(packetHeader.packetSize), 0, data, 0, 2); // parse packet size
-		System.arraycopy(ByteConversion.shortToTwoBytes(packetHeader.type.value), 0, data, 2, 2); // parse packet type
+		System.arraycopy(ByteConversion.shortToTwoBytes(packetHeader.getPacketSize()), 0, data, 0, 2); // parse packet size
+		System.arraycopy(ByteConversion.shortToTwoBytes(packetHeader.getType().value), 0, data, 2, 2); // parse packet type
 		System.arraycopy(ByteConversion.intToFourBytes(Key2), 0, data, 4, 4); // parse Key 2
 		System.arraycopy(ByteConversion.intToFourBytes(Key1), 0, data, 8, 4); // Parse Key 1
 		System.arraycopy(ip.getBytes(), 0, data, 12, 15); // parse gameserver ip

@@ -11,8 +11,8 @@ public class Auth_Login_Packet{
 	private char[] server;  /* always 16 bytes. */ 
 	
 	public Auth_Login_Packet(){
-		packetHeader.packetSize = 52; /* ALWAYS 52 bytes */
-		packetHeader.type = PacketType.auth_login_packet; 
+		packetHeader.setPacketSize( (short) 52);
+		packetHeader.setType(PacketType.auth_login_packet);
 		username = new char[16]; /* initialize array */ 
 		password = new char[16]; /* initialize array */
 		server = new char[16]; /* initialize array */	
@@ -22,10 +22,10 @@ public class Auth_Login_Packet{
 		byte[] temp = new byte[2];
 
 		System.arraycopy(data, 0, temp, 0, 2);
-		packetHeader.packetSize = ByteConversion.bytesToShort(temp);
+		packetHeader.setPacketSize(ByteConversion.bytesToShort(temp));
 		
 		System.arraycopy(data, 0, temp, 2, 2);
-		packetHeader.type.value = ByteConversion.bytesToShort(temp);
+		packetHeader.setType(ByteConversion.bytesToShort(temp));
 		 
 		System.arraycopy(data, 0, username, 4, 16);
 		System.arraycopy(data, 0, password, 20, 16);
