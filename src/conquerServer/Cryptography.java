@@ -152,8 +152,7 @@ public class Cryptography {
 		usingAlternate = true; 
 	}
 	
-	
-	private static int[] generateKeys()
+    private static int[] generateKeys()
 	{
 		/* We need to be able to generate keys.  */ 
 		int[] Keys = new int[2]; // return value

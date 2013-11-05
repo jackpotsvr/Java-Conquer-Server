@@ -3,7 +3,7 @@ package Items;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Item {	
+public class Item  {	
 	
 	public int itemID;
 	public String itemName;

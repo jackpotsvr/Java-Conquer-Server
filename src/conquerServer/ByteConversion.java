@@ -23,4 +23,11 @@ public class ByteConversion {
 	public static short bytesToShort(byte[] bytes){
 		return ByteBuffer.wrap(bytes).order(java.nio.ByteOrder.LITTLE_ENDIAN).getShort();
 	}
+	
+	public static String bytesToString(byte[] bytes) {
+		String output = "";
+		for ( byte b : bytes )
+			output += (char)b ;
+		return output;
+	}
 }

@@ -1,35 +1,28 @@
 package packets;
 
-import conquerServer.ByteConversion;
+import conquerServer.PasswordCrypter;
 
 /* Packet is always incoming, not outgoing. */  
 
-public class Auth_Login_Packet{
-	private Header packetHeader; 
-	private char[] username; /* always 16 bytes. */ 
-	private char[] password;  /* always 16 bytes. */ 
-	private char[] server;  /* always 16 bytes. */ 
+public class Auth_Login_Packet extends IncommingPacket {
+	private String accoutName; /* always 16 bytes. */ 
+	private String password;  /* always 16 bytes. */ 
+	private String serverName;  /* always 16 bytes. */ 
 	
-	public Auth_Login_Packet(){
-		packetHeader.setPacketSize( (short) 52);
-		packetHeader.setType(PacketType.auth_login_packet);
-		username = new char[16]; /* initialize array */ 
-		password = new char[16]; /* initialize array */
-		server = new char[16]; /* initialize array */	
-	}
-			
-	public void setPacketData(byte[] data){
-		byte[] temp = new byte[2];
-
-		System.arraycopy(data, 0, temp, 0, 2);
-		packetHeader.setPacketSize(ByteConversion.bytesToShort(temp));
+	public Auth_Login_Packet(short packetSize, PacketType packetType, byte[] packetData) {
+		super(packetSize, packetType, packetData);
+		accoutName	= this.getString(4,16);
 		
-		System.arraycopy(data, 0, temp, 2, 2);
-		packetHeader.setType(ByteConversion.bytesToShort(temp));
-		 
-		System.arraycopy(data, 0, username, 4, 16);
-		System.arraycopy(data, 0, password, 20, 16);
-		System.arraycopy(data, 0, server, 36, 16);			
+		long[] password = new long[16];
+		for ( int i = 0; i < 16; i++ )
+			password[i] = (long) (data[i+20] & 0xff);
+		PasswordCrypter.decrypt(password);
+		String output = "";
+		for ( int i = 0; i < 16; i++)
+			output += (char) password[i];
+		
+		//password	= this.getString(20, 16);
+		serverName	= this.getString(36, 16);
 	}
 	
 }
