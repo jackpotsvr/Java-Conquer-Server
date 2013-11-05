@@ -4,9 +4,9 @@ import java.nio.ByteBuffer;
 
 public class Cryptography {
 	
-	CryptCounter encryptCounter; 
-	CryptCounter decryptCounter; 
-	boolean usingAlternate;
+	private CryptCounter encryptCounter; 
+	private CryptCounter decryptCounter; 
+	private boolean usingAlternate;
 	
 	
 	/* constant keys, ALWAYS the same!  */ 
@@ -47,21 +47,25 @@ public class Cryptography {
 		  (byte)0x7D, (byte) 0x30, (byte) 0xE3, (byte) 0xAA, (byte) 0xB1, (byte) 0x2C, (byte) 0x47, (byte) 0x16, (byte) 0x05, (byte) 0xC8, (byte) 0x4B, (byte) 0xA2, (byte) 0x79, (byte) 0x04, (byte) 0xEF, (byte) 0x4E, 
 		  (byte)0x0D, (byte) 0xE0, (byte) 0x33, (byte) 0x1A, (byte) 0xC1, (byte) 0x5C, (byte) 0x17, (byte) 0x06, (byte) 0x95, (byte) 0x78, (byte) 0x9B, (byte) 0x12, (byte) 0x89, (byte) 0x34, (byte) 0xBF, (byte) 0x3E }; 
 	
-	byte[] uniqueKey3; 
-	byte[] uniqueKey4; 
-	byte[] inKey1; 
-	byte[] inKey2; 
+	private byte[] uniqueKey3; 
+	private byte[] uniqueKey4; 
+	private byte[] inKey1; 
+	private byte[] inKey2; 
 	
 	public Cryptography(){ /* CONSTRUCTOR */ 
 	    uniqueKey3 = new byte[0x100]; 
 	    uniqueKey4 = new byte[0x100];
 	    usingAlternate = false; 
+	    
+	    encryptCounter = new CryptCounter();
+	    decryptCounter = new CryptCounter();
+	    
 	    encryptCounter.setCounter((short) 0);
 	    decryptCounter.setCounter((short) 0);
 	}
 	
 	/* method to encrypt outgoing packets, should work. */	
-	public void Encrypt(byte[] data){
+	public void encrypt(byte[] data){
 		for(int i = 0; i < data.length; i++){
 			data[i] = (byte)(data[i] ^ 0xAB); 
 			data[i] = (byte)((data[i] >> 4) | (data[i] << 4));
@@ -74,7 +78,7 @@ public class Cryptography {
 	
 	
 	/* method to decrypt incomming packets, should work. */	
-	public void Decrypt(byte[] data)
+	public void decrypt(byte[] data)
 	{
 		for(int i = 0; i < data.length; i++){
 			data[i] = (byte)(data[i] ^ 0xAB); 
@@ -89,13 +93,13 @@ public class Cryptography {
 		}
 	}
 	
-	public void SetKeys(int inKey1, int inKey2){
+	public void setKeys(int inKey1, int inKey2){
 		/* highly doubtable if this work as intented, but we'll figure it out after sending some packets */
 		int temp1 = ((inKey1 + inKey2)^0x4321) ^ inKey1;
 		int temp2 = (int)(inKey1 * inKey1);
 		
-		this.inKey1 = intToFourBytes(inKey1); 
-		this.inKey2 = intToFourBytes(inKey2);
+		this.inKey1 = ByteConversion.intToFourBytes(inKey1);
+		this.inKey2 = ByteConversion.intToFourBytes(inKey2);
 		
 		//byte[] addKey1 = intToFourBytes(temp1);
 		//byte[] addKey2 = intToFourBytes(temp2);
@@ -106,7 +110,7 @@ public class Cryptography {
 		long lmuler; 
 		
 		int adder3 = temp1 + temp2; 
-		tempKey = intToFourBytes(adder3);
+		tempKey = ByteConversion.intToFourBytes(adder3);
 		
 		tempKey[2] = (byte)(tempKey[2] ^ (byte)0x43);
 		tempKey[3] = (byte)(tempKey[3] ^ (byte)0x21);
@@ -126,14 +130,14 @@ public class Cryptography {
 			addResult[i] = tempKey[3 - i];
 		}
 		
-		adder3 = fourBytesToInt(addResult); 
+		adder3 = ByteConversion.bytesToInt(addResult);
 		lmuler = adder3*adder3;
 		lmuler = lmuler << 32;
 		lmuler = lmuler >> 32;
 		
 		adder3 = (int) (lmuler & 0xffffffff);
 		
-		addResult = intToFourBytes(adder3);
+		addResult = ByteConversion.intToFourBytes(adder3);
 		
 		for(int i = 3; i >= 0; i--){
 			tempKey[3 - i] = addResult[i];
@@ -149,7 +153,7 @@ public class Cryptography {
 	}
 	
 	
-	public static int[] generateKeys()
+	private static int[] generateKeys()
 	{
 		/* We need to be able to generate keys.  */ 
 		int[] Keys = new int[2]; // return value
@@ -169,22 +173,11 @@ public class Cryptography {
         Key2[2] = (byte) ((TheKeys & 0xff00) >> 8);
         Key2[3] = (byte) (TheKeys & 0xff);
 
-		Keys[0] = fourBytesToInt(Key1);
-		Keys[1] = fourBytesToInt(Key2);
+		Keys[0] = ByteConversion.bytesToInt(Key1);
+		Keys[1] = ByteConversion.bytesToInt(Key2);
+		
 		
 		return Keys; // return the generated Keys as an array. 
 	}
 	
-	/*!!! TO BE REPLACED WITH THE FUNCTIONS OF ToByteArray.java !!!*/ 
-	
-	public static int fourBytesToInt(byte[] bytes){  
-		return ((bytes[0] & 0xFF) << 24) | ((bytes[1] & 0xFF) << 16) | ((bytes[2] & 0xFF) << 8) | (bytes[3] & 0xFF);
-	}
-	
-	public static byte[] intToFourBytes(int value){
-		return ByteBuffer.allocate(4).putInt(value).array();
-	}
-	
-	/*!!! TO BE REPLACED WITH THE FUNCTIONS OF ToByteArray.java !!!*/ 
-
 }

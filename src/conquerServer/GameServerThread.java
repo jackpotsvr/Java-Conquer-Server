@@ -35,6 +35,7 @@ public class GameServerThread implements Runnable {
 	public void run() {
 		while(true) {
 			try {
+				
 				byte[] dataIn = new byte[47];
 				in.read(dataIn);
 				
@@ -50,5 +51,6 @@ public class GameServerThread implements Runnable {
 			}
 		}
 	}
+
 
 }

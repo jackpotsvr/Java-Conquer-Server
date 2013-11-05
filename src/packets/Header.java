@@ -41,7 +41,12 @@ public class Header{ // header of packet (Always first 4 bytes).
 	}
 	
 	public void setType(short value){
-		type.value = value;	
+		for ( PacketType t : PacketType.values() ) {
+			if ( t.value == value ) {
+				type = t;
+				break;
+			}
+		}	
 	}
 	
 	public short getPacketSize(){

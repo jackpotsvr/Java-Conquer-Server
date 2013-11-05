@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import packets.Header; 
+
+
 
 public class AuthServer implements Runnable {
 	private int port = 9958;
@@ -46,6 +49,7 @@ public class AuthServer implements Runnable {
 			}
 		}
 	}
+	
 
 	public static void main(String[] args) {
 		AuthServer AS = new AuthServer();
