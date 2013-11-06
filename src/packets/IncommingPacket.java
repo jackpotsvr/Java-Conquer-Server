@@ -1,6 +1,7 @@
 package packets;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Arrays;
 
 import conquerServer.PasswordCrypter;
@@ -49,20 +50,27 @@ public abstract class IncommingPacket extends Packet {
 	 * @return {String} password
 	 */
 	protected String getPassword(int offset) {
+		// String builder for our output
+		StringBuilder sb = new StringBuilder();
 		// Convert split 16 bytes into 4 longs 
 		long[] encrypted = new long[4];
 		for ( int i = 0; i < 4; i++ )
 			for ( int j = 0; j < 4; j++ )
-				encrypted[i] += ((long) data[20+i*4+j] & 0xffL) << ( 8 * j);
-		// Decrypt password
+				encrypted[i] += ((long) data[offset+i*4+j] & 0xff) << (8 * j);
+		// Encrypt password
 		PasswordCrypter.decrypt(encrypted);
-		// Convert decrypted long[4] array to chars
-		char[] decrypted = new char[16];
-		for ( int i = 0; i < 4; i++ )
-			for ( int j = 0; j < 4; j++ )
-				if ((encrypted[i] >> ( 4 - j - 1 << 3) & 0xFF) != 0) 
-					decrypted[i*4+3-j] = (char) (encrypted[i] >> ( 4 - j - 1 << 3) & 0xFF);
-		// Put char[] to string
-		return new String(decrypted);
+		// Convert 4 decrypted longs back to chars and put them in char[]
+		longs: for ( int i = 0; i < 4; i++ ) {
+			for ( int j = 0; j < 4; j++ ) {
+				long singleByte = encrypted[i] >> (j << 3) & 0xff;
+				// Look for end of string
+				if(singleByte == 0 )
+					break longs;
+				// Else, append char to string
+				sb.append((char) singleByte);
+			}
+		}
+		// Return decrypted string
+		return sb.toString();
 	}
 }
