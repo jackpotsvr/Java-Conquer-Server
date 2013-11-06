@@ -33,6 +33,8 @@ public class GameServerThread implements Runnable {
 	 */
 	@Override
 	public void run() {
+		System.out.println("Incomming connection on AuthServer");
+		
 		while(true) {
 			try {
 				

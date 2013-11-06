@@ -4,17 +4,18 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
+import conquerServer.Cryptography;
 import conquerServer.PasswordCrypter;
 
 public abstract class IncommingPacket extends Packet {
 	protected byte[] data;
 
-	public IncommingPacket(short packetSize, PacketType type) {
-		super(packetSize, type);
+	public IncommingPacket(short packetSize, PacketType type, Cryptography cipher) {
+		super(packetSize, type, cipher);
 	}
 	
-	public IncommingPacket(short packetSize, PacketType type, byte[] data) {
-		super(packetSize, type);
+	public IncommingPacket(short packetSize, PacketType type, byte[] data, Cryptography cipher) {
+		super(packetSize, type, cipher);
 		this.receive(data);
 	}
 	
@@ -37,11 +38,13 @@ public abstract class IncommingPacket extends Packet {
 	 * @return 
 	 */
 	protected String getString(int offset, int length) {
-		char[] output = new char[length];
-		for ( int i = 0; i < length; i++ )
-			if ( data[i+offset] != 0 )
-				output[i] = (char) data[i+offset];
-		return new String(output);
+		StringBuilder sb = new StringBuilder();
+		for ( int i = 0; i < length; i++ ) {
+			if ( data[i+offset] == 0 )
+				break;
+			sb.append((char) data[i+offset]);
+		}
+		return sb.toString();
 	}
 
 	/**

@@ -40,9 +40,10 @@ public class AuthServerThread implements Runnable {
 	 */
 	@Override
 	public void run() {
+		System.out.println("Incomming connection on AuthServer");
 		while(true) {
 			try {
-				Packet.delegate(in);
+				Packet.delegate(in, out, cipher);
 			} catch (IOException e) {
 				authServer.disconnect(this);
 				break;
