@@ -19,7 +19,7 @@ public class AuthServerThread implements Runnable {
 	private AuthServer authServer = null;
 	private InputStream in = null;
 	private OutputStream out = null;
-	private Cryptography cipher = new Cryptography(); 
+	private Cryptographer cipher = new Cryptographer(); 
 	
 	/**
 	 * 
@@ -42,21 +42,29 @@ public class AuthServerThread implements Runnable {
 		System.out.println("Incomming connection on AuthServer");
 		while(true) {
 			try {
-				byte[] data = new byte[100];
-				in.read(data);
-				cipher.decrypt(data);
-				IncommingPacket ip = new IncommingPacket(data);
-			
-				switch(ip.getPacketType()) {
-					case auth_login_packet:
-						Auth_Login_Packet ALP = new Auth_Login_Packet(ip);
-						Auth_Login_Response ALR = new Auth_Login_Response(1000000, 0, "127.0.0.1", 5816);
-						ALR.encrypt(cipher);
-						ALR.send(out);
-					default:
-						break;
-				}
+				int available = in.available();
+				if ( available > 0 ) {
+					byte[] data = new byte[available];
+					in.read(data);
+					cipher.Decrypt(data);
+					IncommingPacket ip = new IncommingPacket(data);
 				
+					switch(ip.getPacketType()) {
+						case auth_login_packet:
+							Auth_Login_Packet ALP = new Auth_Login_Packet(ip);
+							Auth_Login_Forward ALF = new Auth_Login_Forward(1000000, 0, "10.0.1.252", 5816);
+							ALF.encrypt(cipher);
+							ALF.send(out);
+							break;
+						case auth_login_response:
+							long Identity = ip.readUnsignedInt(4);
+							long ResNumber = ip.readUnsignedInt(8);
+							String ResLocation = ip.readString(12,16);
+							break;
+						default:
+							break;
+					}
+				}				
 			} catch (IOException e) {
 				authServer.disconnect(this);
 				break;

@@ -3,8 +3,6 @@ package packets;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import conquerServer.Cryptography;
-
 public class OutgoingPacket extends Packet {
 	private byte[] data;
 	private int offset = 0;
@@ -67,8 +65,8 @@ public class OutgoingPacket extends Packet {
 	 * Method to encrypt packet
 	 * @param {Cryptography} Cryptographer object of current session
 	 */
-	public void encrypt(Cryptography cipher) {
-		cipher.encrypt(data);
+	public void encrypt(Cryptographer cipher) {
+		cipher.Encrypt(data);
 	}
 	
 	/**

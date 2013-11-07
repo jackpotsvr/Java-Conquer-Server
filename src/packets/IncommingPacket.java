@@ -22,7 +22,7 @@ public class IncommingPacket extends Packet {
 	 * @param {int} offset
 	 * @return {short}  as the range of ubyte is 0 to 2^8-1
 	 */
-	protected short readUnsignedByte(int offset) {
+	public short readUnsignedByte(int offset) {
 		return (short) (data[offset] & 0xFF);
 	}
 	
@@ -31,7 +31,7 @@ public class IncommingPacket extends Packet {
 	 * @param {int} offset
 	 * @return {int} as the range of ushort is 0 to 2^16-1
 	 */
-	protected int readUnsignedShort(int offset) {
+	public int readUnsignedShort(int offset) {
 		return (int) ((data[offset+1] & 0xFF) << 8 | (data[offset] & 0xFF));
 	}
 	
@@ -40,7 +40,7 @@ public class IncommingPacket extends Packet {
 	 * @param {int} offset
 	 * @return {long} as the range of uint is 0 to 2^32-1
 	 */
-	protected long readUnsignedInt(int offset) {
+	public long readUnsignedInt(int offset) {
 		return ((data[offset + 3] & 0xFF) << 24 |(data[offset + 2] & 0xFF) << 16
                 |(data[offset + 1] & 0xFF) << 8 |(data[offset] & 0xFF)); 
 	}
@@ -51,7 +51,7 @@ public class IncommingPacket extends Packet {
 	 * @param {int} length
 	 * @return {String}
 	 */
-	protected String readString(int offset, int length) {
+	public String readString(int offset, int length) {
         byte[] output = new byte[length];
         System.arraycopy(data, offset, output, 0, length);
         return new String(output);
@@ -62,7 +62,7 @@ public class IncommingPacket extends Packet {
 	 * @param {int} offset at which the password is at
 	 * @return {String} password
 	 */
-	protected String readPassword(int offset) {
+	public String readPassword(int offset) {
 		// String builder for our output
 		StringBuilder sb = new StringBuilder();
 		// Convert split 16 bytes into 4 longs 
