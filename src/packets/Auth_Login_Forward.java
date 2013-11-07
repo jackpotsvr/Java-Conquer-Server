@@ -51,13 +51,13 @@ public class Auth_Login_Forward{
 		
 		String ip = new String(gameServerIP);
 		
-		System.arraycopy(ByteConversion.shortToTwoBytes(packetHeader.getPacketSize()), 0, data, 0, 2); // parse packet size
+/*		System.arraycopy(ByteConversion.shortToTwoBytes(packetHeader.getPacketSize()), 0, data, 0, 2); // parse packet size
 		System.arraycopy(ByteConversion.shortToTwoBytes(packetHeader.getType().value), 0, data, 2, 2); // parse packet type
 		System.arraycopy(ByteConversion.intToFourBytes(Key2), 0, data, 4, 4); // parse Key 2
 		System.arraycopy(ByteConversion.intToFourBytes(Key1), 0, data, 8, 4); // Parse Key 1
 		System.arraycopy(ip.getBytes(), 0, data, 12, 15); // parse gameserver ip
 		System.arraycopy(ByteConversion.intToFourBytes(gameServerPort), 0, data, 28, 4); // parse game server port.
-						
+*/						
 		return data;
 	}
 	

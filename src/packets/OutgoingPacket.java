@@ -2,71 +2,73 @@ package packets;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.ByteBuffer;
 
 import conquerServer.Cryptography;
 
 public class OutgoingPacket extends Packet {
 	private byte[] data;
-	private int index = 0;
+	private int offset = 0;
 
-	public OutgoingPacket(short packetSize, PacketType type, Cryptography cipher) {
-		super(packetSize, type, cipher);
+	public OutgoingPacket(int packetSize, PacketType type) {
+		super(packetSize, type);
 		data = new byte[packetSize];
 	}
 	
 	/**
-	 * Converts a short to a byte[2] array and appends it to the packet
-	 * @param value
+	 * Pushes an unsigned short to the packet
+	 * Since unsigned shorts can grow up to 2^16-1, and Java shorts can only grow up to 2^15-1
+	 * we supply the short as integer
+	 * @param {int} value to be put
 	 */
-	public void put(short value) {
-		put(ByteBuffer.allocate(2).putShort(value).array());
+	public void putUnsignedShort(int ushort) {
+        data[offset++] = (byte) (ushort & 0xFF);
+        data[offset++] = (byte) ((ushort >> 8) & 0xFF);
 	}
 	
 	/**
-	 * Converts an integer to a byte[4] array and appends it to the packet
-	 * @param value
+	 * Pushes an unsigned integer to the packet
+	 * Since unsigned integers can grow up to 2^32-1, and Java integers can only grow up to 2^31-1
+	 * we supply the integer as long
+	 * @param {int} value to be put
 	 */
-	public void put(int value) {
-		put(ByteBuffer.allocate(4).putInt(value).array());
+	public void putUnsignedInteger(long uint) {
+		data[offset++] = (byte)  (uint & 0xFF);
+		data[offset++] = (byte) ((uint >> 8) & 0xFF);
+		data[offset++] = (byte) ((uint >> 16) & 0xFF);
+		data[offset++] = (byte) ((uint >> 24) & 0xFF);
 	}
 	
 	/**
-	 * Converts a string to a char[] array of specified length and appends it to the packet
-	 * @param s
-	 * @param length
+	 * Method to put a Java String to a byte[] and put it to the packet
+	 * @param {String} value to put
 	 */
-	public void put(String s, int length) {
-		char[] ca = new char[length];
-		s.getChars(0, (s.length() < length)? s.length() : length, ca, 0);
-		put(ca);
+	public void putString(String str) {
+        byte[] bytes = str.getBytes();
+
+        for (byte b : bytes)
+        	data[offset++] = b;
 	}
 	
 	/**
-	 * Converts a char[] to a byte[] and appends it to the packet
-	 * @param ca
+	 * Method to put a Java String to a byte[] and put it to the packet
+	 * @param {String} value to put
+	 * @param {int} length to extend
 	 */
-	public void put(char[] ca) {
-		for(char b : ca)
-			put((byte) b);
+	public void putString(String str, int length) {
+        byte[] bytes = str.getBytes();
+
+        for (byte b : bytes)
+        	data[offset++] = b;
+        
+        offset += bytes.length - length;
 	}
 	
 	/**
-	 * Appends a byte[] to the packet
-	 * @param ba
+	 * Method to encrypt packet
+	 * @param {Cryptography} Cryptographer object of current session
 	 */
-	public void put(byte[] ba) {
-		for(byte b : ba)
-			put(b);
-	}
-	
-	/**
-	 * Puts a single byte to the packet
-	 * @param b
-	 */
-	public void put(byte b) {
-		data[index] = b;
-		index++;
+	public void encrypt(Cryptography cipher) {
+		cipher.encrypt(data);
 	}
 	
 	/**
@@ -75,7 +77,6 @@ public class OutgoingPacket extends Packet {
 	 * @throws IOException
 	 */
 	public void send(OutputStream out) throws IOException {
-		cipher.encrypt(data);
 		out.write(data);
 		out.flush();
 	}

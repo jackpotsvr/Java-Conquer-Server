@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.Arrays;
 
 import packets.*;
 
@@ -43,7 +42,21 @@ public class AuthServerThread implements Runnable {
 		System.out.println("Incomming connection on AuthServer");
 		while(true) {
 			try {
-				Packet.delegate(in, out, cipher);
+				byte[] data = new byte[100];
+				in.read(data);
+				cipher.decrypt(data);
+				IncommingPacket ip = new IncommingPacket(data);
+			
+				switch(ip.getPacketType()) {
+					case auth_login_packet:
+						Auth_Login_Packet ALP = new Auth_Login_Packet(ip);
+						Auth_Login_Response ALR = new Auth_Login_Response(1000000, 0, "127.0.0.1", 5816);
+						ALR.encrypt(cipher);
+						ALR.send(out);
+					default:
+						break;
+				}
+				
 			} catch (IOException e) {
 				authServer.disconnect(this);
 				break;

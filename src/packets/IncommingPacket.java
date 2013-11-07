@@ -1,58 +1,68 @@
 package packets;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.util.Arrays;
-
-import conquerServer.Cryptography;
 import conquerServer.PasswordCrypter;
 
-public abstract class IncommingPacket extends Packet {
+public class IncommingPacket extends Packet {
 	protected byte[] data;
-
-	public IncommingPacket(short packetSize, PacketType type, Cryptography cipher) {
-		super(packetSize, type, cipher);
-	}
 	
-	public IncommingPacket(short packetSize, PacketType type, byte[] data, Cryptography cipher) {
-		super(packetSize, type, cipher);
-		this.receive(data);
-	}
-	
-	public void receive(byte[] data) {
+	public IncommingPacket(byte[] data) {
 		this.data = data;
+		this.setPacketSize(this.readUnsignedShort(0));
+		this.setPacketType(this.readUnsignedShort(2));
 	}
 	
-	protected int getInt(int offset, int length) {
-		return ByteBuffer.wrap(Arrays.copyOfRange(data, offset, offset + length)).order(java.nio.ByteOrder.LITTLE_ENDIAN).getInt();
+	public IncommingPacket(IncommingPacket ip) {
+		this.data = ip.data;
+		this.setPacketSize(ip.getPacketSize());
+		this.setPacketType(ip.getPacketType());
 	}
 
-	protected short getShort(int offset, int length) {
-		return ByteBuffer.wrap(Arrays.copyOfRange(data, offset, offset + length)).order(java.nio.ByteOrder.LITTLE_ENDIAN).getShort();
+	/**
+	 * Returns unsigned byte at specified offset (1 byte)
+	 * @param {int} offset
+	 * @return {short}  as the range of ubyte is 0 to 2^8-1
+	 */
+	protected short readUnsignedByte(int offset) {
+		return (short) (data[offset] & 0xFF);
 	}
 	
 	/**
-	 * Function to fetch a String from a package
-	 * @param offset
-	 * @param length
-	 * @return 
+	 * Returns unsigned short at specified offset (2 bytes)
+	 * @param {int} offset
+	 * @return {int} as the range of ushort is 0 to 2^16-1
 	 */
-	protected String getString(int offset, int length) {
-		StringBuilder sb = new StringBuilder();
-		for ( int i = 0; i < length; i++ ) {
-			if ( data[i+offset] == 0 )
-				break;
-			sb.append((char) data[i+offset]);
-		}
-		return sb.toString();
+	protected int readUnsignedShort(int offset) {
+		return (int) ((data[offset+1] & 0xFF) << 8 | (data[offset] & 0xFF));
+	}
+	
+	/**
+	 * Returns unsigned integer at specified offset (4 bytes)
+	 * @param {int} offset
+	 * @return {long} as the range of uint is 0 to 2^32-1
+	 */
+	protected long readUnsignedInt(int offset) {
+		return ((data[offset + 3] & 0xFF) << 24 |(data[offset + 2] & 0xFF) << 16
+                |(data[offset + 1] & 0xFF) << 8 |(data[offset] & 0xFF)); 
 	}
 
+	/**
+	 * Returns string at specified offset and of specified length
+	 * @param {int} offset
+	 * @param {int} length
+	 * @return {String}
+	 */
+	protected String readString(int offset, int length) {
+        byte[] output = new byte[length];
+        System.arraycopy(data, offset, output, 0, length);
+        return new String(output);
+	}
+	
 	/**
 	 * Function to fetch and decrypt the password from the Auth package
 	 * @param {int} offset at which the password is at
 	 * @return {String} password
 	 */
-	protected String getPassword(int offset) {
+	protected String readPassword(int offset) {
 		// String builder for our output
 		StringBuilder sb = new StringBuilder();
 		// Convert split 16 bytes into 4 longs 

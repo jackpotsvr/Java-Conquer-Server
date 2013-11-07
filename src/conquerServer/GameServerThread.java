@@ -41,7 +41,7 @@ public class GameServerThread implements Runnable {
 				byte[] dataIn = new byte[47];
 				in.read(dataIn);
 				
-				gameServer.broadcast(dataIn);
+				// gameServer.broadcast(dataIn);
 				
 				for ( byte b : dataIn )
 					System.out.print((int)b + " ");
