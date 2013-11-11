@@ -24,6 +24,7 @@ public class Auth_Login_Forward extends OutgoingPacket {
 		this.putUnsignedInteger(token);
 		this.putString(ipAddress, 16);
 		this.putUnsignedInteger(port);
+		int i = 0;
 	}
 
 }

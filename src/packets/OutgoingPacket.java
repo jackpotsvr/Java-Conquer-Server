@@ -58,7 +58,7 @@ public class OutgoingPacket extends Packet {
         for (byte b : bytes)
         	data[offset++] = b;
         
-        offset += bytes.length - length;
+        offset += length - str.length();
 	}
 	
 	/**
