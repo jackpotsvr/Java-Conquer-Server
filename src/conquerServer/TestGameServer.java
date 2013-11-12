@@ -15,11 +15,6 @@ public class TestGameServer {
 		OutputStream out = socket.getOutputStream();
 		InputStream in = socket.getInputStream();
 		
-		byte[] dataOut = new byte[47];
-		dataOut[0] = 127;
-		dataOut[46] = 127;
-		out.write(dataOut);
-		out.flush();
 		
 		while(true) {
 			byte[] dataIn = new byte[47];

@@ -5,11 +5,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
+import packets.Cryptographer;
+import packets.IncommingPacket;
+import packets.*;
+
 public class GameServerThread implements Runnable {
 	private Socket client = null;
 	private GameServer gameServer = null;
 	private InputStream in = null;
 	private OutputStream out = null;
+	private Cryptographer cipher = new Cryptographer(); 
 	
 	/**
 	 * 
@@ -37,15 +42,25 @@ public class GameServerThread implements Runnable {
 		
 		while(true) {
 			try {
+				int available = in.available();
 				
-				byte[] dataIn = new byte[47];
-				in.read(dataIn);
-				
-				// gameServer.broadcast(dataIn);
-				
-				for ( byte b : dataIn )
-					System.out.print((int)b + " ");
-				System.out.println();
+				if(available > 0){ 
+					byte[] dataIn = new byte[available];
+					in.read(dataIn);
+					cipher.Decrypt(dataIn);
+					IncommingPacket ip = new IncommingPacket(dataIn);
+					
+					switch(ip.getPacketType()){
+						case auth_login_response: 
+							Auth_Response 
+							
+							
+					}
+					
+					
+					
+					System.out.println();
+				}
 				
 			} catch (IOException e) {
 				gameServer.disconnect(this);

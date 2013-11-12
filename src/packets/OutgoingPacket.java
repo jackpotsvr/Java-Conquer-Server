@@ -12,6 +12,31 @@ public class OutgoingPacket extends Packet {
 		data = new byte[packetSize];
 	}
 	
+	public OutgoingPacket(){
+		
+	}
+
+	
+	/**
+	 *  Pushes an unsigned byte to the packet
+	 *  Since unsigned bytes can grow up to 2^8-1, and Java bytes can only grow up to 2^7-1
+	 *  We supply the byte as short.
+	 * @param ubyte
+	 */
+	public void putUnsignedByte(short ubyte) {
+		data[offset++] = (byte) ( ubyte & 0xFF );
+	}
+	
+	/**
+	 *  Pushes an unsigned byte to the packet
+	 *  Since unsigned bytes can grow up to 2^8-1, and Java bytes can only grow up to 2^7-1
+	 *  We supply the byte as short.
+	 * @param ubyte
+	 */
+	public void putUnsignedByte(int ubyte) {
+		data[offset++] = (byte) ( ubyte & 0xFF );
+	}
+	
 	/**
 	 * Pushes an unsigned short to the packet
 	 * Since unsigned shorts can grow up to 2^16-1, and Java shorts can only grow up to 2^15-1

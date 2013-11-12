@@ -52,7 +52,7 @@ public class AuthServerThread implements Runnable {
 					switch(ip.getPacketType()) {
 						case auth_login_packet:
 							Auth_Login_Packet ALP = new Auth_Login_Packet(ip);
-							Auth_Login_Forward ALF = new Auth_Login_Forward(1000000, 0, "10.0.1.252", 5816);
+							Auth_Login_Forward ALF = new Auth_Login_Forward(23, 5, "127.000.000.001", 5816);
 							ALF.encrypt(cipher);
 							ALF.send(out);
 							break;

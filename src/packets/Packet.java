@@ -5,7 +5,7 @@ public class Packet {
 	private PacketType packetType;
 
 	public Packet() {
-		
+
 	}
 	
 	public Packet(int packetSize, PacketType packetType) {
