@@ -51,7 +51,9 @@ public class GameServerThread implements Runnable {
 					switch(ip.getPacketType()){
 						case auth_login_response: 
 							Auth_Response packet = new Auth_Response(ip);
-							cipher.GenerateKeys( (byte) packet.getKey2(), (byte) packet.getKey1());
+							long key1 = packet.getKey2();
+							long key2 = packet.getKey1();
+							cipher.GenerateKeys((byte) (key1 & 0xff), (byte) (key2 & 0xff));
 							Message_Packet reply = new Message_Packet(0xFFFFFFFFL, 2101L, 0L, "SYSTEM", "ALLUSERS", "NEW_ROLE");  //(long aRGB, long type, long chatID, String from, String to, String  message) 2101 = Login Info, no enum yet 
 							reply.encrypt(cipher);
 							reply.send(out);

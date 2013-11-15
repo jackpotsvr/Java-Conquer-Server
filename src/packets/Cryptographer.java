@@ -123,4 +123,42 @@ public class Cryptographer
         }
     }
     
+    public void GenerateKeys(long puliInKey1, long puliInKey2)
+    {
+    	long uliKey1 = ((puliInKey1 + puliInKey2) ^ 0x4321) ^ puliInKey1;
+    	long uliKey2 = uliKey1 * uliKey1;
+
+    	long[] _cryptKey1Long = toLongArray(_cryptKey1);
+    	long[] _cryptKey2Long = toLongArray(_cryptKey2);
+    	
+    	for(int i = 0, loop = 256/4; i < loop; i++ )
+    	{
+    		_cryptKey1Long[i] ^= uliKey1;
+    		_cryptKey2Long[i] ^= uliKey2;
+    	}
+    	
+    	_cryptKey1 = toByteArray(_cryptKey1Long);
+    	_cryptKey2 = toByteArray(_cryptKey2Long);
+    }
+    
+    private long[] toLongArray(byte[] barr) {
+    	long[] output = new long[barr.length/4];
+    	for ( int i = 0; i < output.length; i++ )
+    		output[i] = ((barr[i*4+3] & 0xFF) << 24 |(barr[i*4+2] & 0xFF) << 16
+    					| (barr[i*4+1] & 0xFF) << 8 |(barr[i*4] & 0xFF));
+    	return output;
+    }
+    
+    private byte[] toByteArray(long[] larr) {
+    	byte[] output = new byte[larr.length*4];
+    	for(int i = 0; i < larr.length; i++ )
+    	{
+    		output[i*4]   = (byte)  (larr[i] & 0xFF);
+    		output[i*4+1] = (byte) ((larr[i] >> 8) & 0xFF);
+    		output[i*4+2] = (byte) ((larr[i] >> 16) & 0xFF);
+    		output[i*4+3] = (byte) ((larr[i] >> 24) & 0xFF);
+    	}
+    	return output;
+    }
+    
 }
