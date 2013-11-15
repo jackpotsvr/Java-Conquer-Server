@@ -1,5 +1,7 @@
 package packets;
 
+import conquerServer.ByteConversion;
+
 /**
  * **********************************************************************
  * Copyright 2012 Charles Benger
@@ -120,4 +122,5 @@ public class Cryptographer
             _cryptKey2[i] ^= (tmpkey2 & 0xFF << right >>> left);
         }
     }
+    
 }

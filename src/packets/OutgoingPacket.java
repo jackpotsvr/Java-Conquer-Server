@@ -15,6 +15,11 @@ public class OutgoingPacket extends Packet {
 	public OutgoingPacket(){
 		
 	}
+	
+	/* If you do not use the constructor which initialize data. */
+	public void setDataLength(int length){
+		data = new byte[length];
+	}
 
 	
 	/**

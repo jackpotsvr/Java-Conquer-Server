@@ -5,8 +5,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-import packets.Cryptographer;
-import packets.IncommingPacket;
 import packets.*;
 
 public class GameServerThread implements Runnable {
@@ -52,9 +50,11 @@ public class GameServerThread implements Runnable {
 					
 					switch(ip.getPacketType()){
 						case auth_login_response: 
-							Auth_Response 
-							
-							
+							Auth_Response packet = new Auth_Response(ip);
+							cipher.GenerateKeys( (byte) packet.getKey2(), (byte) packet.getKey1());
+							Message_Packet reply = new Message_Packet(0xFFFFFFFFL, 2101L, 0L, "SYSTEM", "ALLUSERS", "NEW_ROLE");  //(long aRGB, long type, long chatID, String from, String to, String  message) 2101 = Login Info, no enum yet 
+							reply.encrypt(cipher);
+							reply.send(out);
 					}
 					
 					
