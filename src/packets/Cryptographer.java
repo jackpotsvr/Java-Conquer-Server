@@ -1,7 +1,5 @@
 package packets;
 
-import conquerServer.ByteConversion;
-
 /**
  * **********************************************************************
  * Copyright 2012 Charles Benger
@@ -110,9 +108,8 @@ public class Cryptographer
 
     public void GenerateKeys(byte CryptoKey, byte AccountID)
     {
-        int tmpkey1 = 0, tmpkey2 = 0;
-        tmpkey1 = ((CryptoKey + AccountID) ^ (0x4321)) ^ CryptoKey;
-        tmpkey2 = tmpkey1 * tmpkey1;
+        int tmpkey1 = ((CryptoKey + AccountID) ^ (0x4321)) ^ CryptoKey;
+        int tmpkey2 = tmpkey1 * tmpkey1;
 
         for (int i = 0; i < 256; i++)
         {
@@ -133,8 +130,8 @@ public class Cryptographer
     	
     	for(int i = 0, loop = 256/4; i < loop; i++ )
     	{
-    		_cryptKey1Long[i] ^= uliKey1;
-    		_cryptKey2Long[i] ^= uliKey2;
+    		_cryptKey1Long[i] ^= uliKey1 & 0xFF;
+    		_cryptKey2Long[i] ^= uliKey2 & 0xFF;
     	}
     	
     	_cryptKey1 = toByteArray(_cryptKey1Long);
@@ -159,6 +156,24 @@ public class Cryptographer
     		output[i*4+3] = (byte) ((larr[i] >> 24) & 0xFF);
     	}
     	return output;
+    }
+    
+    public static void main(String[] args) {
+    	Cryptographer a = new Cryptographer();
+    	Cryptographer b = new Cryptographer();
+    	a.GenerateKeys((byte) 1000, (byte) 5000);
+    	b.GenerateKeys((long) 1000, (long) 5000);
+    	
+    	System.out.println("Difference key 1:");
+    	for ( int i = 0; i < 256; i++ )
+    		System.out.print((a._cryptKey1[i] - b._cryptKey1[i]) + " ");
+    	System.out.println();
+    	
+
+    	System.out.println("Difference key 2:");
+    	for ( int i = 0; i < 256; i++ )
+    		System.out.print((a._cryptKey2[i] - b._cryptKey2[i]) + " ");
+    	System.out.println();
     }
     
 }
