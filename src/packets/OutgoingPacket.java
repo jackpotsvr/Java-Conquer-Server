@@ -1,8 +1,5 @@
 package packets;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
 public class OutgoingPacket extends Packet {
 
 	/**
