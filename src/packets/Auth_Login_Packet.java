@@ -1,22 +1,22 @@
 package packets;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
-import conquerServer.Cryptography;
-
-/* Packet is always incoming, not outgoing. */  
+import conquerServer.ServerThread;
 
 public class Auth_Login_Packet extends IncommingPacket {
 	private String accoutName;
 	private String password;
 	private String serverName;
 	
-	public Auth_Login_Packet(IncommingPacket ip) {
-		super(ip);
+	public Auth_Login_Packet(PacketType packetType, byte[] data, ServerThread thread) throws IOException {
+		super(packetType, data);
 		accoutName	= this.readString(4,16);
-		password	= this.readPassword(20);
+		password	= Cryptographer.decryptPassword(data, 20);
 		serverName	= this.readString(36, 16);
+		
+		Auth_Login_Forward ALF = new Auth_Login_Forward(thread);
+		thread.send(ALF.data);
 	}
 	
 }

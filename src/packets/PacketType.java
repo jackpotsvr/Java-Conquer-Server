@@ -1,23 +1,32 @@
 package packets;
 
-public enum PacketType {
-	auth_login_packet	(0x41B),
-	auth_login_forward	(0x41F),
-	auth_login_response (0x41C),
-	message_packet		(0x3EC),  /* also used for logging in. See https://spirited-fang.wikispaces.com/Logging+Into+Conquer+1.0 */
-	char_info_packet	(0x3EE),
-	general_data_packet	(0x3F2);
+public enum PacketType
+{
+	AUTH_LOGIN_PACKET	(0x041B, 0x34),
+	AUTH_LOGIN_FORWARD	(0x041F, 0x20),
+	AUTH_LOGIN_RESPONSE (0x041C, 0x1C),
+	MESSAGE_PACKET		(0x03EC, 0x00),
+	CHAR_INFO_PACKET	(0x03EE, 0x00),
+	GENERAL_DATA_PACKET	(0x03F2, 0x00);
 	
-	public int value;
+	int type, size;
 	
-	PacketType(int i) {
-		this.value = i;
+	PacketType(int type, int size)
+	{
+		this.type = type;
+		this.size = size;
 	}
 	
-	public static PacketType get(int i) {
-		for ( PacketType pt : PacketType.values() )
-			if ( pt.value == i )
+	static PacketType get(int type)
+	{
+		for ( PacketType pt : PacketType.values() ) 
+		{
+			if ( pt.type == type )
+			{
 				return pt;
+			}
+		}
 		return null;
 	}
+	
 }

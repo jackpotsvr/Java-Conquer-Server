@@ -1,20 +1,20 @@
-package packets;
+package testProjects;
 
-import conquerServer.ByteConversion;
+import packets.PacketType;
 
 public class Thomas_Auth_Login_Forward{
-	private Header packetHeader;
+//	private Header packetHeader;
 	private int Key2;
 	private int Key1;
 	private char[] gameServerIP; 
 	private int gameServerPort;
 	
 	private void initialize(){
-		packetHeader = new Header(); // IMPORTANT
+//		packetHeader = new Header(); // IMPORTANT
 		//packetHeader.packetSize = 32; // ALWAYS 32 BYTES
-		packetHeader.setPacketSize((short) 32);
+//		packetHeader.setPacketSize((short) 32);
 		//packetHeader.type = PacketType.auth_login_forward;
-		packetHeader.setType(PacketType.auth_login_forward);
+//		packetHeader.setType(PacketType.auth_login_forward);
 	}
 	
 	public Thomas_Auth_Login_Forward(){
@@ -45,11 +45,11 @@ public class Thomas_Auth_Login_Forward{
 		gameServerPort = port;
 	}
 
-	public byte[] getPacketData(){
+	//public byte[] getPacketData(){
 		
-		byte[] data  = new byte[packetHeader.getPacketSize()]; /* declare and initialize byte array */ 
+//		byte[] data  = new byte[packetHeader.getPacketSize()]; /* declare and initialize byte array */ 
 		
-		String ip = new String(gameServerIP);
+		//String ip = new String(gameServerIP);
 		
 /*		System.arraycopy(ByteConversion.shortToTwoBytes(packetHeader.getPacketSize()), 0, data, 0, 2); // parse packet size
 		System.arraycopy(ByteConversion.shortToTwoBytes(packetHeader.getType().value), 0, data, 2, 2); // parse packet type
@@ -58,7 +58,7 @@ public class Thomas_Auth_Login_Forward{
 		System.arraycopy(ip.getBytes(), 0, data, 12, 15); // parse gameserver ip
 		System.arraycopy(ByteConversion.intToFourBytes(gameServerPort), 0, data, 28, 4); // parse game server port.
 */						
-		return data;
-	}
+		//return data;
+	//}
 	
 }

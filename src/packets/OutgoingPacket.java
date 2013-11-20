@@ -4,23 +4,45 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class OutgoingPacket extends Packet {
-	private byte[] data;
-	private int offset = 0;
 
-	public OutgoingPacket(int packetSize, PacketType type) {
-		super(packetSize, type);
-		data = new byte[packetSize];
+	/**
+	 * Creates a new Outgoing packet with given packetType
+	 * Remember to set data length with setSize or setData!
+	 * @param packetType
+	 */
+	public OutgoingPacket(PacketType packetType) {
+		super(packetType);
+		setData(new byte[packetType.size]);
 	}
 	
-	public OutgoingPacket(){
-		
+	/**
+	 * Creates a new Outgoing packet with given PacketType
+	 * @param packetType
+	 * @param data
+	 */
+	public OutgoingPacket(PacketType packetType, byte[] data) {
+		super(packetType);
+		setData(data);
 	}
 	
-	/* If you do not use the constructor which initialize data. */
-	public void setDataLength(int length){
-		data = new byte[length];
+	/**
+	 * Creates a new data array with size length and updates the packet type and size
+	 * @param length
+	 */
+	public void setSize(int length) {
+		setData(new byte[length]);
 	}
-
+	
+	/**
+	 * Updates the data array for the packet
+	 * @param data
+	 */
+	public void setData(byte[] data) {
+		this.data = data;
+		offset = 0;
+		this.putUnsignedShort(data.length);
+		this.putUnsignedShort(packetType.type);
+	}
 	
 	/**
 	 *  Pushes an unsigned byte to the packet
@@ -89,25 +111,6 @@ public class OutgoingPacket extends Packet {
         	data[offset++] = b;
         
         offset += length - str.length();
-	}
-	
-	/**
-	 * Method to encrypt packet
-	 * @param {Cryptography} Cryptographer object of current session
-	 */
-	public void encrypt(Cryptographer cipher) {
-		cipher.Encrypt(data);
-	}
-	
-	/**
-	 * Writes the packet to the specified OutputStream
-	 * @param out
-	 * @throws IOException
-	 */
-	public void send(OutputStream out) throws IOException {
-		out.write(data);
-		out.flush();
-	}
-	
+	}	
 
 }

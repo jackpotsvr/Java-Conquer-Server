@@ -1,4 +1,4 @@
-package conquerServer;
+package testProjects;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,13 +1,13 @@
 package packets;
 
-public class Message_Packet extends OutgoingPacket {
+public class Message_Packet extends OutgoingPacket
+{
 	
-	public Message_Packet(long aRGB, long type, long chatID, String from, String to, String  message){
-		this.setPacketSize(30 + from.length() + to.length() + message.length());
-		this.setPacketType(PacketType.message_packet);
-		setDataLength(this.getPacketSize());
-		this.putUnsignedShort(this.getPacketSize());
-		this.putUnsignedShort(this.getPacketType().value);
+	public Message_Packet(long aRGB, long type, long chatID, String from, String to, String  message)
+	{
+		
+		super(PacketType.MESSAGE_PACKET, new byte[30 + from.length() + to.length() + message.length()]);
+
 		this.putUnsignedInteger(aRGB);
 		this.putUnsignedInteger(type);
 		this.putUnsignedInteger(chatID);
@@ -23,12 +23,10 @@ public class Message_Packet extends OutgoingPacket {
 		
 		
 		this.putUnsignedByte(0x00); //SUFFIX
-	//	this.putUnsignedByte(0x00); //SUFFIX
 		
 		this.putUnsignedByte(message.length());
 		this.putString(message);
 		
-		System.out.println("Hi");
 	}
 	
 

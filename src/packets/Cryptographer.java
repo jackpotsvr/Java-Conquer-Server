@@ -1,179 +1,142 @@
 package packets;
 
-/**
- * **********************************************************************
- * Copyright 2012 Charles Benger
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ***************************************************************************
- */
-public class Cryptographer
+import java.nio.ByteBuffer;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+
+public final class Cryptographer
 {
 
-    class CryptCounter
+	private int inCounter = 0;
+	private int outCounter = 0;
+	private boolean usingAlternate = false;
+
+	private static byte[] key1 = new byte[256];
+	private static byte[] key2 = new byte[256];
+	private byte[] key3 = new byte[256];
+	private byte[] key4 = new byte[256];
+	
+	private static long[] passwordKey = {
+		0xebe854bc, 0xb04998f7, 0xfffaa88c, 0x96e854bb, 0xa9915556, 0x48e44110, 0x9f32308f,
+		0x27f41d3e, 0xcf4f3523, 0xeac3c6b4, 0xe9ea5e03, 0xe5974bba, 0x334d7692, 0x2c6bcf2e,
+		0xdc53b74, 0x995c92a6, 0x7e4f6d77, 0x1eb2b79f, 0x1d348d89, 0xed641354L, 0x15e04a9d,
+		0x488da159, 0x647817d3, 0x8ca0bc20, 0x9264f7fe, 0x91e78c6c, 0x5c9a07fb, 0xabd4dcce,
+		0x6416f98d, 0x6642ab5b
+	};
+
+	static
+	{
+		byte i_key1 = (byte) 0x9D, i_key2 = 0x62;
+		
+		for (int i = 0; i < 256; i++) {
+			key1[i] = i_key1;
+			key2[i] = i_key2;
+			i_key1 = (byte) ((0x0F + (byte) (i_key1 * 0xFA)) * i_key1 + 0x13);
+			i_key2 = (byte) ((0x79 - (byte) (i_key2 * 0x5C)) * i_key2 + 0x6D);
+		}
+	}
+	
+    private static int rollRight(long Value, long num)
     {
-        short m_Counter = 0x00;
-
-        public short Key2()
-        {
-            return (short) ((m_Counter >> 8) & 0xF);
-        }
-
-        public short Key1()
-        {
-            return (short) (m_Counter & 0xFF);
-        }
-
-        public void Increment()
-        {
-            m_Counter++;
-        }
-    }
-
-    private CryptCounter _decryptCounter;
-    private CryptCounter _encryptCounter;
-    private byte[] _cryptKey1;
-    private byte[] _cryptKey2;
-
-    public Cryptographer()
-    {
-        _decryptCounter = new CryptCounter();
-        _encryptCounter = new CryptCounter();
-        _cryptKey1 = new byte[0x100];
-        _cryptKey2 = new byte[0x100];
-        byte i_key1 = (byte) 0x9D;
-        byte i_key2 = 0x62;
-        for (int i = 0; i < 0x100; i++)
-        {
-            _cryptKey1[i] = i_key1;
-            _cryptKey2[i] = i_key2;
-            i_key1 = (byte) ((0x0f + (byte) (i_key1 * 0xfa)) * i_key1 + 0x13);
-            i_key2 = (byte) ((0x79 - (byte) (i_key2 * 0x5c)) * i_key2 + 0x6d);
-        }
-    }
-
-    public void Decrypt(byte[] buffer)
-    {
-        for (int i = 0; i < buffer.length; i++)
-        {
-            buffer[i] ^= (byte) 0xAB;
-            buffer[i] = (byte) ((buffer[i] >> 4) & 0xF | (buffer[i] << 4));
-            buffer[i] ^= (byte) (_cryptKey1[_decryptCounter.Key1()] ^ _cryptKey2[_decryptCounter.Key2()]);
-            _decryptCounter.Increment();
-        }
-    }
-
-    public void Encrypt(byte[] buffer)
-    {
-        for (int i = 0; i < buffer.length; i++)
-        {
-            buffer[i] ^= (byte) 0xAB;
-            buffer[i] = (byte) ((buffer[i] >> 4) & 0xf | buffer[i] << 4);
-            buffer[i] ^= (_cryptKey1[_encryptCounter.Key1()] ^ _cryptKey2[_encryptCounter.Key2()]);
-            _encryptCounter.Increment();
-        }
-    }
-
-    public void EncryptBackwards(byte[] buffer)
-    {
-        for (int i = 0; i < buffer.length; i++)
-        {
-            buffer[i] ^= (byte) (_cryptKey2[_encryptCounter.Key2()] ^ _cryptKey1[_encryptCounter.Key1()]);
-            buffer[i] = (byte) ((buffer[i] >> 4) & 0xf | (buffer[i] << 4));
-            buffer[i] ^= (byte) 0xAB;
-            _encryptCounter.Increment();
-        }
-    }
-
-    public void DecryptBackwards(byte[] buffer)
-    {
-        for (int i = 0; i < buffer.length; i++)
-        {
-            buffer[i] ^= (byte) (_cryptKey2[_decryptCounter.Key2()] ^ _cryptKey1[_decryptCounter.Key1()]);
-            buffer[i] = (byte) ((buffer[i] >> 4) & 0xF | (buffer[i] << 4));
-            buffer[i] ^= (byte) (0xAB);
-            _decryptCounter.Increment();
-        }
-    }
-
-    public void GenerateKeys(byte CryptoKey, byte AccountID)
-    {
-        int tmpkey1 = ((CryptoKey + AccountID) ^ (0x4321)) ^ CryptoKey;
-        int tmpkey2 = tmpkey1 * tmpkey1;
-
-        for (int i = 0; i < 256; i++)
-        {
-            byte right = (byte) ((3 - (i % 4)) * 8);
-            byte left = (byte) (((i % 4)) * 8 + right);
-            _cryptKey1[i] ^= (tmpkey1 & 0xFF << right >>> left);
-            _cryptKey2[i] ^= (tmpkey2 & 0xFF << right >>> left);
-        }
+        num &= 0x1F;
+        return (int) (Value << (32 - num) | ((Value & 0xFFFFFFFFL) >> num));
     }
     
-    public void GenerateKeys(long puliInKey1, long puliInKey2)
-    {
-    	long uliKey1 = ((puliInKey1 + puliInKey2) ^ 0x4321) ^ puliInKey1;
-    	long uliKey2 = uliKey1 * uliKey1;
+	public void encrypt(byte[] buffer)
+	{
+		for (int i = 0; i < buffer.length; i++)
+		{
+			buffer[i] ^= 0xAB;
+			buffer[i] = (byte) (((buffer[i] & 0xFF) >> 4) | ((buffer[i] & 0xFF) << 4));
+			buffer[i] ^= key2[outCounter >> 8] ^ key1[outCounter & 0xFF];
+			outCounter++;
+		}
+	}
 
-    	long[] _cryptKey1Long = toLongArray(_cryptKey1);
-    	long[] _cryptKey2Long = toLongArray(_cryptKey2);
-    	
-    	for(int i = 0, loop = 256/4; i < loop; i++ )
-    	{
-    		_cryptKey1Long[i] ^= uliKey1 & 0xFF;
-    		_cryptKey2Long[i] ^= uliKey2 & 0xFF;
-    	}
-    	
-    	_cryptKey1 = toByteArray(_cryptKey1Long);
-    	_cryptKey2 = toByteArray(_cryptKey2Long);
-    }
-    
-    private long[] toLongArray(byte[] barr) {
-    	long[] output = new long[barr.length/4];
-    	for ( int i = 0; i < output.length; i++ )
-    		output[i] = ((barr[i*4+3] & 0xFF) << 24 |(barr[i*4+2] & 0xFF) << 16
-    					| (barr[i*4+1] & 0xFF) << 8 |(barr[i*4] & 0xFF));
-    	return output;
-    }
-    
-    private byte[] toByteArray(long[] larr) {
-    	byte[] output = new byte[larr.length*4];
-    	for(int i = 0; i < larr.length; i++ )
-    	{
-    		output[i*4]   = (byte)  (larr[i] & 0xFF);
-    		output[i*4+1] = (byte) ((larr[i] >> 8) & 0xFF);
-    		output[i*4+2] = (byte) ((larr[i] >> 16) & 0xFF);
-    		output[i*4+3] = (byte) ((larr[i] >> 24) & 0xFF);
-    	}
-    	return output;
-    }
-    
-    public static void main(String[] args) {
-    	Cryptographer a = new Cryptographer();
-    	Cryptographer b = new Cryptographer();
-    	a.GenerateKeys((byte) 1000, (byte) 5000);
-    	b.GenerateKeys((long) 1000, (long) 5000);
-    	
-    	System.out.println("Difference key 1:");
-    	for ( int i = 0; i < 256; i++ )
-    		System.out.print((a._cryptKey1[i] - b._cryptKey1[i]) + " ");
-    	System.out.println();
-    	
+	public void decrypt(byte[] buffer)
+	{
+		for (int i = 0; i < buffer.length; i++)
+		{
+			buffer[i] ^= 0xAB;
+			buffer[i] = (byte) (((buffer[i] & 0xFF) >> 4) | ((buffer[i] & 0xFF) << 4));
+			
+			if(usingAlternate)
+			{
+				buffer[i] ^= key4[inCounter >> 8] ^ key3[inCounter & 0xFF];
+			}
+			else
+			{
+				buffer[i] ^= key2[inCounter >> 8] ^ key1[inCounter & 0xFF];
+			}
+			
+			inCounter++;
+		}
+	}
 
-    	System.out.println("Difference key 2:");
-    	for ( int i = 0; i < 256; i++ )
-    		System.out.print((a._cryptKey2[i] - b._cryptKey2[i]) + " ");
-    	System.out.println();
-    }
-    
+	public void setKeys(long inKey1, long inKey2)
+	{
+		long DWordKey = ((inKey1 + inKey2) ^ 0x4321) ^ inKey1;
+		long IMul = DWordKey * DWordKey;
+		
+		byte[]  XorKey =  {
+			(byte) (DWordKey & 0xFF),
+			(byte) ((DWordKey >> 8) & 0xFF),
+			(byte) ((DWordKey >> 16) & 0xFF),
+			(byte) ((DWordKey >> 24) & 0xFF),
+			
+			(byte)  (IMul & 0xFF),
+			(byte) ((IMul >> 8) & 0xFF),
+			(byte) ((IMul >> 16) & 0xFF),
+			(byte) ((IMul >> 24) & 0xFF)
+		};
+		
+		for ( int i = 0; i < 256; i++ )
+		{
+			key3[i] = (byte) (XorKey[i % 4] ^ key1[i]);
+			key4[i] = (byte) (XorKey[i%4+4] ^ key2[i]);
+		}
+
+		usingAlternate = true;
+		outCounter = 0;
+	}
+	
+	public static String decryptPassword(byte[] password, int offset)
+	{
+		long[] pSeeds = new long[4];
+		byte[] destination = new byte[16];
+		
+		for(int i = 0; i < 16; i++)
+		{
+			pSeeds[i/4] |= (password[i + offset] & 0xFF) << (i % 4 << 3);
+		}
+		
+		for(int i = 0; i < 2; i++)
+		{
+            long num1 = pSeeds[(i * 2) + 1], num2 = pSeeds[i * 2];
+            
+            for (int j = 11; j >= 0; j--)
+            {
+                num1 = rollRight(num1 - (passwordKey[(j * 2) + 7]), num2 ) ^ num2;
+                num2 = rollRight(num2 - (passwordKey[(j * 2) + 6]), num1 ) ^ num1;
+ 
+            }
+            pSeeds[i * 2 + 1] = num1 - passwordKey[5];
+            pSeeds[i * 2] = num2 - passwordKey[4];
+		}
+
+		for(int i = 0; i < 16; i++)
+		{
+			destination[i] = (byte) (( pSeeds[i/4] >> ( i % 4 << 3 )));
+		}
+		
+		return new String(destination);
+	}
+
 }

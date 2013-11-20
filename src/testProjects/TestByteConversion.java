@@ -1,4 +1,4 @@
-package conquerServer;
+package testProjects;
 
 import static org.junit.Assert.*;
 

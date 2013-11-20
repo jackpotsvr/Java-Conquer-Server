@@ -3,28 +3,18 @@
  */
 package packets;
 
-/**
- * @author Jan-Willem
- *
- */
-public class Auth_Login_Forward extends OutgoingPacket {
+import conquerServer.ServerThread;
 
-	/**
-	 * 
-	 * @param identity
-	 * @param token
-	 * @param ipAddress
-	 * @param port
-	 */
-	public Auth_Login_Forward(long identity, long token, String ipAddress, int port) {
-		super(32, PacketType.auth_login_response);
-		this.putUnsignedShort(this.getPacketSize());
-		this.putUnsignedShort(this.getPacketType().value);
-		this.putUnsignedInteger(identity);
-		this.putUnsignedInteger(token);
-		this.putString(ipAddress, 16);
-		this.putUnsignedInteger(port);
-		int i = 0;
+public class Auth_Login_Forward extends OutgoingPacket
+{
+
+	public Auth_Login_Forward(ServerThread thread)
+	{
+		super(PacketType.AUTH_LOGIN_FORWARD);
+		this.putUnsignedInteger(23l);
+		this.putUnsignedInteger(5);
+		this.putString("127.000.000.001", 16);
+		this.putUnsignedInteger(5816);
 	}
 
 }

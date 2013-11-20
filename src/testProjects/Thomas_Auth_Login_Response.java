@@ -1,11 +1,10 @@
-package packets;
+package testProjects;
 
-import conquerServer.ByteConversion;
 
 // incoming packet only! (to be set with a packet, get the specific values */ 
 
 public class Thomas_Auth_Login_Response {
-	private Header packetHeader; 
+	//private Header packetHeader; 
 	private int key2;
 	private int key1;
 	private char[] szInfo; /* unknown information, to be ignored for now */
@@ -32,10 +31,10 @@ public class Thomas_Auth_Login_Response {
 		byte[] temp = new byte[2];
 		
 		System.arraycopy(data, 0, temp, 0, 2);
-		packetHeader.setPacketSize(ByteConversion.bytesToShort(temp));
+//		packetHeader.setPacketSize(ByteConversion.bytesToShort(temp));
 		
 		System.arraycopy(data, 0, temp, 2, 2); 
-		packetHeader.setType(ByteConversion.bytesToShort(temp));
+//		packetHeader.setType(ByteConversion.bytesToShort(temp));
 		
 		temp = new byte[4];
 		
