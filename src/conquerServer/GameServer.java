@@ -3,28 +3,30 @@ package conquerServer;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GameServer implements Runnable {
-	private int port = 5816;
-	private ServerSocket server = null;
-	private ArrayList<GameServerThread> connections = new ArrayList<GameServerThread>();
+	
+	private static final int PORT = 5816;
+	
+	private final ServerSocket server;
+	
+	private List<GameServerThread> connections = new CopyOnWriteArrayList<GameServerThread>();
 
 	/**
 	 * Constructor creates a new Socket
+	 * @throws IOException 
 	 */
-	public GameServer() {
-		try {
-			server =  new ServerSocket(port);
-			System.out.println("GameServer running on port " + port);
-		} catch (IOException e) {
-			System.out.println("Port " + port + " is already being used by another process.");
-		}	
+	public GameServer() throws IOException {
+		server =  new ServerSocket(PORT);
+		System.out.println("GameServer running on port " + PORT);	
 	}
 	
 	public void broadcast(byte[] data) throws IOException {
-		for ( GameServerThread client : connections )
+		for ( GameServerThread client : connections ) {
 			client.send(data);
+		}
 	}
 	
 	public synchronized void disconnect(GameServerThread GST) {
@@ -48,13 +50,12 @@ public class GameServer implements Runnable {
 				thread.start();
 				System.out.println("Connected clients: " + connections.size());
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		GameServer GS = new GameServer();
 		Thread thread = new Thread(GS);
 		thread.start();
