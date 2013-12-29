@@ -63,7 +63,6 @@ public class AuthServerThread implements Runnable, ServerThread
 				}
 				
 			} catch (IOException e) {
-				authServer.disconnect(this);
 				break;
 			}
 		}		
