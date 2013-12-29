@@ -2,6 +2,7 @@ package packets;
 
 import java.io.IOException;
 
+import conquerServer.GameServerThread;
 import conquerServer.ServerThread;
 
 public abstract class Packet {
@@ -14,7 +15,7 @@ public abstract class Packet {
 	}
 	
 	public int getPacketSize() {
-		return packetType.size;
+		return packetType.getSize();
 	}
 
 	public PacketType getPacketType() {
@@ -29,19 +30,23 @@ public abstract class Packet {
 	
 	public static Packet create(PacketType packetType, ServerThread thread) throws IOException
 	{
-		return create(packetType, new byte[packetType.size], thread);
+		return create(packetType, new byte[packetType.getSize()], thread);
 	}
 	
 	public static Packet create(PacketType packetType, byte[] data, ServerThread thread) throws IOException
 	{
 		switch(packetType){
-			case AUTH_LOGIN_PACKET: return new Auth_Login_Packet(packetType, data, thread);
-			case AUTH_LOGIN_RESPONSE: return new Auth_Login_Response(packetType, data, thread);
+			case AUTH_LOGIN_PACKET:
+				return new Auth_Login_Packet(packetType, data, thread);
+			case AUTH_LOGIN_RESPONSE:
+				return new Auth_Login_Response(packetType, data, (GameServerThread) thread);
 			case CHAR_INFO_PACKET:
 			case GENERAL_DATA_PACKET:
-			case CHARACTER_CREATION_PACKET: return new Character_Creation_Packet(packetType, data, thread);
+			case CHARACTER_CREATION_PACKET:
+				return new Character_Creation_Packet(packetType, data, thread);
 			//TO BE DONE - case CHARACTER_CREATION_PACEKT: return new Character_Creation_Packet(packetType, data, thread); 
-			default: return null;
+			default:
+				return null;
 		}		
 	}
 

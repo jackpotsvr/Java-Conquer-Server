@@ -11,15 +11,29 @@ public enum PacketType
 	GENERAL_DATA_PACKET	(0x03F2, 0x00);
 
 	
-	int type, size;
+	private final int type, size;
 	
-	PacketType(int type, int size)
+	private PacketType(int type, int size)
 	{
 		this.type = type;
 		this.size = size;
 	}
 	
-	static PacketType get(int type)
+	/**
+	 * @return Packet type
+	 */
+	public int getType() {
+		return type;
+	}
+	
+	/**
+	 * @return packet size
+	 */
+	public int getSize() {
+		return size;
+	}
+	
+	public static PacketType get(int type)
 	{
 		for ( PacketType pt : PacketType.values() ) 
 		{

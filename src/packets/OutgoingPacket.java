@@ -9,7 +9,7 @@ public class OutgoingPacket extends Packet {
 	 */
 	public OutgoingPacket(PacketType packetType) {
 		super(packetType);
-		setData(new byte[packetType.size]);
+		setData(new byte[packetType.getSize()]);
 	}
 	
 	/**
@@ -38,7 +38,7 @@ public class OutgoingPacket extends Packet {
 		this.data = data;
 		offset = 0;
 		this.putUnsignedShort(data.length);
-		this.putUnsignedShort(packetType.type);
+		this.putUnsignedShort(packetType.getType());
 	}
 	
 	/**
