@@ -51,5 +51,9 @@ public abstract class Packet {
 				
 		}		
 	}
-
+	
+	public byte[] getData()
+	{
+		return data;
+	}
 }

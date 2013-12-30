@@ -14,7 +14,7 @@ public class IncommingGeneralData extends IncommingPacket
 	private int datafields[] = new int[5];
 	SubType subType; 
 	
-	public IncommingGeneralData(PacketType packetType, byte[] data, GameServerThread thread)
+	public IncommingGeneralData(PacketType packetType, byte[] data, GameServerThread thread) throws IOException
 	{
 		super(packetType, data);
 		timestamp = this.readUnsignedInt(4);
@@ -28,11 +28,11 @@ public class IncommingGeneralData extends IncommingPacket
 		
 		switch(subType)
 		{
-			case NO_VALUES_ATM:
-				System.out.println("Info");
+			case LOCATION:
+				new OutgoingGeneralData(packetType, data, (GameServerThread) thread);
+				break;
 			default:
-				System.out.printf("%s, \t %s, \t %s, \t %s, \t %s, \t %s, \t %s", timestamp, identity, datafields[0], datafields[1],
-								 datafields[2], datafields[3], subType.getType());
+				System.out.printf("Fix subtype %s", this.readUnsignedShort(22));
 		
 		}
 		

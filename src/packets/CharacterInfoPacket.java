@@ -38,7 +38,7 @@ public class CharacterInfoPacket extends OutgoingPacket
 
 	private CharacterInfoPacket(String name, String spouseName)
 	{
-		super(PacketType.CHAR_INFO_PACKET, new byte[66 + name.length() + spouseName.length()]);
+		super(PacketType.CHAR_INFO_PACKET, new byte[71 + name.length() + spouseName.length()]);
 		this.name = name;
 		this.spouseName = spouseName;
 	}
@@ -50,16 +50,16 @@ public class CharacterInfoPacket extends OutgoingPacket
 		String spouseName = "firetao250";
 		CharacterInfoPacket packet = new CharacterInfoPacket(name, spouseName);
 		
-		packet.identity = 5234902;
+		packet.identity = 23L;
 		packet.mesh = 381004;
 		packet.hairstyle = 315;
-		packet.gold = 999999999;
-		packet.cps = 999999999;
-		packet.experience = 0;
-		packet.strength = 500;
-		packet.dexterity = 500;
-		packet.vitality = 500;
-		packet.spirit = 500;
+		packet.gold = 1000;
+		packet.cps = 215;
+		packet.experience = 34195965;
+		packet.strength = 50;
+		packet.dexterity = 50;
+		packet.vitality = 50;
+		packet.spirit = 50;
 		packet.attributePoints = 500; 
 		packet.currentHP = 1000;
 		packet.currentMP = 1000;
@@ -78,6 +78,7 @@ public class CharacterInfoPacket extends OutgoingPacket
 		packet.putUnsignedInteger(packet.gold);
 		packet.putUnsignedInteger(packet.cps);
 		packet.putUnsignedInteger(packet.experience);
+		packet.setOffset(46);
 		packet.putUnsignedShort(packet.strength);
 		packet.putUnsignedShort(packet.dexterity);
 		packet.putUnsignedShort(packet.vitality);
@@ -88,6 +89,7 @@ public class CharacterInfoPacket extends OutgoingPacket
 		packet.putUnsignedShort(packet.pkPoints);
 		packet.putUnsignedByte(packet.level);
 		packet.putUnsignedByte(packet.profession);
+		packet.setOffset(65);
 		packet.putUnsignedByte(packet.rebornCount);
 		packet.putBoolean(packet.displayNames);
 		packet.putUnsignedByte(packet.stringCount);

@@ -2,7 +2,7 @@ package packets.generalData;
 
 public enum SubType
 {
-	JUST_SPACE_HOLDER	(0),
+	LOCATION 			(0x4A), // 74 
 	NO_VALUES_ATM		(1);
 
 	

@@ -8,7 +8,7 @@ public enum PacketType
 	MESSAGE_PACKET		(0x03EC, 0x00),
 	CHAR_INFO_PACKET	(0x03EE, 0x00),
 	CHARACTER_CREATION_PACKET(0x03E9, 0x3C),
-	GENERAL_DATA_PACKET	(0x03F2, 0x00);
+	GENERAL_DATA_PACKET	(0x03F2, 0x18);
 
 	
 	private final int type, size;

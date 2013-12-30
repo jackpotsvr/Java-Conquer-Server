@@ -44,7 +44,7 @@ public final class Cryptographer
 		{
 			buffer[i] ^= 0xAB;
 			buffer[i] = (byte) (((buffer[i] & 0xFF) >> 4) | ((buffer[i] & 0xFF) << 4));
-			buffer[i] ^= key2[outCounter >> 8] ^ key1[outCounter & 0xFF];
+			buffer[i] ^= key2[(outCounter%65536) >> 8] ^ key1[(outCounter%65536) & 0xFF];
 			outCounter++;
 		}
 	}

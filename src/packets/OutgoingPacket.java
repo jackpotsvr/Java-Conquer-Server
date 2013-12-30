@@ -42,6 +42,15 @@ public class OutgoingPacket extends Packet {
 	}
 	
 	/**
+	 * Set the offset for packets with blank spaces. 
+	 * @param offset vale
+	 */
+	public void setOffset(int offset)
+	{
+		this.offset = offset;
+	}
+	
+	/**
 	 *  Pushes an unsigned byte to the packet
 	 *  Since unsigned bytes can grow up to 2^8-1, and Java bytes can only grow up to 2^7-1
 	 *  We supply the byte as short.
