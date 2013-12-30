@@ -108,6 +108,14 @@ public class OutgoingPacket extends Packet {
         	data[offset++] = b;
         
         offset += length - str.length();
-	}	
+	}
+	
+	/**
+	 * Method used to put a bool into the packet.
+	 * @param b boolean value to put.
+	 */
+	public void putBoolean(boolean b) {
+		  putUnsignedByte(b?1:0);
+	}
 
 }

@@ -12,7 +12,7 @@ public class IncommingPacket extends Packet {
 	 * @param {int} offset
 	 * @return {short}  as the range of ubyte is 0 to 2^8-1
 	 */
-	short readUnsignedByte(int offset) {
+	protected short readUnsignedByte(int offset) {
 		return (short) (data[offset] & 0xFF);
 	}
 	
@@ -21,7 +21,7 @@ public class IncommingPacket extends Packet {
 	 * @param {int} offset
 	 * @return {int} as the range of ushort is 0 to 2^16-1
 	 */
-	int readUnsignedShort(int offset) {
+	protected int readUnsignedShort(int offset) {
 		return (int) ((data[offset+1] & 0xFF) << 8 | (data[offset] & 0xFF));
 	}
 	
@@ -30,7 +30,7 @@ public class IncommingPacket extends Packet {
 	 * @param {int} offset
 	 * @return {long} as the range of uint is 0 to 2^32-1
 	 */
-	long readUnsignedInt(int offset) {
+	protected long readUnsignedInt(int offset) {
 		return ((data[offset + 3] & 0xFF) << 24 |(data[offset + 2] & 0xFF) << 16
                 |(data[offset + 1] & 0xFF) << 8 |(data[offset] & 0xFF)); 
 	}
@@ -41,7 +41,7 @@ public class IncommingPacket extends Packet {
 	 * @param {int} length
 	 * @return {String}
 	 */
-	String readString(int offset, int length) {
+	protected String readString(int offset, int length) {
         byte[] output = new byte[length];
         System.arraycopy(data, offset, output, 0, length);
         return new String(output);

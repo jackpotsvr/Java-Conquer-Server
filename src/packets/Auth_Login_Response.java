@@ -21,8 +21,10 @@ public class Auth_Login_Response extends IncommingPacket
 		 /*
 		  * long aRGB, long type, long chatID, String from, String to, String  message) 2101 = Login Info, no enum yet 
 		  */
-        Message_Packet reply = new Message_Packet(0xFFFFFFFFL, 2101L, 0L, "SYSTEM", "ALLUSERS", "NEW_ROLE");
-        thread.send(reply.data);
+        //Message_Packet reply = new Message_Packet(0xFFFFFFFFL, 2101L, 0L, "SYSTEM", "ALLUSERS", "NEW_ROLE");
+		Message_Packet reply = new Message_Packet(0xFFFFFFFFL, 2101L, 0L, "SYSTEM", "ALLUSERS", "ANSWER_OK");
+		
+		thread.send(reply.data);
         
 	}
 
