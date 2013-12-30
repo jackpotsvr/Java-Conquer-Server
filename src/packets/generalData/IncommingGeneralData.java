@@ -11,7 +11,7 @@ public class IncommingGeneralData extends IncommingPacket
 {
 	private long timestamp;
 	private long identity;
-	private int datafields[] = new int[4];
+	private int datafields[] = new int[5];
 	SubType subType; 
 	
 	public IncommingGeneralData(PacketType packetType, byte[] data, GameServerThread thread)
@@ -23,9 +23,11 @@ public class IncommingGeneralData extends IncommingPacket
 		datafields[1] = this.readUnsignedShort(14);
 		datafields[2] = this.readUnsignedShort(16);
 		datafields[3] =  this.readUnsignedShort(18);
-		subType = subType.get(this.readUnsignedInt(20));
+		datafields[4] = this.readUnsignedShort(20);
+		subType = SubType.get(this.readUnsignedShort(22));
 		
-		switch(subType){
+		switch(subType)
+		{
 			case NO_VALUES_ATM:
 				System.out.println("Info");
 			default:

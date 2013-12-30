@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import conquerServer.GameServerThread;
 import conquerServer.ServerThread;
+import packets.generalData.*;
 
 public abstract class Packet {
 	PacketType packetType;
@@ -40,13 +41,14 @@ public abstract class Packet {
 				return new Auth_Login_Packet(packetType, data, thread);
 			case AUTH_LOGIN_RESPONSE:
 				return new Auth_Login_Response(packetType, data, (GameServerThread) thread);
-			case CHAR_INFO_PACKET:
 			case GENERAL_DATA_PACKET:
+				return new IncommingGeneralData(packetType, data, (GameServerThread) thread);
 			case CHARACTER_CREATION_PACKET:
 				return new Character_Creation_Packet(packetType, data, thread);
 			//TO BE DONE - case CHARACTER_CREATION_PACEKT: return new Character_Creation_Packet(packetType, data, thread); 
 			default:
 				return null;
+				
 		}		
 	}
 
