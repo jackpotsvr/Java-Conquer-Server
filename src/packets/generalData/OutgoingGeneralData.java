@@ -25,7 +25,7 @@ public class OutgoingGeneralData extends OutgoingPacket
 		
 		datafields[0] = 1002;
 		datafields[1] = 382;
-		datafields[2] = 341; 
+		datafields[2] = 341;  //HAHAHA
 		
 		subType = SubType.get(74l); 
 		
