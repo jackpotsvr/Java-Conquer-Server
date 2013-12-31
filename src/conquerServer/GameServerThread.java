@@ -14,7 +14,7 @@ public class GameServerThread implements Runnable, ServerThread
 	private GameServer gameServer = null;
 	private InputStream in = null;
 	private OutputStream out = null;
-	private Cryptographer cipher = new Cryptographer(); 
+	private Cryptographer cipher = new Cryptographer();
 	
 	/**
 	 * 
@@ -30,6 +30,16 @@ public class GameServerThread implements Runnable, ServerThread
 		this.out = client.getOutputStream();
 	}
 
+	/**
+	 * Set the keys for the cipher
+	 * @param inKey1
+	 * @param inKey2
+	 */
+	public void setKeys(long inKey1, long inKey2) {
+		cipher.setKeys(inKey1, inKey2);
+	}
+
+	@Override
 	public synchronized void send(byte[] data) throws IOException
 	{
 		cipher.encrypt(data);

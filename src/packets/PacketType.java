@@ -8,18 +8,32 @@ public enum PacketType
 	MESSAGE_PACKET		(0x03EC, 0x00),
 	CHAR_INFO_PACKET	(0x03EE, 0x00),
 	CHARACTER_CREATION_PACKET(0x03E9, 0x3C),
-	GENERAL_DATA_PACKET	(0x03F2, 0x00);
+	GENERAL_DATA_PACKET	(0x03F2, 0x18);
 
 	
-	int type, size;
+	private final int type, size;
 	
-	PacketType(int type, int size)
+	private PacketType(int type, int size)
 	{
 		this.type = type;
 		this.size = size;
 	}
 	
-	static PacketType get(int type)
+	/**
+	 * @return Packet type
+	 */
+	public int getType() {
+		return type;
+	}
+	
+	/**
+	 * @return packet size
+	 */
+	public int getSize() {
+		return size;
+	}
+	
+	public static PacketType get(int type)
 	{
 		for ( PacketType pt : PacketType.values() ) 
 		{
