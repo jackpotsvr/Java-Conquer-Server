@@ -11,7 +11,7 @@ public class IncommingGeneralData extends IncommingPacket
 {
 	private long timestamp;
 	private long identity;
-	private int datafields[] = new int[5];
+	private int datafields[] = new int[3];
 	SubType subType; 
 	
 	public IncommingGeneralData(PacketType packetType, byte[] data, GameServerThread thread) throws IOException
@@ -20,34 +20,35 @@ public class IncommingGeneralData extends IncommingPacket
 		timestamp = this.readUnsignedInt(4);
 		identity = this.readUnsignedInt(8);
 		datafields[0] = this.readUnsignedShort(12);
-		datafields[1] = this.readUnsignedShort(14);
-		datafields[2] = this.readUnsignedShort(16);
-		datafields[3] =  this.readUnsignedShort(18);
-		datafields[4] = this.readUnsignedShort(20);
+		datafields[1] = this.readUnsignedShort(16);
+		datafields[1] = this.readUnsignedShort(18);
 		subType = SubType.get(this.readUnsignedShort(22));
 		
+		route(packetType, data, thread);
+	}
+	
+	
+	/**
+	 * Used to route packet to handle different subtypes ;) 
+	 * @param packetType
+	 * @param data
+	 * @param thread 
+	 * @throws IOException 
+	 */
+	private void route(PacketType packetType, byte[] data, GameServerThread thread) throws IOException
+	{
 		switch(subType)
 		{
 			case LOCATION:
 				new OutgoingGeneralData(packetType, data, (GameServerThread) thread);
 				break;
+			case GET_SURROUNDINGS:
+				System.out.println("Surroundings get ;) "); 
+				break;
 			default:
 				System.out.printf("Fix subtype %s", this.readUnsignedShort(22));
 		
 		}
-		
-		// route subtype ;) 
 	}
 	
 }
-
-/**
-public Auth_Login_Packet(PacketType packetType, byte[] data, ServerThread thread) throws IOException {
-	super(packetType, data);
-	accoutName	= this.readString(4,16);
-	password	= Cryptographer.decryptPassword(data, 20);
-	serverName	= this.readString(36, 16);
-	
-	Auth_Login_Forward ALF = new Auth_Login_Forward(thread);
-	thread.send(ALF.data);
-} */

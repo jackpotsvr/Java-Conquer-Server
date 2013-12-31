@@ -5,6 +5,7 @@ import java.io.IOException;
 import conquerServer.GameServerThread;
 import packets.PacketType;
 import packets.OutgoingPacket;
+import packets.generalData.*;
 
 public class OutgoingGeneralData extends OutgoingPacket
 {
@@ -18,30 +19,32 @@ public class OutgoingGeneralData extends OutgoingPacket
 	{
 		super(PacketType.GENERAL_DATA_PACKET, new byte[28]);
 		
-		
-		timestamp = 0; 
-		
+		timestamp = (int) System.currentTimeMillis() & 0xFFFFFFFF; 
 		identity = 23L; 
-		
-		datafields[0] = 1002;
-		datafields[1] = 382;
-		datafields[2] = 341;  //HAHAHA
-		
 		subType = SubType.get(74l); 
 		
 		this.putUnsignedInteger(timestamp);
 		this.putUnsignedInteger(identity);
-		
-		this.putUnsignedShort(datafields[0]);
-		this.setOffset(16);
-		this.putUnsignedShort(datafields[1]);
-		this.putUnsignedShort(datafields[2]);
-		
-		
 		this.setOffset(22);
 		this.putUnsignedShort( (int) subType.getType());
 		
+		
+		route();
 		thread.send(this.getData());
-
+		
 	}
+	
+	private void route()
+	{
+		switch(subType)
+		{
+			case LOCATION:
+				new OutgoingLocation(this);
+				break;
+			default:
+				break;
+				
+		}
+	}
+	
 }

@@ -3,7 +3,7 @@ package packets.generalData;
 public enum SubType
 {
 	LOCATION 			(0x4A), // 74 
-	NO_VALUES_ATM		(1);
+	GET_SURROUNDINGS	(0x72); //114
 
 	
 	private final long type;
