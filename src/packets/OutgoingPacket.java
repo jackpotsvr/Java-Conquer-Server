@@ -1,5 +1,7 @@
 package packets;
 
+import conquerServer.ServerThread;
+
 public class OutgoingPacket extends Packet {
 
 	/**
@@ -125,6 +127,15 @@ public class OutgoingPacket extends Packet {
 	 */
 	public void putBoolean(boolean b) {
 		  putUnsignedByte(b?1:0);
+	}
+	
+	/**
+	 * Queue this packet for transport to the client
+	 * @param client
+	 * @return
+	 */
+	public boolean send(ServerThread client) {
+		return client.offer(this);
 	}
 
 }

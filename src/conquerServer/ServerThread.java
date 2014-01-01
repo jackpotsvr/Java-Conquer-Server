@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import packets.Cryptographer;
+import packets.OutgoingPacket;
 import packets.PacketType;
 
 /**
@@ -93,6 +94,16 @@ public abstract class ServerThread implements Runnable {
 	 */
 	public boolean offer(byte[] data) {
 		return packets.offer(data);
+	}
+	
+	/**
+	 * Queues packet for transport to the client
+	 * @param packet
+	 * @return true if successfully added, false if the
+	 * packet queue is full
+	 */
+	public boolean offer(OutgoingPacket packet) {
+		return this.offer(packet.getData());
 	}
 	
 	/**
