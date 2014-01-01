@@ -1,11 +1,8 @@
 package packets.generalData;
 
-import java.io.IOException;
-
 import conquerServer.GameServerThread;
 import packets.PacketType;
 import packets.OutgoingPacket;
-import packets.generalData.*;
 
 public class OutgoingGeneralData extends OutgoingPacket
 {
@@ -15,7 +12,7 @@ public class OutgoingGeneralData extends OutgoingPacket
 	SubType subType; 
 	
 	
-	OutgoingGeneralData(PacketType packetType, byte[] data, GameServerThread thread) throws IOException
+	OutgoingGeneralData(PacketType packetType, byte[] data, GameServerThread thread)
 	{
 		super(PacketType.GENERAL_DATA_PACKET, new byte[28]);
 		
@@ -30,7 +27,7 @@ public class OutgoingGeneralData extends OutgoingPacket
 		
 		
 		route();
-		thread.send(this.getData());
+		thread.offer(this.getData());
 		
 	}
 	

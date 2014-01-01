@@ -2,20 +2,18 @@ package packets;
 
 import java.io.IOException;
 
+import conquerServer.AuthServerThread;
 import conquerServer.GameServerThread;
 
 public class Auth_Login_Response extends IncommingPacket
 {
-
-	private long inKey1;
-	private long inKey2;
 	
-	public Auth_Login_Response(PacketType packetType, byte[] data, GameServerThread thread) throws IOException
+	public Auth_Login_Response(PacketType packetType, byte[] data, GameServerThread thread)
 	{
 		super(packetType, data);
 		
-		inKey2 = this.readUnsignedInt(4);
-		inKey1 = this.readUnsignedInt(8);
+		long inKey2 = this.readUnsignedInt(4);
+		long inKey1 = this.readUnsignedInt(8);
 		thread.setKeys(inKey1, inKey2);
 		
 		 /*
@@ -26,11 +24,18 @@ public class Auth_Login_Response extends IncommingPacket
 		CharacterInfoPacket reply2 = CharacterInfoPacket.create();
 		
 		
-		thread.send(reply1.data);
-		thread.send(reply2.data);
+		thread.offer(reply1.data);
+		thread.offer(reply2.data);
 		
+	}
+	
+	public Auth_Login_Response(PacketType packetType, byte[] data, AuthServerThread thread) {
+		super(packetType, data);
 		
-        
+		long identity = this.readUnsignedInt(4);
+		long resNumber = this.readUnsignedInt(8);
+		String resLocation = this.readString(12,16);
+		System.out.println("ALR: " + resLocation + " " + identity + ", "  + resNumber);
 	}
 
 }

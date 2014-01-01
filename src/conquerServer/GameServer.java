@@ -23,9 +23,9 @@ public class GameServer implements Runnable {
 		System.out.println("GameServer running on port " + PORT);	
 	}
 	
-	public void broadcast(byte[] data) throws IOException {
+	public void broadcast(byte[] data) {
 		for ( GameServerThread client : connections ) {
-			client.send(data);
+			client.offer(data);
 		}
 	}
 	

@@ -4,24 +4,19 @@
 package conquerServer;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.Socket;
 
 import packets.*;
 
 /**
- * @author jan-willem
+ * 
+ * @author Jan-Willem
  *
  */
-public class AuthServerThread implements Runnable, ServerThread
+public class AuthServerThread extends ServerThread
 {
 	
-	private Socket client = null;
 	private AuthServer authServer = null;
-	private InputStream in = null;
-	private OutputStream out = null;
-	private Cryptographer cipher = new Cryptographer();
 	
 	/**
 	 * 
@@ -31,41 +26,22 @@ public class AuthServerThread implements Runnable, ServerThread
 	 */
 	public AuthServerThread(Socket client, AuthServer authServer) throws IOException
 	{
-		this.client = client;
+		super(client);
 		this.authServer = authServer;
-		in = client.getInputStream();
-		out = client.getOutputStream();
 	}
 
 	@Override
-	public void send(byte[] data) throws IOException
-	{
-		cipher.encrypt(data);
-		out.write(data);
-	}
-
-	@Override
-	public void run()
-	{
-		System.out.println("Incomming connection on AuthServer");
-		while(true)
-		{
-			try
-			{
-				int available = in.available();
-				
-				if ( available > 0 )
-				{
-					byte[] data = new byte[available];
-					in.read(data);
-					cipher.decrypt(data);
-					Packet.route(data, this);
-				}
-				
-			} catch (IOException e) {
-				break;
-			}
-		}		
+	protected void route(PacketType packetType, byte[] data) {		
+		switch(packetType){
+		case AUTH_LOGIN_PACKET:
+			new Auth_Login_Packet(packetType, data, this);
+			break;
+		case AUTH_LOGIN_RESPONSE:
+			new Auth_Login_Response(packetType, data, this);
+			break; 
+		default:
+			break;
+		}
 	}
 	
 }

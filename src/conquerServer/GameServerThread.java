@@ -1,20 +1,15 @@
 package conquerServer;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.Socket;
 
 import packets.*;
+import packets.generalData.IncommingGeneralData;
 
-public class GameServerThread implements Runnable, ServerThread
+public class GameServerThread extends ServerThread
 {
 	
-	private Socket client = null;
-	private GameServer gameServer = null;
-	private InputStream in = null;
-	private OutputStream out = null;
-	private Cryptographer cipher = new Cryptographer();
+	private final GameServer gameServer;
 	
 	/**
 	 * 
@@ -24,52 +19,27 @@ public class GameServerThread implements Runnable, ServerThread
 	 */
 	public GameServerThread(Socket client, GameServer gameServer) throws IOException
 	{
-		this.client = client;
+		super(client);
 		this.gameServer = gameServer;
-		this.in = client.getInputStream();
-		this.out = client.getOutputStream();
-	}
-
-	/**
-	 * Set the keys for the cipher
-	 * @param inKey1
-	 * @param inKey2
-	 */
-	public void setKeys(long inKey1, long inKey2) {
-		cipher.setKeys(inKey1, inKey2);
 	}
 
 	@Override
-	public synchronized void send(byte[] data) throws IOException
-	{
-		cipher.encrypt(data);
-		out.write(data);
-	}
-	
-	@Override
-	public void run() {
-		System.out.println("Incomming connection on GameServer");
-		
-		while(true)
-		{
-			try
-			{
-				int available = in.available();
-				
-				if(available > 0)
-				{ 
-					byte[] data = new byte[available];
-					in.read(data);
-					cipher.decrypt(data);
-					Packet.route(data, this);
-				}
-			}
-			catch (IOException e)
-			{
-				gameServer.disconnect(this);
-				break;
-			}
-		}
+	protected void route(PacketType packetType, byte[] data) {
+		switch(packetType){
+		case AUTH_LOGIN_RESPONSE:
+			new Auth_Login_Response(packetType, data, this);
+			break;
+		case GENERAL_DATA_PACKET:
+			new IncommingGeneralData(packetType, data, this);
+			break;
+		case CHARACTER_CREATION_PACKET:
+			new Character_Creation_Packet(packetType, data, this);
+			break;
+		//TO BE DONE - case CHARACTER_CREATION_PACEKT: return new Character_Creation_Packet(packetType, data, thread); 
+		default:
+			System.out.println("Unimplemented packet " + packetType.toString());
+			break;
+		}	
 	}
 
 

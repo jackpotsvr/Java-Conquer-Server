@@ -14,7 +14,7 @@ public class IncommingGeneralData extends IncommingPacket
 	private int datafields[] = new int[3];
 	SubType subType; 
 	
-	public IncommingGeneralData(PacketType packetType, byte[] data, GameServerThread thread) throws IOException
+	public IncommingGeneralData(PacketType packetType, byte[] data, GameServerThread thread)
 	{
 		super(packetType, data);
 		timestamp = this.readUnsignedInt(4);
@@ -35,7 +35,7 @@ public class IncommingGeneralData extends IncommingPacket
 	 * @param thread 
 	 * @throws IOException 
 	 */
-	private void route(PacketType packetType, byte[] data, GameServerThread thread) throws IOException
+	private void route(PacketType packetType, byte[] data, GameServerThread thread)
 	{
 		switch(subType)
 		{

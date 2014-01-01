@@ -50,7 +50,7 @@ public class CharacterInfoPacket extends OutgoingPacket
 		String spouseName = "firetao250";
 		CharacterInfoPacket packet = new CharacterInfoPacket(name, spouseName);
 		
-		packet.identity = 23L;
+		packet.identity = 1000000L;
 		packet.mesh = 381004;
 		packet.hairstyle = 315;
 		packet.gold = 1000;
