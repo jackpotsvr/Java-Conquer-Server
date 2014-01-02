@@ -1,4 +1,4 @@
-package Items;
+package data;
 
 public class Equipment extends Item {
 	private int ClassReq;

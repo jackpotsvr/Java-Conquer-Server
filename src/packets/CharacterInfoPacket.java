@@ -1,6 +1,6 @@
 package packets;
 
-import packets.Packet;
+import data.Player;
 import packets.OutgoingPacket;
 import packets.PacketType;
 
@@ -30,9 +30,7 @@ public class CharacterInfoPacket extends OutgoingPacket
 	private short rebornCount;
 	private boolean displayNames;
 	private short stringCount;
-	private short nameLength;
 	private String name;
-	private short spouseLength;
 	private String spouseName;
 
 
@@ -42,6 +40,63 @@ public class CharacterInfoPacket extends OutgoingPacket
 		this.name = name;
 		this.spouseName = spouseName;
 	}
+	
+	public CharacterInfoPacket(Player player) {
+		super(PacketType.CHAR_INFO_PACKET, new byte[71 + player.getName().length() + player.getSpouseName().length()]);
+		putUnsignedInteger(player.getIdentity());
+		putUnsignedInteger(player.getMesh());
+		putUnsignedShort(player.getHairStyle());
+		putUnsignedInteger(player.getGold());
+		putUnsignedInteger(player.getCps());
+		putUnsignedInteger(player.getExperience());
+		setOffset(46);
+		putUnsignedShort(player.getStrength());
+		putUnsignedShort(player.getDexterity());
+		putUnsignedShort(player.getVitality());
+		putUnsignedShort(player.getSpirit());
+		putUnsignedShort(player.getAttributePoints());
+		putUnsignedShort(player.getCurrentHP());
+		putUnsignedShort(player.getCurrentMP());
+		putUnsignedShort(player.getPkPoints());
+		putUnsignedByte(player.getLevel());
+		putUnsignedByte(player.getProfession());
+		setOffset(65);
+		putUnsignedByte(player.getRebornCount());
+		putBoolean(true);
+		putUnsignedByte(2);
+		putUnsignedByte(player.getName().length());
+		putString(player.getName());
+		putUnsignedByte(player.getSpouseName().length());
+		putString(player.getSpouseName());
+	}
+	
+	private void fill() {
+		this.putUnsignedInteger(this.identity);
+		this.putUnsignedInteger(this.mesh);
+		this.putUnsignedShort(this.hairstyle);
+		this.putUnsignedInteger(this.gold);
+		this.putUnsignedInteger(this.cps);
+		this.putUnsignedInteger(this.experience);
+		this.setOffset(46);
+		this.putUnsignedShort(this.strength);
+		this.putUnsignedShort(this.dexterity);
+		this.putUnsignedShort(this.vitality);
+		this.putUnsignedShort(this.spirit);
+		this.putUnsignedShort(this.attributePoints);
+		this.putUnsignedShort(this.currentHP);
+		this.putUnsignedShort(this.currentMP);
+		this.putUnsignedShort(this.pkPoints);
+		this.putUnsignedByte(this.level);
+		this.putUnsignedByte(this.profession);
+		this.setOffset(65);
+		this.putUnsignedByte(this.rebornCount);
+		this.putBoolean(this.displayNames);
+		this.putUnsignedByte(this.stringCount);
+		this.putUnsignedByte(this.name.length());
+		this.putString(this.name);
+		this.putUnsignedByte(this.spouseName.length());
+		this.putString(this.spouseName);
+	}
 
 	public static CharacterInfoPacket create()
 	{
@@ -50,7 +105,7 @@ public class CharacterInfoPacket extends OutgoingPacket
 		String spouseName = "firetao250";
 		CharacterInfoPacket packet = new CharacterInfoPacket(name, spouseName);
 		
-		packet.identity = 23L;
+		packet.identity = 1000000L;
 		packet.mesh = 381004;
 		packet.hairstyle = 315;
 		packet.gold = 1000;
@@ -72,31 +127,7 @@ public class CharacterInfoPacket extends OutgoingPacket
 		
 		/* Uiteindelijk worden deze gegevens uit database geladen... :) */
 		
-		packet.putUnsignedInteger(packet.identity);
-		packet.putUnsignedInteger(packet.mesh);
-		packet.putUnsignedShort(packet.hairstyle);
-		packet.putUnsignedInteger(packet.gold);
-		packet.putUnsignedInteger(packet.cps);
-		packet.putUnsignedInteger(packet.experience);
-		packet.setOffset(46);
-		packet.putUnsignedShort(packet.strength);
-		packet.putUnsignedShort(packet.dexterity);
-		packet.putUnsignedShort(packet.vitality);
-		packet.putUnsignedShort(packet.spirit);
-		packet.putUnsignedShort(packet.attributePoints);
-		packet.putUnsignedShort(packet.currentHP);
-		packet.putUnsignedShort(packet.currentMP);
-		packet.putUnsignedShort(packet.pkPoints);
-		packet.putUnsignedByte(packet.level);
-		packet.putUnsignedByte(packet.profession);
-		packet.setOffset(65);
-		packet.putUnsignedByte(packet.rebornCount);
-		packet.putBoolean(packet.displayNames);
-		packet.putUnsignedByte(packet.stringCount);
-		packet.putUnsignedByte(packet.nameLength);
-		packet.putString(packet.name);
-		packet.putUnsignedByte(packet.spouseLength);
-		packet.putString(packet.spouseName);
+		packet.fill();
 
 		return packet;
 	}

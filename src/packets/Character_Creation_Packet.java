@@ -1,6 +1,5 @@
 package packets;
 
-import java.io.IOException;
 import conquerServer.ServerThread;
 
 public class Character_Creation_Packet extends IncommingPacket
@@ -16,7 +15,7 @@ public class Character_Creation_Packet extends IncommingPacket
 	int proffession; // in-game 'class' e.g. Taoist, Archer etc ...  
 	long identity; 
 	
-	public Character_Creation_Packet(PacketType packetType, byte[] data, ServerThread thread) throws IOException
+	public Character_Creation_Packet(PacketType packetType, byte[] data, ServerThread thread)
 	{
 		super(packetType, data);
 		accountName = this.readString(4, 16); 

@@ -1,20 +1,24 @@
 package packets.generalData;
 
-public class OutgoingLocation 
+import conquerServer.GameServerThread;
+import data.Location;
+
+public class OutgoingLocation extends OutgoingGeneralData
 {
-	int mapID, xCord, yCord;
-	
-	OutgoingLocation(OutgoingGeneralData packet)
-	{
-		mapID = 1002;
-		xCord = 382;
-		yCord = 341;  
+
+	OutgoingLocation(GameServerThread client) {
+		super(SubType.LOCATION);
 		
-		packet.setOffset(12);
-		packet.putUnsignedShort(mapID);
-		packet.setOffset(16);
-		packet.putUnsignedShort(xCord);
-		packet.putUnsignedShort(yCord);	
-		
+		Location location = client.getPlayer().getLocation();
+		int mapID = location.getMap().getMapID();
+		int xCord = location.getxCord();
+		int yCord = location.getyCord();
+
+		this.setOffset(12);
+		this.putUnsignedShort(mapID);
+		this.setOffset(16);
+		this.putUnsignedShort(xCord);
+		this.putUnsignedShort(yCord);
 	}
+	
 }

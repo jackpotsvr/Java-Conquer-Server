@@ -12,6 +12,8 @@ public class GameServer implements Runnable {
 	
 	private final ServerSocket server;
 	
+	public int PLAYER_COUNT = 0;
+	
 	private List<GameServerThread> connections = new CopyOnWriteArrayList<GameServerThread>();
 
 	/**
@@ -23,9 +25,9 @@ public class GameServer implements Runnable {
 		System.out.println("GameServer running on port " + PORT);	
 	}
 	
-	public void broadcast(byte[] data) throws IOException {
+	public void broadcast(byte[] data) {
 		for ( GameServerThread client : connections ) {
-			client.send(data);
+			client.offer(data);
 		}
 	}
 	

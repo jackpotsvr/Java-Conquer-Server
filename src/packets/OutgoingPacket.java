@@ -1,6 +1,8 @@
 package packets;
 
-public class OutgoingPacket extends Packet {
+import conquerServer.ServerThread;
+
+public abstract class OutgoingPacket extends Packet {
 
 	/**
 	 * Creates a new Outgoing packet with given packetType
@@ -125,6 +127,15 @@ public class OutgoingPacket extends Packet {
 	 */
 	public void putBoolean(boolean b) {
 		  putUnsignedByte(b?1:0);
+	}
+	
+	/**
+	 * Queue this packet for transport to the client
+	 * @param client
+	 * @return
+	 */
+	public boolean send(ServerThread client) {
+		return client.offer(this);
 	}
 
 }

@@ -6,9 +6,9 @@ public enum SubType
 	GET_SURROUNDINGS	(0x72); //114
 
 	
-	private final long type;
+	private final int type;
 	
-	private SubType(long type)
+	private SubType(int type)
 	{
 		this.type = type;
 	}
@@ -16,11 +16,11 @@ public enum SubType
 	/**
 	 * @return Packet type
 	 */
-	public long getType() {
+	public int getType() {
 		return type;
 	}
 	
-	public static SubType get(long type)
+	public static SubType get(int type)
 	{
 		for ( SubType st : SubType.values() ) 
 		{
