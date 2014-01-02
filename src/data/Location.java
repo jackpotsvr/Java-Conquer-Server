@@ -2,7 +2,7 @@ package data;
 
 public class Location {
 
-	private final static int VIEW_RANGE = 20;
+	private final static int VIEW_RANGE = 12;
 	
 	private final Map map;
 	private final int xCord, yCord;
@@ -23,6 +23,10 @@ public class Location {
 
 	public int getyCord() {
 		return yCord;
+	}
+	
+	public Location offset(int x, int y) {
+		return new Location(map, xCord + x, yCord + y);
 	}
 	
 	public boolean inView(Location location) {

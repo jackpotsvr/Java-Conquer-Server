@@ -2,10 +2,13 @@ package data;
 
 import java.util.HashMap;
 
+import data.Entity.GuildRank;
+import packets.OutgoingPacket;
+import packets.PacketType;
+
 public class Player extends Entity {
 	
-	private int mesh = 381004;
-	private int hairstyle = 315;
+
 	private int gold = 1000;
 	private int cps = 215;
 	private int experience = 34195965;
@@ -13,11 +16,12 @@ public class Player extends Entity {
 	private int dexterity = 52;
 	private int vitality = 53;
 	private int spirit = 54;
-	private int attributePoints = 500; 
-	private int currentHP = 1000;
-	private int currentMP = 1000;
+	private int attributePoints = 500;
+	
+	protected Guild guild = null;	                
+	protected GuildRank guildRank = GuildRank.None; 
+
 	private int pkPoints = 0;
-	private int level = 130;
 	private int profession = 15;
 	private int rebornCount = 0;
 	private Player spouse;
@@ -26,26 +30,11 @@ public class Player extends Entity {
 	private HashMap<EquipmentSlot, Equipment> equipment = new HashMap<EquipmentSlot, Equipment>();
 	
 	public Player(long identity, String name, Location location, int HP) {
-		super(identity, name, location, HP);
+		super(identity, 223, 315, name, location, HP);
 		// TODO Auto-generated constructor stub
 	}
 
-	public int getMesh() {
-		return mesh;
-	}
-
-	public void setMesh(int mesh) {
-		this.mesh = mesh;
-	}
 	
-	public int getHairStyle() {
-		return hairstyle;
-	}
-	
-	public void setHairStyle(int hairstyle) {
-		this.hairstyle = hairstyle;
-	}
-
 	public int getGold() {
 		return gold;
 	}
@@ -62,6 +51,22 @@ public class Player extends Entity {
 		this.cps = cps;
 	}
 
+	public Guild getGuild() {
+		return guild;
+	}
+
+	public void setGuild(Guild guild) {
+		this.guild = guild;
+	}
+
+	public int getGuildRank() {
+		return guildRank.getRank();
+	}
+
+	public void setGuildRank(GuildRank guildRank) {
+		this.guildRank = guildRank;
+	}
+	
 	public int getExperience() {
 		return experience;
 	}
@@ -110,36 +115,12 @@ public class Player extends Entity {
 		this.attributePoints = attributePoints;
 	}
 
-	public int getCurrentHP() {
-		return currentHP;
-	}
-
-	public void setCurrentHP(int currentHP) {
-		this.currentHP = currentHP;
-	}
-
-	public int getCurrentMP() {
-		return currentMP;
-	}
-
-	public void setCurrentMP(int currentMP) {
-		this.currentMP = currentMP;
-	}
-
 	public int getPkPoints() {
 		return pkPoints;
 	}
 
 	public void setPkPoints(int pkPoints) {
 		this.pkPoints = pkPoints;
-	}
-
-	public int getLevel() {
-		return level;
-	}
-
-	public void setLevel(int level) {
-		this.level = level;
 	}
 
 	public int getProfession() {
@@ -194,5 +175,37 @@ public class Player extends Entity {
 		// TODO Auto-generated method stub
 		return 0;
 	}	
+
+	@Override
+	public OutgoingPacket spawn() {
+		return new OutgoingPacket(PacketType.ENTITY_SPAWN_PACKET, new byte[82+name.length()]) {{
+			this.putUnsignedInteger(identity);
+			this.putUnsignedInteger(mesh);
+			this.setOffset(20); // TODO ulong status flags?
+			this.putUnsignedShort(0); // Guild ID
+			this.setOffset(23);
+			this.putUnsignedByte((short) guildRank.rank); // Guild rank
+			this.putUnsignedInteger(0); // garment 24
+			this.putUnsignedInteger(0); // helm 28
+			this.putUnsignedInteger(0); // arm 32
+			this.putUnsignedInteger(0); // rw 36
+			this.putUnsignedInteger(0); // lw 40
+			this.setOffset(48);
+			this.putUnsignedShort(HP); // health 48
+			this.putUnsignedShort(0); // mob lvl 50
+			this.putUnsignedShort(location.getxCord()); // 52
+			this.putUnsignedShort(location.getyCord()); // 54
+			this.putUnsignedShort(hairstyle); //56
+			this.putUnsignedByte(4); // direction 58
+			this.putUnsignedByte(0x01); // action 59
+			this.putUnsignedByte(1); // reborn //60
+			this.setOffset(62);
+			this.putUnsignedByte(130); // level
+			this.setOffset(80);
+			this.putUnsignedByte(1);
+			this.putUnsignedByte(name.length());
+			this.putString(name);
+		}};
+	}
 
 }
