@@ -11,8 +11,8 @@ public class Main {
 		Thread gameServerThread = new Thread(gameServer);
 		authServerThread.start();
 		gameServerThread.start();
-		String SQLUrl = args[0];
-		System.out.println(SQLUrl);
+		//String SQLUrl = args[0];
+		//System.out.println(SQLUrl);
 	}
 
 }
