@@ -3,6 +3,9 @@ package packets.generalData;
 import java.io.IOException;
 
 import conquerServer.GameServerThread;
+import data.Entity;
+import data.Map;
+import data.Player;
 import packets.IncommingPacket;
 import packets.OutgoingPacket;
 import packets.PacketType;
@@ -36,24 +39,23 @@ public class IncommingGeneralData extends IncommingPacket
 	 * @param thread 
 	 * @throws IOException 
 	 */
-	private void route(PacketType packetType, byte[] data, GameServerThread thread)
+	private void route(PacketType packetType, byte[] data, GameServerThread client)
 	{
-		OutgoingPacket response = null;
-		
 		switch(subType)
 		{
 			case LOCATION:
-				response = new OutgoingLocation(thread);
+				new OutgoingLocation(client).send(client);
 				break;
 			case GET_SURROUNDINGS:
-				System.out.println("Surroundings get ;) "); 
+				System.out.println("Get surroundings!");
+				Player player = client.getPlayer();
+				Map map = player.getLocation().getMap();
+				for ( Entity e : map.getEntitiesInRange(player) ) {
+					e.spawn().send(client);
+				}
 				break;
 			default:
 				System.out.printf("Fix subtype %s", this.readUnsignedShort(22));
-		}
-		
-		if ( response != null ) {
-			response.send(thread);
 		}
 	}
 	

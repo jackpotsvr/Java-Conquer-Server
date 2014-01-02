@@ -45,7 +45,7 @@ public class CharacterInfoPacket extends OutgoingPacket
 		super(PacketType.CHAR_INFO_PACKET, new byte[71 + player.getName().length() + player.getSpouseName().length()]);
 		putUnsignedInteger(player.getIdentity());
 		putUnsignedInteger(player.getMesh());
-		putUnsignedShort(player.getHairStyle());
+		putUnsignedShort(player.getHairstyle());
 		putUnsignedInteger(player.getGold());
 		putUnsignedInteger(player.getCps());
 		putUnsignedInteger(player.getExperience());
@@ -55,8 +55,8 @@ public class CharacterInfoPacket extends OutgoingPacket
 		putUnsignedShort(player.getVitality());
 		putUnsignedShort(player.getSpirit());
 		putUnsignedShort(player.getAttributePoints());
-		putUnsignedShort(player.getCurrentHP());
-		putUnsignedShort(player.getCurrentMP());
+		putUnsignedShort(player.getHP());
+		putUnsignedShort(player.getMana());
 		putUnsignedShort(player.getPkPoints());
 		putUnsignedByte(player.getLevel());
 		putUnsignedByte(player.getProfession());
