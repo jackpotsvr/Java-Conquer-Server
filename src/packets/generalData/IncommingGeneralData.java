@@ -21,7 +21,7 @@ public class IncommingGeneralData extends IncommingPacket
 				new OutgoingLocation(client).send(client);  // Doesn't need parameters ;) 
 				break;
 			case CHANGE_DIRECTION:
-				ChangeDirection.in(data, client);
+				ChangeDirection.in(this, client);
 				break;
 			case GET_SURROUNDINGS:
 				System.out.println("Get surroundings!");
@@ -34,6 +34,10 @@ public class IncommingGeneralData extends IncommingPacket
 			default:
 				System.out.printf("Fix subtype %s", this.readUnsignedShort(22));
 		}
+	}
+	
+	IncommingGeneralData(IncommingGeneralData request) {
+		super(request);
 	}
 	
 	public long getTimestamp() {

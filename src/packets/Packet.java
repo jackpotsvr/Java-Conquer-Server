@@ -1,11 +1,5 @@
 package packets;
 
-import java.io.IOException;
-
-import conquerServer.GameServerThread;
-import conquerServer.ServerThread;
-import packets.generalData.*;
-
 public abstract class Packet {
 	PacketType packetType;
 	byte[] data;
@@ -13,6 +7,12 @@ public abstract class Packet {
 	
 	public Packet(PacketType packetType) {
 		this.packetType = packetType;
+	}
+	
+	public Packet(Packet packet) {
+		this.packetType = packet.packetType;
+		this.data = packet.data;
+		this.offset = packet.offset;
 	}
 	
 	public int getPacketSize() {

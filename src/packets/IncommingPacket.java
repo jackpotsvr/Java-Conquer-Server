@@ -6,6 +6,10 @@ public class IncommingPacket extends Packet {
 		super(packetType);
 		this.data = data;
 	}
+	
+	public IncommingPacket(Packet packet) {
+		super(packet);
+	}
 
 	/**
 	 * Returns unsigned byte at specified offset (1 byte)

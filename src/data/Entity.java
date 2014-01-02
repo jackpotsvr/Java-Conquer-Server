@@ -139,6 +139,10 @@ public abstract class Entity implements Spawnable {
 		private Action(int index) {
 			this.index = index;
 		}
+		
+		public int getIndex() {
+			return index;
+		}
 	}
 
 }
