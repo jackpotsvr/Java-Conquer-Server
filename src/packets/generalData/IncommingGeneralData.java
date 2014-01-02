@@ -21,6 +21,7 @@ public class IncommingGeneralData extends IncommingPacket
 				new OutgoingLocation(client).send(client);  // Doesn't need parameters ;) 
 				break;
 			case CHANGE_DIRECTION:
+				ChangeDirection.in(data, client);
 				break;
 			case GET_SURROUNDINGS:
 				System.out.println("Get surroundings!");
@@ -56,11 +57,12 @@ public class IncommingGeneralData extends IncommingPacket
 	}
 	
 	public int[] getShorts() {
+		System.out.println("Hi, we got here ;p");
 		return new int[] {
 			this.readUnsignedShort(12),
 			this.readUnsignedShort(16),
 			this.readUnsignedShort(18)
-		};
+	};
 	}
 	
 }
