@@ -44,10 +44,13 @@ public class GameServerThread extends ServerThread
 			new Auth_Login_Response(packetType, data, this);
 			break;
 		case GENERAL_DATA_PACKET:
-			new IncommingGeneralData(packetType, data, this);
+			new IncommingGeneralData(data, this);
 			break;
 		case CHARACTER_CREATION_PACKET:
 			new Character_Creation_Packet(packetType, data, this);
+			break;
+		case ITEM_USAGE_PACKET:
+			ItemUsagePacket.in(data, this);
 			break;
 		//TO BE DONE - case CHARACTER_CREATION_PACEKT: return new Character_Creation_Packet(packetType, data, thread); 
 		default:

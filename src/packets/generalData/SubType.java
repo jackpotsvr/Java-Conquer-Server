@@ -3,6 +3,7 @@ package packets.generalData;
 public enum SubType
 {
 	LOCATION 			(0x4A), // 74 
+	CHANGE_DIRECTION 	(0x4F), // 79
 	GET_SURROUNDINGS	(0x72); //114
 
 	
