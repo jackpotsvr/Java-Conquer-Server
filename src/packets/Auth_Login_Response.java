@@ -27,6 +27,7 @@ public class Auth_Login_Response extends IncommingPacket
 		
 		Map map = new Map(1002);
 		Player player = new Player(1000000, "Jackpotsvr", new Location(map, 382, 341), 500);
+		player.setLevel(130);
 		map.addEntity(player);
 		Player other = new Player(1000001, "Bliep", new Location(map, 384, 343), 500);
 		Monster mob = new Monster(new Location(map, 378, 343), 564564, "BullMessenger",  112, 117, 55000);

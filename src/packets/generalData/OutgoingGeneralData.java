@@ -16,7 +16,7 @@ public class OutgoingGeneralData extends OutgoingPacket
 		super(PacketType.GENERAL_DATA_PACKET, new byte[28]);
 		this.subType = subType;
 		
-		timestamp = (int) System.currentTimeMillis() & 0xFFFFFFFF; 
+		timestamp = System.currentTimeMillis(); 
 		identity = 1000000L;
 		
 		this.putUnsignedInteger(timestamp);
