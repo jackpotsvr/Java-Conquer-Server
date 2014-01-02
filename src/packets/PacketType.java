@@ -43,7 +43,7 @@ public enum PacketType
 				return pt;
 			}
 		}
-		return null;
+		throw new IllegalArgumentException("No packettype implemented for " + type);
 	}
 	
 }
