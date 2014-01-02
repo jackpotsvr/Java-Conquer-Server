@@ -12,6 +12,8 @@ public class GameServer implements Runnable {
 	
 	private final ServerSocket server;
 	
+	public int PLAYER_COUNT = 0;
+	
 	private List<GameServerThread> connections = new CopyOnWriteArrayList<GameServerThread>();
 
 	/**

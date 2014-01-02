@@ -3,6 +3,7 @@ package conquerServer;
 import java.io.IOException;
 import java.net.Socket;
 
+import data.Player;
 import packets.*;
 import packets.generalData.IncommingGeneralData;
 
@@ -10,6 +11,7 @@ public class GameServerThread extends ServerThread
 {
 	
 	private final GameServer gameServer;
+	private Player player;
 	
 	/**
 	 * 
@@ -21,6 +23,18 @@ public class GameServerThread extends ServerThread
 	{
 		super(client);
 		this.gameServer = gameServer;
+	}
+	
+	public GameServer getGameServer() {
+		return gameServer;
+	}
+	
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
+	
+	public Player getPlayer() {
+		return this.player;
 	}
 
 	@Override

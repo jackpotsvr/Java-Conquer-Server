@@ -1,7 +1,7 @@
 /**
  * 
  */
-package Items;
+package data;
 
 /**
  * Enum for EquipmentSlot

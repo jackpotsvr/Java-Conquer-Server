@@ -1,9 +1,10 @@
 package packets;
 
-import java.io.IOException;
-
 import conquerServer.AuthServerThread;
 import conquerServer.GameServerThread;
+import data.Location;
+import data.Map;
+import data.Player;
 
 public class Auth_Login_Response extends IncommingPacket
 {
@@ -21,11 +22,12 @@ public class Auth_Login_Response extends IncommingPacket
 		  */
         //Message_Packet reply = new Message_Packet(0xFFFFFFFFL, 2101L, 0L, "SYSTEM", "ALLUSERS", "NEW_ROLE");
 		Message_Packet reply1 = new Message_Packet(0xFFFFFFFFL, 2101L, 0L, "SYSTEM", "ALLUSERS", "ANSWER_OK");
-		CharacterInfoPacket reply2 = CharacterInfoPacket.create();
 		
+		Player player = new Player(1000000, "Jackpotsvr", new Location(new Map(1002), 382, 341), 500);
+		thread.setPlayer(player);
 		
 		thread.offer(reply1.data);
-		thread.offer(reply2.data);
+		thread.offer(new CharacterInfoPacket(player));
 		
 	}
 	

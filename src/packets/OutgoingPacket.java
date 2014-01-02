@@ -2,7 +2,7 @@ package packets;
 
 import conquerServer.ServerThread;
 
-public class OutgoingPacket extends Packet {
+public abstract class OutgoingPacket extends Packet {
 
 	/**
 	 * Creates a new Outgoing packet with given packetType

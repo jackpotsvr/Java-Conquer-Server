@@ -1,6 +1,5 @@
 package packets;
 
-import java.io.IOException;
 import conquerServer.ServerThread;
 
 public class Character_Creation_Packet extends IncommingPacket

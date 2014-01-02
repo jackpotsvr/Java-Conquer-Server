@@ -1,6 +1,6 @@
 package packets;
 
-import packets.Packet;
+import data.Player;
 import packets.OutgoingPacket;
 import packets.PacketType;
 
@@ -39,6 +39,35 @@ public class CharacterInfoPacket extends OutgoingPacket
 		super(PacketType.CHAR_INFO_PACKET, new byte[71 + name.length() + spouseName.length()]);
 		this.name = name;
 		this.spouseName = spouseName;
+	}
+	
+	public CharacterInfoPacket(Player player) {
+		super(PacketType.CHAR_INFO_PACKET, new byte[71 + player.getName().length() + player.getSpouseName().length()]);
+		putUnsignedInteger(player.getIdentity());
+		putUnsignedInteger(player.getMesh());
+		putUnsignedShort(player.getHairStyle());
+		putUnsignedInteger(player.getGold());
+		putUnsignedInteger(player.getCps());
+		putUnsignedInteger(player.getExperience());
+		setOffset(46);
+		putUnsignedShort(player.getStrength());
+		putUnsignedShort(player.getDexterity());
+		putUnsignedShort(player.getVitality());
+		putUnsignedShort(player.getSpirit());
+		putUnsignedShort(player.getAttributePoints());
+		putUnsignedShort(player.getCurrentHP());
+		putUnsignedShort(player.getCurrentMP());
+		putUnsignedShort(player.getPkPoints());
+		putUnsignedByte(player.getLevel());
+		putUnsignedByte(player.getProfession());
+		setOffset(65);
+		putUnsignedByte(player.getRebornCount());
+		putBoolean(true);
+		putUnsignedByte(2);
+		putUnsignedByte(player.getName().length());
+		putString(player.getName());
+		putUnsignedByte(player.getSpouseName().length());
+		putString(player.getSpouseName());
 	}
 	
 	private void fill() {

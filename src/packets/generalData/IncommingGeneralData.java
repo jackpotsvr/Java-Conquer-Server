@@ -43,7 +43,7 @@ public class IncommingGeneralData extends IncommingPacket
 		switch(subType)
 		{
 			case LOCATION:
-				response = new OutgoingLocation();
+				response = new OutgoingLocation(thread);
 				break;
 			case GET_SURROUNDINGS:
 				System.out.println("Surroundings get ;) "); 
