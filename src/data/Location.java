@@ -5,7 +5,7 @@ public class Location {
 	private final static int VIEW_RANGE = 12;
 	
 	private final Map map;
-	private final int xCord, yCord;
+	private int xCord, yCord;
 
 	public Location(Map map, int xCord, int yCord) {
 		this.map = map;
@@ -23,6 +23,14 @@ public class Location {
 
 	public int getyCord() {
 		return yCord;
+	}
+	
+	public void setX(int x){
+		xCord = x;
+	}
+	
+	public void setY(int y){
+		yCord = y;
 	}
 	
 	public Location offset(int x, int y) {

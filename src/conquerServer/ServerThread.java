@@ -41,12 +41,16 @@ public abstract class ServerThread implements Runnable {
 		connected();
 		while (true) {
 			try {
+				Thread.sleep(1);
 				retrievePacket();
 				workQueue();
 			} catch (IOException e) {
 				disconnected();
 				try { this.close(); } catch (IOException e1) { }
 				break;
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}

@@ -24,11 +24,15 @@ public class AuthServer implements Runnable {
 		while(true){
 			System.out.println("Waiting for incomming connection...");
 			try {
+				Thread.sleep(1);
 				Socket client = server.accept();
 				AuthServerThread AST = new AuthServerThread(client, this);
 				Thread thread = new Thread(AST);
 				thread.start();
 			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

@@ -31,8 +31,13 @@ public class IncommingGeneralData extends IncommingPacket
 					e.spawn().send(client);
 				}
 				break;
+			case JUMP:
+				JumpPacket.out(this, client).send(client);
+			case UNIMPLEMENTED:
+				new EmptyGeneralData(this ,client).send(client);
+				break;
 			default:
-				System.out.printf("Fix subtype %s", this.readUnsignedShort(22));
+				break;
 		}
 	}
 	
@@ -50,6 +55,10 @@ public class IncommingGeneralData extends IncommingPacket
 	
 	public SubType getSubType() {
 		return SubType.get(this.readUnsignedShort(22));
+	}
+	
+	public int getIntSubType(){
+				return this.readUnsignedShort(22);
 	}
 	
 	public int getShort() {

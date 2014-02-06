@@ -2,6 +2,7 @@ package packets;
 
 import conquerServer.AuthServerThread;
 import conquerServer.GameServerThread;
+import data.Entity;
 import data.Location;
 import data.Map;
 import data.Monster;
@@ -25,20 +26,41 @@ public class Auth_Login_Response extends IncommingPacket
 		Message_Packet reply1 = new Message_Packet(0xFFFFFFFFL, 2101L, 0L, "SYSTEM", "ALLUSERS", "ANSWER_OK");
 		
 		
-		Map map = new Map(1002);
-		Player player = new Player(1000000, "Jackpotsvr", new Location(map, 382, 341), 500);
+		Map map = thread.getMap();
+		Player player = new Player(thread, "Jackpotsvr", new Location(map, 382, 341), 500);
 		player.setLevel(130);
+		
 		map.addEntity(player);
-		Player other = new Player(1000001, "Bliep", new Location(map, 384, 343), 500);
-		Monster mob = new Monster(new Location(map, 378, 343), 564564, "BullMessenger",  112, 117, 55000);
-		map.addEntity(mob);
-		other.setHairstyle(408);
-		map.addEntity(other);
+		
+
+		
 		thread.setPlayer(player);
+		spawnEntity(thread);
 		
 		thread.offer(reply1.data);
 		thread.offer(new CharacterInfoPacket(player));
 		
+	}
+	
+	/**
+	 *  Make others see you :) 
+	 */
+	public void spawnEntity(GameServerThread thread)
+	{
+		Map map = thread.getMap(); 
+		Player me = thread.getPlayer();
+		OutgoingPacket esp = me.spawn();
+		
+		for( Entity e : map.getEntitiesInRange(thread.getPlayer()) ) {
+			if (e == me)
+				continue;
+			
+			if (e instanceof Player)
+			{
+				Player p = (Player) e;
+				p.getThread().offer(esp);
+			}
+		}
 	}
 	
 	public Auth_Login_Response(PacketType packetType, byte[] data, AuthServerThread thread) {

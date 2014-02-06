@@ -14,7 +14,7 @@ public class LocationPacket {
 	}
 	
 	public static OutgoingPacket out(byte[] data, final GameServerThread client) {
-		return new OutgoingGeneralData(SubType.LOCATION) {{
+		return new OutgoingGeneralData(SubType.LOCATION, client) {{
 			Location location = client.getPlayer().getLocation();
 			int mapID = location.getMap().getMapID();
 			int xCord = location.getxCord();

@@ -7,7 +7,7 @@ public class OutgoingLocation extends OutgoingGeneralData
 {
 
 	OutgoingLocation(GameServerThread client) {
-		super(SubType.LOCATION);
+		super(SubType.LOCATION, client);
 		
 		Location location = client.getPlayer().getLocation();
 		int mapID = location.getMap().getMapID();

@@ -2,6 +2,7 @@ package data;
 
 import java.util.HashMap;
 
+import conquerServer.GameServerThread;
 import data.Entity.GuildRank;
 import packets.OutgoingPacket;
 import packets.PacketType;
@@ -26,11 +27,15 @@ public class Player extends Entity {
 	private int rebornCount = 0;
 	private Player spouse;
 	
+	private final GameServerThread thread;
+	
+	
 	private HashMap<Integer, Item> inventory = new HashMap<Integer, Item>();
 	private HashMap<EquipmentSlot, Equipment> equipment = new HashMap<EquipmentSlot, Equipment>();
 	
-	public Player(long identity, String name, Location location, int HP) {
-		super(identity, 223, 315, name, location, HP);
+	public Player(GameServerThread thread, String name, Location location, int HP) {
+		super(thread.getIdentity(), 223, 315, name, location, HP);
+		this.thread = thread;
 		// TODO Auto-generated constructor stub
 	}
 
@@ -175,6 +180,11 @@ public class Player extends Entity {
 		// TODO Auto-generated method stub
 		return 0;
 	}	
+	
+	public GameServerThread getThread()
+	{
+		return this.thread;
+	}
 
 	@Override
 	public OutgoingPacket spawn() {
@@ -205,6 +215,8 @@ public class Player extends Entity {
 			this.putUnsignedByte(1);
 			this.putUnsignedByte(name.length());
 			this.putString(name);
+			
+			System.out.println(identity);
 		}};
 	}
 
