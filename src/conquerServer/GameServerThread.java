@@ -57,6 +57,7 @@ public class GameServerThread extends ServerThread
 			break;
 		case ENTITY_MOVE_PACKET:	
 			new EntityMovePacket(packetType, data);
+			break;
 		//TO BE DONE - case CHARACTER_CREATION_PACEKT: return new Character_Creation_Packet(packetType, data, thread); 
 		default:
 			System.out.println("Unimplemented packet " + packetType.toString());

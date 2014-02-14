@@ -22,17 +22,14 @@ public class JumpPacket
 				int [] location = data.getShorts();
 				client.getPlayer().getLocation().setX(location[0]);
 				client.getPlayer().getLocation().setY(location[2]);
-				
-			
-		
-				
-				
+								
 				this.setOffset(12);
 				this.putUnsignedShort(location[0]);
 				this.setOffset(16);
 				this.putUnsignedShort(location[1]);
 				this.putUnsignedShort(location[2]);
 				
+				client.getPlayer().getLocation().getMap().updateMap(this, client);
 				
 				
 			}};

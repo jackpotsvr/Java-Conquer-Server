@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import packets.OutgoingPacket;
+import conquerServer.GameServerThread;
+
 public class Map {
 
 	private final int id;
@@ -43,6 +46,18 @@ public class Map {
 		}
 		
 		return result;
+	}
+	
+	public void updateMap(OutgoingPacket esp, GameServerThread thread)
+	{
+		
+		for( Entity e : this.getEntitiesInRange(thread.getPlayer()) ) {	
+			if (e instanceof Player)
+			{
+				Player p = (Player) e;
+				p.getThread().offer(esp);
+			}
+		}
 	}
 
 }

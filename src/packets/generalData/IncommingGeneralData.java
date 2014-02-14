@@ -5,6 +5,7 @@ import data.Entity;
 import data.Map;
 import data.Player;
 import packets.IncommingPacket;
+import packets.OutgoingPacket;
 import packets.PacketType;
 import packets.generalData.SubType;
 
@@ -32,7 +33,8 @@ public class IncommingGeneralData extends IncommingPacket
 				}
 				break;
 			case JUMP:
-				JumpPacket.out(this, client).send(client);
+				JumpPacket.out(this, client);
+				break;
 			case UNIMPLEMENTED:
 				new EmptyGeneralData(this ,client).send(client);
 				break;

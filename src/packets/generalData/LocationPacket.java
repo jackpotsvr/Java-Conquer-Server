@@ -25,6 +25,8 @@ public class LocationPacket {
 			this.setOffset(16);
 			this.putUnsignedShort(xCord);
 			this.putUnsignedShort(yCord);
+			
+			
 		}};
 	}
 	
