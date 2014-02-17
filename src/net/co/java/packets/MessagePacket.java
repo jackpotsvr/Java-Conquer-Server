@@ -37,6 +37,22 @@ public class MessagePacket {
 	}
 	
 	/**
+	 * Construct a new Message packet based on a IncomingPacket
+	 * @param ip
+	 */
+	public MessagePacket(IncomingPacket ip) {
+		this.aRGB = ip.readUnsignedInt(4);
+		this.type = MessageType.valueOf(ip.readUnsignedInt(8));
+		this.chatID = ip.readUnsignedInt(12);
+		int fromLength = ip.readUnsignedByte(25);
+		this.from = ip.readString(26, fromLength);
+		int toLength = ip.readUnsignedByte(27 + fromLength);
+		this.to = ip.readString(28 + fromLength, toLength);
+		int messageLength = ip.readUnsignedByte(31 + toLength + fromLength);
+		this.message = ip.readString(32 + toLength + fromLength, messageLength);
+	}
+	
+	/**
 	 * Set the colour for this message
 	 * @param ARGB
 	 * @return this MessagePacket (builder pattern)
@@ -44,6 +60,13 @@ public class MessagePacket {
 	public MessagePacket setARGB(long ARGB) {
 		this.aRGB = ARGB;
 		return this;
+	}
+	
+	/**
+	 * @return ARGB.
+	 */
+	public long getARGB() {
+		return this.aRGB;
 	}
 	
 	/**
@@ -57,6 +80,13 @@ public class MessagePacket {
 	}
 	
 	/**
+	 * @return MessageType for this message
+	 */
+	public MessageType getMessageType() {
+		return type;
+	}
+	
+	/**
 	 * Set the ChatID for this message
 	 * @param chatID
 	 * @return this MessagePacket (builder pattern)
@@ -64,6 +94,34 @@ public class MessagePacket {
 	public MessagePacket setChatID(long chatID) {
 		this.chatID = chatID;
 		return this;
+	}
+	
+	/**
+	 * @return CHATID
+	 */
+	public long getChatID() {
+		return chatID;
+	}
+	
+	/**
+	 * @return the sender
+	 */
+	public String getFrom() {
+		return from;
+	}
+	
+	/**
+	 * @return the reciepient
+	 */
+	public String getTo() {
+		return to;
+	}
+	
+	/**
+	 * @return the message
+	 */
+	public String getMessage() {
+		return message;
 	}
 	
 	/**
@@ -114,8 +172,24 @@ public class MessagePacket {
 		
 		final long type;
 		
+		/**
+		 * Constructor for MessageType enum values
+		 * @param type
+		 */
 		private MessageType(long type) {
 			this.type = type;
+		}
+		
+		/**
+		 * @param value
+		 * @return {@code MessageType} for the given value
+		 * @throws RuntimeException when there is no such MessageType
+		 */
+		public static MessageType valueOf(long value) {
+			for ( MessageType mt : MessageType.values() )
+				if ( mt.type == value )
+					return mt;
+			throw new RuntimeException("Unimplemented MessageType for " + value);
 		}
 	}
 	
