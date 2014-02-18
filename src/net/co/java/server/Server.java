@@ -1,5 +1,7 @@
 package net.co.java.server;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -10,6 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import net.co.java.entity.Entity;
 import net.co.java.entity.Monster;
 import net.co.java.entity.Player;
+import net.co.java.item.ItemPrototype;
 import net.co.java.packets.GeneralData;
 import net.co.java.packets.IncomingPacket;
 import net.co.java.packets.ItemUsage;
@@ -50,10 +53,12 @@ public class Server {
 		this.new GameServer();
 	}
 	
-	private void createWorld() {
+	private void createWorld() throws FileNotFoundException {
 		System.out.println("Creating the magical world of Conquer Online");
 		// We spawn a BullMessenger in Twin City for testing purposes here
 		Map.CentralPlain.addEntity(new Monster(Map.CentralPlain.new Location(378, 343), 564564, "BullMessenger",  112, 117, 55000));
+		// Load the item data
+		ItemPrototype.read(new File("ini/COItems.txt"));
 	}
 
 	/**

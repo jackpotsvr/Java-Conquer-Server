@@ -6,7 +6,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;
 
-import net.co.cipher.Cryptographer;
+import net.co.java.cipher.Cryptographer;
 import net.co.java.packets.IncomingPacket;
 import net.co.java.packets.PacketType.UnimplementedPacketTypeException;
 

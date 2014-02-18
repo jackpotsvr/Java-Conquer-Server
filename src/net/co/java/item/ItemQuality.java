@@ -19,7 +19,16 @@ public enum ItemQuality {
 	
 	public final int value;
 	
-	ItemQuality(int i) {
+	private ItemQuality(int i) {
 		this.value = i;
+	}
+	
+	public ItemQuality valueOf(int i) {
+		for ( ItemQuality iq : ItemQuality.values() ) {
+			if ( iq.value == i ) {
+				return iq;
+			}
+		}
+		return null;
 	}
 }

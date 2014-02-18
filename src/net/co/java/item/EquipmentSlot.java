@@ -10,22 +10,23 @@ package net.co.java.item;
  *
  */
 public enum EquipmentSlot {
-	Helm		((byte) 0x1),
-	Necklace	((byte) 0x2),
-	Armor		((byte) 0x3),
-	RightHand	((byte) 0x4),
-	LeftHand	((byte) 0x5),
-	Ring		((byte) 0x6),
-	Talisman	((byte) 0x7),
-	Boots		((byte) 0x8),
-	Garment		((byte) 0x9),
-	AttackTalisman 	((byte) 0xA),
-	DefenseTalisman	((byte) 0xB),
-	Steed		((byte) 0xC);
+	Inventory	(0),
+	Helm		(1),
+	Necklace	(2),
+	Armor		(3),
+	RightHand	(4),
+	LeftHand	(5),
+	Ring		(6),
+	Talisman	(7),
+	Boots		(8),
+	Garment		(9),
+	AttackTalisman 	(10),
+	DefenseTalisman	(11),
+	Steed		(12);
 	
-	public final byte value;
+	public final int value;
 	
-	EquipmentSlot(byte i) {
+	EquipmentSlot(int i) {
 		this.value = i;
 	}
 }

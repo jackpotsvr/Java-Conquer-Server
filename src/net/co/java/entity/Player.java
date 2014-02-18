@@ -4,9 +4,9 @@ import java.util.HashMap;
 
 import net.co.java.guild.Guild;
 import net.co.java.guild.GuildRank;
-import net.co.java.item.Equipment;
 import net.co.java.item.EquipmentSlot;
-import net.co.java.item.Item;
+import net.co.java.item.ItemInstance;
+import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.packets.GeneralData;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
@@ -35,8 +35,9 @@ public class Player extends Entity {
 	private int rebornCount = 0;
 	private Player spouse;
 	
-	private HashMap<Integer, Item> inventory = new HashMap<Integer, Item>();
-	private HashMap<EquipmentSlot, Equipment> equipment = new HashMap<EquipmentSlot, Equipment>();
+	private static int INVENTORY_SIZE = 28;
+	private ItemInstance[] inventory = new ItemInstance[INVENTORY_SIZE];
+	private HashMap<EquipmentSlot, EquipmentInstance> equipment = new HashMap<EquipmentSlot, EquipmentInstance>(10);
 	
 	public Player(Client client, String name, Location location, int HP) {
 		super(client.getIdentity(), 223, 315, name + (client.getIdentity() & 0xFF), location, HP);
@@ -162,21 +163,21 @@ public class Player extends Entity {
 		this.spouse = spouse;
 	}
 
-	public HashMap<Integer, Item> getInventory() {
-		return inventory;
-	}
+	/*	public HashMap<Integer, Item> getInventory() {
+	return inventory;
+}
 
-	public void setInventory(HashMap<Integer, Item> inventory) {
-		this.inventory = inventory;
-	}
+public void setInventory(HashMap<Integer, Item> inventory) {
+	this.inventory = inventory;
+}
 
-	public HashMap<EquipmentSlot, Equipment> getEquipment() {
-		return equipment;
-	}
+public HashMap<EquipmentSlot, Equipment> getEquipment() {
+	return equipment;
+}
 
-	public void setEquipment(HashMap<EquipmentSlot, Equipment> equipment) {
-		this.equipment = equipment;
-	}
+public void setEquipment(HashMap<EquipmentSlot, Equipment> equipment) {
+	this.equipment = equipment;
+}*/
 
 	@Override
 	public int getMaxHP() {

@@ -2,7 +2,7 @@ package net.co.java.packets;
 
 import java.util.Arrays;
 
-import net.co.cipher.Cryptographer;
+import net.co.java.cipher.Cryptographer;
 import net.co.java.entity.Entity;
 import net.co.java.entity.Player;
 import net.co.java.packets.PacketType.UnimplementedPacketTypeException;

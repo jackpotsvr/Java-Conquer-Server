@@ -1,4 +1,4 @@
-package net.co.cipher;
+package net.co.java.cipher;
 
 public final class Cryptographer
 {

@@ -4,6 +4,7 @@
 *.jar
 *.war
 *.ear
+*.DS_Store
 /bin
 /Client
 /ref/Thomas_Old
