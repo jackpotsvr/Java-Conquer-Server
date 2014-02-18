@@ -79,52 +79,32 @@ public class ItemUsage {
 	
 	public void handle(Client client) {
 		switch(mode){
-		case AddVendingItem:
-			break;
-		case BuyItem:
-			break;
-		case BuyVendingItem:
-			break;
-		case DepositWarehouseMoney:
-			break;
-		case DropGold:
-			break;
-		case EquipItem:
-			break;
-		case ParticleEffect:
-			break;
 		case Ping:
 			new ItemUsage(client.getIdentity(), 0, mode, timestamp).build().send(client);
 			break;
+		case AddVendingItem:
+		case BuyItem:
+		case BuyVendingItem:
+		case DepositWarehouseMoney:
+		case DropGold:
+		case EquipItem:
+		case ParticleEffect:
 		case RemoveEquipment:
-			break;
 		case RemoveInventory:
-			break;
 		case RemoveVendingItem:
-			break;
 		case RepairItem:
-			break;
 		case SellItem:
-			break;
 		case SetEquipPosition:
-			break;
 		case ShowVendingList:
-			break;
 		case ShowWarehouseMoney:
-			break;
 		case UnEquipItem:
-			break;
 		case UpdateArrowCount:
-			break;
 		case UpdateDurability:
-			break;
 		case UpgradeDragonball:
-			break;
 		case UpgradeMeteor:
-			break;
 		case WithdrawWarehouseMoney:
-			break;
 		default:
+			System.out.println("Unimplemented ItemUsage/" + mode + " with parameter " + parameter);
 			break;
 		}
 	}

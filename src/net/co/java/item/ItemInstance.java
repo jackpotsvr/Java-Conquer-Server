@@ -43,7 +43,7 @@ public class ItemInstance {
 		.putUnsignedInteger(itemPrototype.identifier)
 		.setOffset(16)
 		.putUnsignedShort(mode)
-		.putUnsignedShort(position);
+		.putUnsignedByte(position);
 	}
 	
 	/* (non-Javadoc)
@@ -113,8 +113,8 @@ public class ItemInstance {
 		// must always use the newest version of these
 		// attributes and should not cache the value.
 		public volatile int dura;
-		public volatile int firstSocket;
-		public volatile int secondSocket;
+		public volatile Socket firstSocket = Socket.None;
+		public volatile Socket secondSocket = Socket.None;
 		public volatile int plus;
 		public volatile int bless;
 		public volatile int enchant;
@@ -131,44 +131,56 @@ public class ItemInstance {
 	
 		/**
 		 * @param dura the dura to set
+		 * @return this EquipmentInstance - builder pattern
 		 */
-		public void setDura(int dura) {
+		public EquipmentInstance setDura(int dura) {
 			this.dura = dura;
+			return this;
 		}
 	
 		/**
 		 * @param firstSocket the firstSocket to set
+		 * @return this EquipmentInstance - builder pattern
 		 */
-		public void setFirstSocket(int firstSocket) {
+		public EquipmentInstance setFirstSocket(Socket firstSocket) {
 			this.firstSocket = firstSocket;
+			return this;
 		}
 	
 		/**
 		 * @param secondSocket the secondSocket to set
+		 * @return this EquipmentInstance - builder pattern
 		 */
-		public void setSecondSocket(int secondSocket) {
+		public EquipmentInstance setSecondSocket(Socket secondSocket) {
 			this.secondSocket = secondSocket;
+			return this;
 		}
 	
 		/**
 		 * @param plus the plus to set
+		 * @return this EquipmentInstance - builder pattern
 		 */
-		public void setPlus(int plus) {
+		public EquipmentInstance setPlus(int plus) {
 			this.plus = plus;
+			return this;
 		}
 	
 		/**
 		 * @param bless the bless to set
+		 * @return this EquipmentInstance - builder pattern
 		 */
-		public void setBless(int bless) {
+		public EquipmentInstance setBless(int bless) {
 			this.bless = bless;
+			return this;
 		}
 	
 		/**
 		 * @param enchant the enchant to set
+		 * @return this EquipmentInstance - builder pattern
 		 */
-		public void setEnchant(int enchant) {
+		public EquipmentInstance setEnchant(int enchant) {
 			this.enchant = enchant;
+			return this;
 		}
 		
 		@Override
@@ -178,8 +190,8 @@ public class ItemInstance {
 				.putUnsignedShort(dura)
 				.putUnsignedShort(equipmentPrototype.maxDura)
 				.setOffset(24)
-				.putUnsignedByte(firstSocket)
-				.putUnsignedByte(secondSocket)
+				.putUnsignedByte(firstSocket.value)
+				.putUnsignedByte(secondSocket.value)
 				.setOffset(28)
 				.putUnsignedByte(plus)
 				.putUnsignedByte(bless)
@@ -197,6 +209,45 @@ public class ItemInstance {
 					+ ", plus=" + plus + ", bless=" + bless + ", enchant="
 					+ enchant + ", uniqueIdentifier=" + uniqueIdentifier
 					+ ", itemPrototype=" + itemPrototype + "]";
+		}
+
+		public static enum Socket {
+			None(0),
+			Empty(4),
+			NormalPhoenix(1),
+			RefinedPhoenix(2),
+			SuperPhoenix(3),
+			NormalDragon(11),
+			RefinedDragon(12),
+			SuperDragon(13),
+			NormalFury(21),
+			RefinedFury(22),
+			SuperFury(23),
+			NormalRainbowGem(31),
+			RefinedRainbowGem(32),
+			SuperRainbowGem(33),
+			NormalKylinGem(41),
+			RefinedKylinGem(42),
+			SuperKylinGem(43),
+			NormalVioletGem(51),
+			RefinedVioletGem(52),
+			SuperVioletGem(53),
+			NormalMoonGem(61),
+			RefinedMoonGem(62),
+			SuperMoonGem(63),
+			NormalTortoiseGem(71),
+			RefinedTortoiseGem(72),
+			SuperTortoiseGem(73);
+			
+			final int value;
+			Socket(int value) { this.value = value; }
+			
+			public static Socket valueOf(int value) {
+				for ( Socket s : Socket.values() )
+					if ( s.value == value )
+						return s;
+				return null;
+			}
 		}
 		
 	}

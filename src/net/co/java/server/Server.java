@@ -12,7 +12,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import net.co.java.entity.Entity;
 import net.co.java.entity.Monster;
 import net.co.java.entity.Player;
+import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemPrototype;
+import net.co.java.item.ItemPrototype.EquipmentPrototype;
 import net.co.java.packets.GeneralData;
 import net.co.java.packets.IncomingPacket;
 import net.co.java.packets.ItemUsage;
@@ -315,16 +317,34 @@ public class Server {
 					makeBeautiful(player);
 					player.setLocation(Map.CentralPlain.new Location(382, 341), null);
 					// Send the character information packet
-					player.characterInformation().send(this);			
-					break;
-				case CHARACTER_CREATION_PACKET:
-					break;
-				case CHAR_INFO_PACKET:
+					player.characterInformation().send(this);
+					// Send an item
+					
+					EquipmentInstance ei = new EquipmentInstance(2342239l, (EquipmentPrototype) ItemPrototype.get(112389l));
+					ei.setDura(500);
+					ei.setFirstSocket(EquipmentInstance.Socket.SuperFury);
+					ei.setSecondSocket(EquipmentInstance.Socket.SuperFury);
+					ei.setBless(3);
+					ei.setPlus(7);
+					ei.setEnchant(172);
+					System.out.println(ei);
+					PacketWriter pw = ei.send(1, 0);
+					pw.send(this);
+					
+					ei = new EquipmentInstance(23422340l, (EquipmentPrototype) ItemPrototype.get(112389l));
+					ei.setDura(500);
+					ei.setFirstSocket(EquipmentInstance.Socket.SuperDragon);
+					ei.setSecondSocket(EquipmentInstance.Socket.SuperDragon);
+					ei.setBless(3);
+					ei.setPlus(7);
+					ei.setEnchant(172);
+					System.out.println(ei);
+					pw = ei.send(1, 0);
+					pw.send(this);
+					
 					break;
 				case ENTITY_MOVE_PACKET:
 					player.walk(packet.readUnsignedByte(8), packet);
-					break;
-				case ENTITY_SPAWN_PACKET:
 					break;
 				case GENERAL_DATA_PACKET:
 					handleGeneralData(packet);
@@ -332,9 +352,8 @@ public class Server {
 				case ITEM_USAGE_PACKET:
 					new ItemUsage(packet).handle(this);
 					break;
-				case MESSAGE_PACKET:
-					break;
 				default:
+					System.out.println("Unimplemented " + packet.getPacketType().toString());
 					break;
 				}
 			}
@@ -342,8 +361,6 @@ public class Server {
 			private void handleGeneralData(IncomingPacket packet) {
 				GeneralData gd = new GeneralData(packet);
 				switch(gd.getSubType()){
-				case CHANGE_DIRECTION:
-					break;
 				case GET_SURROUNDINGS:
 					for (Entity e : player.getSurroundings())
 						e.spawn().send(this);
@@ -355,9 +372,8 @@ public class Server {
 				case LOCATION:
 					player.retrieveLocation().build().send(this);
 					break;
-				case UNIMPLEMENTED:
-					break;
 				default:
+					System.out.println("Unimplemented " + gd.getSubType().toString());
 					break;
 				}
 			}

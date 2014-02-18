@@ -246,13 +246,18 @@ public class ItemPrototype {
 		int dodge = sc.nextInt();
 		int agility = sc.nextInt();
 		int CPWorth = sc.nextInt();
+		
+		int maxDura = 0;
+		if(sc.hasNextInt()) {
+			maxDura = sc.nextInt() * 100;
+		}
 	
 		sc.close();
 		
-		return isEquipment ? new EquipmentPrototype(id, name, 0, worth,
+		return isEquipment ? new EquipmentPrototype(id, name, maxDura, worth,
 				CPWorth, classReq, profReq, lvlReq, sexReq, strReq, agiReq,
 				minAtk, maxAtk, defence, mDef, mAttack, dodge, agility)
-				: new ItemPrototype(id, name, 0, worth, CPWorth);
+				: new ItemPrototype(id, name, maxDura, worth, CPWorth);
 	}
 
 	public static void read(File file) throws FileNotFoundException {
