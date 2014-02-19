@@ -1,5 +1,8 @@
 package net.co.java.packets;
 
+import net.co.java.item.ItemInstance;
+import net.co.java.item.EquipmentSlot;
+import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.server.Server.GameServer.Client;
 
 /**
@@ -36,6 +39,20 @@ public class ItemUsage {
 		parameter = ip.readUnsignedInt(8);
 		mode = Mode.getMode(ip.readUnsignedInt(12));
 		timestamp = ip.readUnsignedInt(16);
+		if ( mode == Mode.EquipItem ) {
+			System.out.println(ip.toString());
+			System.out.println(this.toString());
+		}
+			
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "ItemUsage [identity=" + identity + ", parameter=" + parameter
+				+ ", mode=" + mode + ", timestamp=" + timestamp + "]";
 	}
 
 	/**
@@ -82,12 +99,14 @@ public class ItemUsage {
 		case Ping:
 			new ItemUsage(client.getIdentity(), 0, mode, timestamp).build().send(client);
 			break;
+		case EquipItem:
+			EquipmentInstance.get(2342239l).ItemInformationPacket(ItemInstance.Mode.DEFAULT, EquipmentSlot.Helm).send(client);
+			break;
 		case AddVendingItem:
 		case BuyItem:
 		case BuyVendingItem:
 		case DepositWarehouseMoney:
 		case DropGold:
-		case EquipItem:
 		case ParticleEffect:
 		case RemoveEquipment:
 		case RemoveInventory:

@@ -12,7 +12,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import net.co.java.entity.Entity;
 import net.co.java.entity.Monster;
 import net.co.java.entity.Player;
+import net.co.java.item.EquipmentSlot;
 import net.co.java.item.ItemInstance.EquipmentInstance;
+import net.co.java.item.ItemInstance.Mode;
 import net.co.java.item.ItemPrototype;
 import net.co.java.item.ItemPrototype.EquipmentPrototype;
 import net.co.java.packets.GeneralData;
@@ -61,6 +63,11 @@ public class Server {
 		Map.CentralPlain.addEntity(new Monster(Map.CentralPlain.new Location(378, 343), 564564, "BullMessenger",  112, 117, 55000));
 		// Load the item data
 		ItemPrototype.read(new File("ini/COItems.txt"));
+		// Create an item
+		new EquipmentInstance(2342239l, (EquipmentPrototype) ItemPrototype.get(112389l))
+			.setFirstSocket(EquipmentInstance.Socket.SuperFury)
+			.setSecondSocket(EquipmentInstance.Socket.SuperRainbowGem)
+			.setDura(500).setBless(3).setPlus(7).setEnchant(172);
 	}
 
 	/**
@@ -319,29 +326,7 @@ public class Server {
 					// Send the character information packet
 					player.characterInformation().send(this);
 					// Send an item
-					
-					EquipmentInstance ei = new EquipmentInstance(2342239l, (EquipmentPrototype) ItemPrototype.get(112389l));
-					ei.setDura(500);
-					ei.setFirstSocket(EquipmentInstance.Socket.SuperFury);
-					ei.setSecondSocket(EquipmentInstance.Socket.SuperFury);
-					ei.setBless(3);
-					ei.setPlus(7);
-					ei.setEnchant(172);
-					System.out.println(ei);
-					PacketWriter pw = ei.send(1, 0);
-					pw.send(this);
-					
-					ei = new EquipmentInstance(23422340l, (EquipmentPrototype) ItemPrototype.get(112389l));
-					ei.setDura(500);
-					ei.setFirstSocket(EquipmentInstance.Socket.SuperDragon);
-					ei.setSecondSocket(EquipmentInstance.Socket.SuperDragon);
-					ei.setBless(3);
-					ei.setPlus(7);
-					ei.setEnchant(172);
-					System.out.println(ei);
-					pw = ei.send(1, 0);
-					pw.send(this);
-					
+					EquipmentInstance.get(2342239l).ItemInformationPacket(Mode.DEFAULT, EquipmentSlot.Inventory).send(this);
 					break;
 				case ENTITY_MOVE_PACKET:
 					player.walk(packet.readUnsignedByte(8), packet);

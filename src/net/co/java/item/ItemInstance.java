@@ -31,19 +31,41 @@ public class ItemInstance {
 		}
 	}
 	
+	public static enum Mode {
+		/**
+		 * The default mode is used to send inventory items
+		 */
+		DEFAULT(1),
+		
+		/**
+		 * The trade mode is used for trade views
+		 */
+		TRADE(2),
+		
+		UPDATE(3),
+		
+		/**
+		 * The view mode is used when inspecting someone
+		 */
+		VIEW(4);
+		
+		public final int value;
+		Mode(int value) { this.value = value; }
+	}
+	
 	/**
 	 * Prepare an Item Information Packet for this ItemInstance
 	 * @param mode
 	 * @param position
 	 * @return Item Information Packet
 	 */
-	public PacketWriter send(int mode, int position) {
+	public PacketWriter ItemInformationPacket(Mode mode, EquipmentSlot slot) {
 		return new PacketWriter(PacketType.ITEM_INFORMATION_PACKET, 36)
 		.putUnsignedInteger(uniqueIdentifier)
 		.putUnsignedInteger(itemPrototype.identifier)
 		.setOffset(16)
-		.putUnsignedShort(mode)
-		.putUnsignedByte(position);
+		.putUnsignedShort(mode.value)
+		.putUnsignedByte(slot.value);
 	}
 	
 	/* (non-Javadoc)
@@ -92,7 +114,7 @@ public class ItemInstance {
 
 	private static HashMap<Long, ItemInstance> ITEM_INSTANCES = new HashMap<Long, ItemInstance>();
 	
-	public ItemInstance get(long id) {
+	public static ItemInstance get(long id) {
 		synchronized(ITEM_INSTANCES) {
 			return ITEM_INSTANCES.get(id);
 		}
@@ -183,9 +205,16 @@ public class ItemInstance {
 			return this;
 		}
 		
+		public static EquipmentInstance get(long id) {
+			ItemInstance item = ItemInstance.get(id);
+			if ( item instanceof EquipmentInstance)
+				return (EquipmentInstance) item;
+			return null;
+		}
+		
 		@Override
-		public PacketWriter send(int mode, int position) {
-			return super.send(mode, position)
+		public PacketWriter ItemInformationPacket(Mode mode, EquipmentSlot slot) {
+			return super.ItemInformationPacket(mode, slot)
 				.setOffset(12)
 				.putUnsignedShort(dura)
 				.putUnsignedShort(equipmentPrototype.maxDura)
