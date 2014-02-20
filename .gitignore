@@ -1,7 +1,6 @@
 *.class
 
 # Package Files #
-*.jar
 *.war
 *.ear
 *.DS_Store
@@ -9,4 +8,4 @@
 /Client
 /ref/Thomas_Old
 /ref/Re-UnitedCo Source
-/ref/HybridCO C++ (Fixed) !jdbc/postgresql-9.3-1101.jdbc4.jar
+/ref/HybridCO C++ (Fixed)
