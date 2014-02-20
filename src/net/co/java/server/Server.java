@@ -337,6 +337,10 @@ public class Server {
 				case ITEM_USAGE_PACKET:
 					new ItemUsage(packet).handle(this);
 					break;
+				case MESSAGE_PACKET:
+					MessagePacket mp = new MessagePacket(packet);
+					System.out.println(mp.getFrom() + " said " + mp.getMessage() + ".");
+					break;
 				default:
 					System.out.println("Unimplemented " + packet.getPacketType().toString());
 					break;

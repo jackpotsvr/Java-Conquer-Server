@@ -107,11 +107,11 @@ public class ItemUsage {
 			// Remove the item from the inventory
 			new ItemUsage(identity, parameter, Mode.RemoveInventory).build().send(client);
 			// Equip the item
-			EquipmentInstance.get(2342239l).new ItemInformationPacket(ItemInstance.Mode.DEFAULT, EquipmentSlot.RightHand).send(client);
+			EquipmentInstance.get(identity).new ItemInformationPacket(ItemInstance.Mode.DEFAULT, EquipmentSlot.RightHand).send(client);
 			break;
 		case UnEquipItem:
 			EquipmentInstance item = EquipmentInstance.get(identity);
-			// Remove the item from equipment
+			// Remove the item from equipment [ Parameter = slot ]
 			new ItemUsage(identity, parameter, ItemUsage.Mode.RemoveEquipment).build().send(client);
 			// Add the item to the backpack
 			item.new ItemInformationPacket(ItemInstance.Mode.DEFAULT, EquipmentSlot.Inventory).send(client);

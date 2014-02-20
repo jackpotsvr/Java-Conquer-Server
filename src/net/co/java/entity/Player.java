@@ -252,7 +252,7 @@ public void setEquipment(HashMap<EquipmentSlot, Equipment> equipment) {
 		.putUnsignedShort(location.getyCord()) // 54
 		.putUnsignedShort(hairstyle) //56
 		.putUnsignedByte(4) // direction 58
-		.putUnsignedByte(0x01) // action 59
+		.putUnsignedByte(0x0) // action 59
 		.putUnsignedByte(1) // reborn //60
 		.setOffset(62)
 		.putUnsignedByte(130) // level

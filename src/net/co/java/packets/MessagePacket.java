@@ -46,10 +46,10 @@ public class MessagePacket {
 		this.chatID = ip.readUnsignedInt(12);
 		int fromLength = ip.readUnsignedByte(25);
 		this.from = ip.readString(26, fromLength);
-		int toLength = ip.readUnsignedByte(27 + fromLength);
-		this.to = ip.readString(28 + fromLength, toLength);
-		int messageLength = ip.readUnsignedByte(31 + toLength + fromLength);
-		this.message = ip.readString(32 + toLength + fromLength, messageLength);
+		int toLength = ip.readUnsignedByte(26 + fromLength);
+		this.to = ip.readString(27 + fromLength, toLength);
+		int messageLength = ip.readUnsignedByte(28 + toLength + fromLength);
+		this.message = ip.readString(29 + toLength + fromLength, messageLength);
 	}
 	
 	/**
