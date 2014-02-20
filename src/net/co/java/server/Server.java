@@ -25,6 +25,10 @@ import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
 import net.co.java.packets.MessagePacket.MessageType;
 
+import java.sql.DriverManager;
+import java.sql.Connection;
+import java.sql.SQLException;
+
 /**
  * The server is the main class for the Conquer Online server. 
  * It initialzes one GameServer and one AuthServer.
