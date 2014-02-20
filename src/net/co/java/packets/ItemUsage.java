@@ -17,6 +17,10 @@ public class ItemUsage {
 	private final Mode mode;
 	private final long timestamp;
 	
+	public ItemUsage(long identity, long parameter, Mode mode) {
+		this(identity, parameter, mode, System.currentTimeMillis() & 0xFFFFFFFF);
+	}
+	
 	/**
 	 * Create a new ItemUsage packet based on parameters
 	 * @param identity
@@ -100,7 +104,17 @@ public class ItemUsage {
 			new ItemUsage(client.getIdentity(), 0, mode, timestamp).build().send(client);
 			break;
 		case EquipItem:
-			EquipmentInstance.get(2342239l).ItemInformationPacket(ItemInstance.Mode.DEFAULT, EquipmentSlot.Helm).send(client);
+			// Remove the item from the inventory
+			new ItemUsage(identity, parameter, Mode.RemoveInventory).build().send(client);
+			// Equip the item
+			EquipmentInstance.get(2342239l).new ItemInformationPacket(ItemInstance.Mode.DEFAULT, EquipmentSlot.RightHand).send(client);
+			break;
+		case UnEquipItem:
+			EquipmentInstance item = EquipmentInstance.get(identity);
+			// Remove the item from equipment
+			new ItemUsage(identity, parameter, ItemUsage.Mode.RemoveEquipment).build().send(client);
+			// Add the item to the backpack
+			item.new ItemInformationPacket(ItemInstance.Mode.DEFAULT, EquipmentSlot.Inventory).send(client);
 			break;
 		case AddVendingItem:
 		case BuyItem:
@@ -116,7 +130,7 @@ public class ItemUsage {
 		case SetEquipPosition:
 		case ShowVendingList:
 		case ShowWarehouseMoney:
-		case UnEquipItem:
+			
 		case UpdateArrowCount:
 		case UpdateDurability:
 		case UpgradeDragonball:

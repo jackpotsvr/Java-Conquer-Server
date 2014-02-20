@@ -53,21 +53,6 @@ public class ItemInstance {
 		Mode(int value) { this.value = value; }
 	}
 	
-	/**
-	 * Prepare an Item Information Packet for this ItemInstance
-	 * @param mode
-	 * @param position
-	 * @return Item Information Packet
-	 */
-	public PacketWriter ItemInformationPacket(Mode mode, EquipmentSlot slot) {
-		return new PacketWriter(PacketType.ITEM_INFORMATION_PACKET, 36)
-		.putUnsignedInteger(uniqueIdentifier)
-		.putUnsignedInteger(itemPrototype.identifier)
-		.setOffset(16)
-		.putUnsignedShort(mode.value)
-		.putUnsignedByte(slot.value);
-	}
-	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -110,6 +95,32 @@ public class ItemInstance {
 	public String toString() {
 		return "ItemInstance [uniqueIdentifier=" + uniqueIdentifier
 				+ ", itemPrototype=" + itemPrototype + "]";
+	}
+
+	public class ItemInformationPacket extends PacketWriter {
+	
+		public ItemInformationPacket(ItemInstance.Mode mode, EquipmentSlot slot) {
+			super(PacketType.ITEM_INFORMATION_PACKET, 36);
+			this.putUnsignedInteger(uniqueIdentifier);
+			this.putUnsignedInteger(itemPrototype.identifier);
+			this.setOffset(16);
+			this.putUnsignedShort(mode.value);
+			this.putUnsignedByte(slot.value);
+			
+			if(ItemInstance.this instanceof EquipmentInstance) {
+				EquipmentInstance equipment = (EquipmentInstance) ItemInstance.this;
+				this.setOffset(12);
+				this.putUnsignedShort(equipment.dura);
+				this.putUnsignedShort(equipment.equipmentPrototype.maxDura);
+				this.setOffset(24);
+				this.putUnsignedByte(equipment.firstSocket.value);
+				this.putUnsignedByte(equipment.secondSocket.value);
+				this.setOffset(28);
+				this.putUnsignedByte(equipment.plus);
+				this.putUnsignedByte(equipment.bless);
+				this.putUnsignedByte(equipment.enchant);
+			}
+		}
 	}
 
 	private static HashMap<Long, ItemInstance> ITEM_INSTANCES = new HashMap<Long, ItemInstance>();
@@ -210,21 +221,6 @@ public class ItemInstance {
 			if ( item instanceof EquipmentInstance)
 				return (EquipmentInstance) item;
 			return null;
-		}
-		
-		@Override
-		public PacketWriter ItemInformationPacket(Mode mode, EquipmentSlot slot) {
-			return super.ItemInformationPacket(mode, slot)
-				.setOffset(12)
-				.putUnsignedShort(dura)
-				.putUnsignedShort(equipmentPrototype.maxDura)
-				.setOffset(24)
-				.putUnsignedByte(firstSocket.value)
-				.putUnsignedByte(secondSocket.value)
-				.setOffset(28)
-				.putUnsignedByte(plus)
-				.putUnsignedByte(bless)
-				.putUnsignedByte(enchant);
 		}
 
 		/* (non-Javadoc)

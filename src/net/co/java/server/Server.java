@@ -64,10 +64,10 @@ public class Server {
 		// Load the item data
 		ItemPrototype.read(new File("ini/COItems.txt"));
 		// Create an item
-		new EquipmentInstance(2342239l, (EquipmentPrototype) ItemPrototype.get(112389l))
+		new EquipmentInstance(2342239l, (EquipmentPrototype) ItemPrototype.get(480029l))
 			.setFirstSocket(EquipmentInstance.Socket.SuperFury)
 			.setSecondSocket(EquipmentInstance.Socket.SuperRainbowGem)
-			.setDura(500).setBless(3).setPlus(7).setEnchant(172);
+			.setDura(1500).setBless(3).setPlus(7).setEnchant(172);
 	}
 
 	/**
@@ -326,7 +326,7 @@ public class Server {
 					// Send the character information packet
 					player.characterInformation().send(this);
 					// Send an item
-					EquipmentInstance.get(2342239l).ItemInformationPacket(Mode.DEFAULT, EquipmentSlot.Inventory).send(this);
+					EquipmentInstance.get(2342239l).new ItemInformationPacket(Mode.DEFAULT, EquipmentSlot.Inventory).send(this);
 					break;
 				case ENTITY_MOVE_PACKET:
 					player.walk(packet.readUnsignedByte(8), packet);
