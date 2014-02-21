@@ -132,9 +132,9 @@ public class Server {
 			 * @param packet
 			 */
 			private void AuthLogin(IncomingPacket packet) {
-				String accountName	= packet.readString(4,16);
-				String password	= packet.readPassword();
-				String serverName	= packet.readString(36, 16);
+				String accountName	= packet.readString(4,16).replaceAll("[\u0000]", "");;
+				String password	= packet.readPassword().replaceAll("[\u0000]", "");;
+				String serverName	= packet.readString(36, 16).replaceAll("[\u0000]", "");;
 				
 				try {
 					if (model.isAuthorised(serverName, accountName, password)) {
