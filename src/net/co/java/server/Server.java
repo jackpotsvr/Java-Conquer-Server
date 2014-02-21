@@ -146,8 +146,13 @@ public class Server {
 						pw.putString("127.000.000.001", 16);
 						pw.putUnsignedInteger(GAME_PORT);
 						pw.send(this);
+					} else {
+						this.close();
 					}
 				} catch (AccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -543,22 +548,8 @@ public class Server {
 			
 		}
 	}
-	
-	public static void initSQL()
-	{
-		try {
-			Class.forName("org.postgresql.Driver");
-		} catch (ClassNotFoundException e) {
- 
-			System.out.println("Where is your PostgreSQL JDBC Driver? "
-					+ "Include in your library path!");
-			e.printStackTrace();
-			return;
-		}	
-	}
 
 	public static void main(String[] args) throws IOException {
-		// TODO Auto-generated method stub
 		new Server();
 	}
 	
