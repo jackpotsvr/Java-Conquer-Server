@@ -27,6 +27,8 @@ import net.co.java.packets.MessagePacket.MessageType;
 
 import java.sql.DriverManager;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -38,6 +40,10 @@ import java.sql.SQLException;
  *
  */
 public class Server {
+	
+	String[] sqlArgs = {"jdbc:postgresql://localhost:5432/coserver", "postgres", "J1]bB6_rF#3C"};
+			
+
 	
 	private volatile long INCREMENTING_IDENTITY = 0;
 	
@@ -56,6 +62,7 @@ public class Server {
 	 * @throws IOException
 	 */
 	public Server() throws IOException {
+		initSQL();
 		createWorld();
 		this.new AuthServer();
 		this.new GameServer();
@@ -80,11 +87,6 @@ public class Server {
 	 * @param serverName
 	 * @return true if the credentials are correct, false if not
 	 */
-	private boolean isAuthorised(String accountName, String password,
-			String serverName) {
-		// TODO Auto-generated method stub
-		return true;
-	}
 	
 	/**
 	 * @return a player identity between 1000000 and 1999999999
@@ -143,6 +145,8 @@ public class Server {
 		 * @author Thomas Gmelig Meyling
 		 */
 		public class Client extends ServerThread {
+			
+			private Connection sqlCon = null; 
 
 			Client(Socket client) throws IOException {
 				super(client);
@@ -150,6 +154,7 @@ public class Server {
 
 			@Override
 			public void handle(IncomingPacket packet) {
+				sqlConnect();
 				switch(packet.getPacketType()) {
 				case AUTH_LOGIN_PACKET:
 					AuthLogin(packet);
@@ -161,6 +166,16 @@ public class Server {
 					break;
 				}
 			}
+			
+			public void sqlConnect()
+			{
+				try {
+					sqlCon = DriverManager.getConnection(sqlArgs[0], sqlArgs[1], sqlArgs[2]);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			
 
 			/**
 			 * When the user logs in, an Auth Login packet is sent from the client.
@@ -173,7 +188,7 @@ public class Server {
 				String password	= packet.readPassword();
 				String serverName	= packet.readString(36, 16);
 				
-				if (Server.this.isAuthorised(accountName, password, serverName)) {
+				if (isAuthorised(accountName, password, serverName)) {
 					PacketWriter pw = new PacketWriter(PacketType.AUTH_LOGIN_FORWARD, 0x20);
 					long identity = createPlayerIdentity();
 					long token = 5; // SUCCESS
@@ -194,6 +209,31 @@ public class Server {
 				long resNumber = packet.readUnsignedInt(8);
 				String resLocation = packet.readString(12,16);
 				System.out.println("ALR: " + resLocation + " " + identity + ", "  + resNumber);
+			}
+			
+			private boolean isAuthorised(String accountName, String password,
+					String serverName) {
+					
+				PreparedStatement pst = null;
+				String stm = "SELECT password FROM account WHERE account_username = ?";
+				try {
+					accountName = accountName.replaceAll("[\u0000]", "");
+					password = password.replaceAll("[\u0000]", "");
+					pst = sqlCon.prepareStatement(stm);
+					pst.setString(1, accountName);
+					ResultSet rs = pst.executeQuery();
+
+					if(rs.next())
+					{
+						String storedPassword = rs.getString(1);
+						return password.equals(storedPassword);
+					} else {
+						return false;
+					}					
+				} catch (SQLException e) {
+					e.printStackTrace();
+					return false;
+				}	
 			}
 			
 		}
@@ -597,10 +637,25 @@ public class Server {
 			
 		}
 	}
+	
+	public static void initSQL()
+	{
+		try {
+			Class.forName("org.postgresql.Driver");
+		} catch (ClassNotFoundException e) {
+ 
+			System.out.println("Where is your PostgreSQL JDBC Driver? "
+					+ "Include in your library path!");
+			e.printStackTrace();
+			return;
+		}	
+	}
 
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		new Server();
 	}
+	
+	
 
 }
