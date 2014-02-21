@@ -41,9 +41,7 @@ import java.sql.SQLException;
  */
 public class Server {
 	
-	static String[] sqlArgs;
-			
-
+	static String[] sqlArgs = {"jdbc:postgresql://localhost:5432/coserver", "postgres", "J1]bB6_rF#3C"};
 	
 	private volatile long INCREMENTING_IDENTITY = 0;
 	
