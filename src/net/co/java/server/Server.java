@@ -1,7 +1,5 @@
 package net.co.java.server;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -10,13 +8,13 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.co.java.entity.Entity;
-import net.co.java.entity.Monster;
 import net.co.java.entity.Player;
 import net.co.java.item.EquipmentSlot;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemInstance.Mode;
-import net.co.java.item.ItemPrototype;
-import net.co.java.item.ItemPrototype.EquipmentPrototype;
+import net.co.java.model.AccessException;
+import net.co.java.model.Mock;
+import net.co.java.model.Model;
 import net.co.java.packets.GeneralData;
 import net.co.java.packets.IncomingPacket;
 import net.co.java.packets.ItemUsage;
@@ -24,12 +22,6 @@ import net.co.java.packets.MessagePacket;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
 import net.co.java.packets.MessagePacket.MessageType;
-
-import java.sql.DriverManager;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * The server is the main class for the Conquer Online server. 
@@ -41,11 +33,7 @@ import java.sql.SQLException;
  */
 public class Server {
 	
-	String[] sqlArgs = {"jdbc:postgresql://localhost:5432/coserver", "postgres", "J1]bB6_rF#3C"};
-			
-
-	
-	private volatile long INCREMENTING_IDENTITY = 0;
+	private final Model model;
 	
 	/**
 	 * The default Game Server port
@@ -62,37 +50,10 @@ public class Server {
 	 * @throws IOException
 	 */
 	public Server() throws IOException {
-		initSQL();
-		createWorld();
+		//this.model = new PostgreSQL(Config.HOST, Config.USERNAME, Config.PASSWORD);
+		this.model = new Mock();
 		this.new AuthServer();
 		this.new GameServer();
-	}
-	
-	private void createWorld() throws FileNotFoundException {
-		System.out.println("Creating the magical world of Conquer Online");
-		// We spawn a BullMessenger in Twin City for testing purposes here
-		Map.CentralPlain.addEntity(new Monster(Map.CentralPlain.new Location(378, 343), 564564, "BullMessenger",  112, 117, 55000));
-		// Load the item data
-		ItemPrototype.read(new File("ini/COItems.txt"));
-		// Create an item
-		new EquipmentInstance(2342239l, (EquipmentPrototype) ItemPrototype.get(480029l))
-			.setFirstSocket(EquipmentInstance.Socket.SuperFury)
-			.setSecondSocket(EquipmentInstance.Socket.SuperRainbowGem)
-			.setDura(1500).setBless(3).setPlus(7).setEnchant(172);
-	}
-
-	/**
-	 * @param accountName
-	 * @param password
-	 * @param serverName
-	 * @return true if the credentials are correct, false if not
-	 */
-	
-	/**
-	 * @return a player identity between 1000000 and 1999999999
-	 */
-	public long createPlayerIdentity() {
-		return (INCREMENTING_IDENTITY++ % 1999000000) + 1000000;
 	}
 	
 	/**
@@ -146,15 +107,12 @@ public class Server {
 		 */
 		public class Client extends ServerThread {
 			
-			private Connection sqlCon = null; 
-
 			Client(Socket client) throws IOException {
 				super(client);
 			}
 
 			@Override
 			public void handle(IncomingPacket packet) {
-				sqlConnect();
 				switch(packet.getPacketType()) {
 				case AUTH_LOGIN_PACKET:
 					AuthLogin(packet);
@@ -165,17 +123,7 @@ public class Server {
 				default:
 					break;
 				}
-			}
-			
-			public void sqlConnect()
-			{
-				try {
-					sqlCon = DriverManager.getConnection(sqlArgs[0], sqlArgs[1], sqlArgs[2]);
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			
+			}			
 
 			/**
 			 * When the user logs in, an Auth Login packet is sent from the client.
@@ -188,15 +136,20 @@ public class Server {
 				String password	= packet.readPassword();
 				String serverName	= packet.readString(36, 16);
 				
-				if (isAuthorised(accountName, password, serverName)) {
-					PacketWriter pw = new PacketWriter(PacketType.AUTH_LOGIN_FORWARD, 0x20);
-					long identity = createPlayerIdentity();
-					long token = 5; // SUCCESS
-					pw.putUnsignedInteger(identity);
-					pw.putUnsignedInteger(token);
-					pw.putString("127.000.000.001", 16);
-					pw.putUnsignedInteger(GAME_PORT);
-					pw.send(this);
+				try {
+					if (model.isAuthorised(serverName, accountName, password)) {
+						PacketWriter pw = new PacketWriter(PacketType.AUTH_LOGIN_FORWARD, 0x20);
+						Long identity = model.getIdentity("Jackpotsvr");
+						long token = 5; // SUCCESS
+						pw.putUnsignedInteger(identity);
+						pw.putUnsignedInteger(token);
+						pw.putString("127.000.000.001", 16);
+						pw.putUnsignedInteger(GAME_PORT);
+						pw.send(this);
+					}
+				} catch (AccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 			
@@ -209,31 +162,6 @@ public class Server {
 				long resNumber = packet.readUnsignedInt(8);
 				String resLocation = packet.readString(12,16);
 				System.out.println("ALR: " + resLocation + " " + identity + ", "  + resNumber);
-			}
-			
-			private boolean isAuthorised(String accountName, String password,
-					String serverName) {
-					
-				PreparedStatement pst = null;
-				String stm = "SELECT password FROM account WHERE account_username = ?";
-				try {
-					accountName = accountName.replaceAll("[\u0000]", "");
-					password = password.replaceAll("[\u0000]", "");
-					pst = sqlCon.prepareStatement(stm);
-					pst.setString(1, accountName);
-					ResultSet rs = pst.executeQuery();
-
-					if(rs.next())
-					{
-						String storedPassword = rs.getString(1);
-						return password.equals(storedPassword);
-					} else {
-						return false;
-					}					
-				} catch (SQLException e) {
-					e.printStackTrace();
-					return false;
-				}	
 			}
 			
 		}
@@ -354,18 +282,16 @@ public class Server {
 					// Read the identity and token from the packet
 					// and set these as keys for the cipher
 					identity = packet.readUnsignedInt(4);
+					player = model.getPlayer(identity);
+					player.setClient(this);
 					long token = packet.readUnsignedInt(8);
 					this.setKeys(token, identity);
 					// Inform the client that the login was successful
 					new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "ANSWER_OK")
 							.setMessageType(MessageType.LoginInfo)
 							.build().send(this);
-					//	Message_Packet reply1 = new Message_Packet(0xFFFFFFFFL, 2101L, 0L, "SYSTEM", "ALLUSERS", "ANSWER_OK");
 					// Create the Entity object for the player, bound to
 					// the current identity and client thread
-					player = new Player(this, "Jackpotsvr", null, 500);
-					// TODO This data needs to come from somewhere else
-					makeBeautiful(player);
 					player.setLocation(Map.CentralPlain.new Location(382, 341), null);
 					// Send the character information packet
 					player.characterInformation().send(this);
@@ -410,26 +336,6 @@ public class Server {
 					break;
 				}
 			}
-			
-			private void makeBeautiful(Player player) {
-				player.setMesh(381004);
-				player.setHairstyle(315);
-				player.setGold(1111);
-				player.setCps(215);
-				player.setExperience(34195965);
-				player.setStrength(51);
-				player.setDexterity(50);
-				player.setVitality(50);
-				player.setSpirit(50);
-				player.setAttributePoints(200);
-				player.setHP(500);
-				player.setMana(1000);
-				player.setPkPoints(10);
-				player.setLevel(130);
-				player.setRebornCount(0);
-				player.setProfession(15);
-			}
-			
 		}
 	}
 

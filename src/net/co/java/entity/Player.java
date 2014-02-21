@@ -17,7 +17,7 @@ import net.co.java.server.Server.Map.Location;
 public class Player extends Entity {
 	
 
-	private final Client client;
+	private Client client;
 	private int gold = 1000;
 	private int cps = 215;
 	private int experience = 34195965;
@@ -39,8 +39,11 @@ public class Player extends Entity {
 	private ItemInstance[] inventory = new ItemInstance[INVENTORY_SIZE];
 	private HashMap<EquipmentSlot, EquipmentInstance> equipment = new HashMap<EquipmentSlot, EquipmentInstance>(10);
 	
-	public Player(Client client, String name, Location location, int HP) {
-		super(client.getIdentity(), 223, 315, name + (client.getIdentity() & 0xFF), location, HP);
+	public Player(Long identity, String name, Location location, int HP) {
+		super(identity, 223, 315, name, location, HP);
+	}
+	
+	public void setClient(Client client) {
 		this.client = client;
 	}
 
