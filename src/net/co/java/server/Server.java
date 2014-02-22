@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import net.co.java.config.Config;
 import net.co.java.entity.Entity;
 import net.co.java.entity.Player;
 import net.co.java.item.EquipmentSlot;
@@ -15,6 +16,7 @@ import net.co.java.item.ItemInstance.Mode;
 import net.co.java.model.AccessException;
 import net.co.java.model.Mock;
 import net.co.java.model.Model;
+import net.co.java.model.PostgreSQL;
 import net.co.java.packets.GeneralData;
 import net.co.java.packets.IncomingPacket;
 import net.co.java.packets.ItemUsage;
@@ -50,8 +52,8 @@ public class Server {
 	 * @throws IOException
 	 */
 	public Server() throws IOException {
-		//this.model = new PostgreSQL(Config.HOST, Config.USERNAME, Config.PASSWORD);
-		this.model = new Mock();
+		this.model = new PostgreSQL(Config.HOST, Config.USERNAME, Config.PASSWORD);
+		//this.model = new Mock();
 		this.new AuthServer();
 		this.new GameServer();
 	}
@@ -240,6 +242,7 @@ public class Server {
 			
 			private long identity;
 			private Player player;
+			
 
 			Client(Socket client) throws IOException {
 				super(client);
@@ -291,13 +294,14 @@ public class Server {
 					player.setClient(this);
 					long token = packet.readUnsignedInt(8);
 					this.setKeys(token, identity);
+					
 					// Inform the client that the login was successful
 					new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "ANSWER_OK")
 							.setMessageType(MessageType.LoginInfo)
 							.build().send(this);
 					// Create the Entity object for the player, bound to
 					// the current identity and client thread
-					player.setLocation(Map.CentralPlain.new Location(382, 341), null);
+					//player.setLocation(Map.CentralPlain.new Location(382, 341), null);
 					// Send the character information packet
 					player.characterInformation().send(this);
 					// Send an item

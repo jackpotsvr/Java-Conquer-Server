@@ -17,6 +17,7 @@ import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemPrototype.EquipmentPrototype;
 import net.co.java.item.ItemPrototype;
 import net.co.java.server.Server.Map;
+import net.co.java.server.Server.Map.Location;
 
 /**
  * The PostgreSQL model is to use the Java Conquer Server with PostgreSQL databases
@@ -87,8 +88,24 @@ public class PostgreSQL extends AbstractModel {
 	}
 
 	@Override
-	public boolean hasCharacter(String server, String username) {
-		// TODO Auto-generated method stub
+	public boolean hasCharacter(String server, String username) throws AccessException {
+		try {
+			Connection conn = getConnection();
+			PreparedStatement stmt = conn.prepareStatement("SELECT count(*) FROM accounts WHERE account_username = ?");
+			stmt.setString(1, username);
+			ResultSet rs = stmt.executeQuery();
+			
+			if(rs.next())
+			{
+				if(rs.getInt(1) == 1)
+				{
+					return true; 
+				}
+			}	
+		} catch (SQLException e) {
+			throw new AccessException(e);
+		}
+		
 		return false;
 	}
 
@@ -120,24 +137,38 @@ public class PostgreSQL extends AbstractModel {
 	public long getIdentity(String character) throws AccessException {
 		Long identity = this.createPlayerIdentity();
 		Player player = new Player(identity, character, null, 500);
-		player.setMesh(381004);
-		player.setHairstyle(315);
-		player.setGold(1111);
-		player.setCps(215);
-		player.setExperience(34195965);
-		player.setStrength(51);
-		player.setDexterity(50);
-		player.setVitality(50);
-		player.setSpirit(50);
-		player.setAttributePoints(200);
-		player.setHP(500);
-		player.setPkPoints(10);
-		player.setMana(120);
-		player.setLevel(130);
-		player.setRebornCount(0);
-		player.setProfession(15);
-		this.players.put(identity, player);
-		return identity;
+		
+		try {
+			Connection conn = getConnection();
+			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM characters WHERE character_name = ?");
+			stmt.setString(1, character);
+			ResultSet rs = stmt.executeQuery();
+
+			if(rs.next()) {
+				player.setLevel(rs.getInt("character_level"));
+				player.setExperience(rs.getInt("character_experience"));
+				player.setStrength(rs.getInt("character_strength"));
+				player.setDexterity(rs.getInt("character_agility"));
+				player.setVitality(rs.getInt("character_vitality"));
+				player.setSpirit(rs.getInt("character_spirit"));
+				player.setAttributePoints(rs.getInt("character_attributepoints"));
+				player.setProfession(rs.getInt("character_profession"));
+				player.setMesh(rs.getInt("character_mesh"));
+				player.setGold(rs.getInt("character_gold"));
+				player.setCps(rs.getInt("character_cps"));
+				//player.setSpouse(rs.getString(15));
+				player.setLocation(Map.CentralPlain.new Location(rs.getInt("character_x"), rs.getInt("character_y")), null);
+				player.setHairstyle(rs.getInt("character_hair"));
+				player.setRebornCount(rs.getInt("character_reborn"));
+				player.setHP(rs.getInt("character_curhp"));
+				player.setMana(rs.getInt("character_curmp"));
+				this.players.put(identity, player);
+		
+			}	
+		} catch (SQLException e) {
+			throw new AccessException(e);
+		}
+		return identity;	
 	}
 
 }
