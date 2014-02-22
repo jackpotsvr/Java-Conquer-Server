@@ -14,7 +14,7 @@ import net.co.java.item.EquipmentSlot;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemInstance.Mode;
 import net.co.java.model.AccessException;
-import net.co.java.model.Mock;
+import net.co.java.model.AuthorizationPromise;
 import net.co.java.model.Model;
 import net.co.java.model.PostgreSQL;
 import net.co.java.packets.GeneralData;
@@ -114,7 +114,7 @@ public class Server {
 			}
 
 			@Override
-			public void handle(IncomingPacket packet) {
+			public void handle(IncomingPacket packet) throws AccessException {
 				switch(packet.getPacketType()) {
 				case AUTH_LOGIN_PACKET:
 					AuthLogin(packet);
@@ -132,31 +132,25 @@ public class Server {
 			 * In this function we prepare the response and check if the credentials
 			 * are correct.
 			 * @param packet
+			 * @throws AccessException 
 			 */
-			private void AuthLogin(IncomingPacket packet) {
+			private void AuthLogin(IncomingPacket packet) throws AccessException {
 				String accountName	= packet.readString(4,16).replaceAll("[\u0000]", "");;
 				String password	= packet.readPassword().replaceAll("[\u0000]", "");;
 				String serverName	= packet.readString(36, 16).replaceAll("[\u0000]", "");;
 				
-				try {
-					if (model.isAuthorised(serverName, accountName, password)) {
-						PacketWriter pw = new PacketWriter(PacketType.AUTH_LOGIN_FORWARD, 0x20);
-						Long identity = model.getIdentity("Jackpotsvr");
-						long token = 5; // SUCCESS
-						pw.putUnsignedInteger(identity);
-						pw.putUnsignedInteger(token);
-						pw.putString("127.000.000.001", 16);
-						pw.putUnsignedInteger(GAME_PORT);
-						pw.send(this);
-					} else {
-						this.close();
-					}
-				} catch (AccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				if (model.isAuthorised(serverName, accountName, password)) {
+					PacketWriter pw = new PacketWriter(PacketType.AUTH_LOGIN_FORWARD, 0x20);
+					AuthorizationPromise promise = model.createAuthorizationPromise(accountName);
+					Long identity = promise.getIdentity();
+					long token = promise.getToken(); // SUCCESS
+					pw.putUnsignedInteger(identity);
+					pw.putUnsignedInteger(token);
+					pw.putString("127.000.000.001", 16);
+					pw.putUnsignedInteger(GAME_PORT);
+					pw.send(this);
+				} else {
+					// TODO Send a response to the client
 				}
 			}
 			
@@ -284,13 +278,13 @@ public class Server {
 			}
 
 			@Override
-			public void handle(IncomingPacket packet) {
+			public void handle(IncomingPacket packet) throws AccessException {
 				switch(packet.getPacketType()) {
 				case AUTH_LOGIN_RESPONSE:
 					// Read the identity and token from the packet
 					// and set these as keys for the cipher
 					identity = packet.readUnsignedInt(4);
-					player = model.getPlayer(identity);
+					player = model.loadPlayer(identity);
 					player.setClient(this);
 					long token = packet.readUnsignedInt(8);
 					this.setKeys(token, identity);

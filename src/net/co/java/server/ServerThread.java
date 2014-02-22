@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import net.co.java.cipher.Cryptographer;
+import net.co.java.model.AccessException;
 import net.co.java.packets.IncomingPacket;
 import net.co.java.packets.PacketType.UnimplementedPacketTypeException;
 
@@ -79,7 +80,12 @@ public abstract class ServerThread implements Runnable {
 			byte[] data = new byte[available];
 			in.read(data);
 			cipher.decrypt(data);
-			this.handle(new IncomingPacket(data));
+			try {
+				this.handle(new IncomingPacket(data));
+			} catch (AccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -120,7 +126,7 @@ public abstract class ServerThread implements Runnable {
 	 * handle the incoming packets
 	 * @param packet
 	 */
-	public abstract void handle(IncomingPacket packet);
+	public abstract void handle(IncomingPacket packet) throws AccessException;
 	
 	/**
 	 * Subclasses can override this method to listen for

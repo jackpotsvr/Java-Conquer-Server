@@ -44,11 +44,6 @@ public class Mock extends AbstractModel {
 	}
 
 	@Override
-	public boolean hasCharacter(String server, String username) {
-		return true;
-	}
-
-	@Override
 	public ItemInstance[] getInventory(Player player) {
 		return new ItemInstance[] { EquipmentInstance.get(2342239l) };
 	}
@@ -72,9 +67,31 @@ public class Mock extends AbstractModel {
 	}
 
 	@Override
-	public long getIdentity(String character) throws AccessException {
+	protected ItemPrototype fetchItemPrototype(long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected ItemInstance fetchItemInstance(long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public AuthorizationPromise createAuthorizationPromise(String accountName)
+			throws AccessException {
 		Long identity = this.createPlayerIdentity();
-		Player player = new Player(identity, character, null, 500);
+		String characterName = "Jackpotsvr";
+		AuthorizationPromise promise = new AuthorizationPromise(identity, accountName, characterName);
+		this.authPromises.put(identity, promise);
+		return promise;
+	}
+
+	@Override
+	public Player loadPlayer(Long identity) throws AccessException {
+		AuthorizationPromise promise = this.getAuthorizationPromise(identity);
+		Player player = new Player(promise.getIdentity(), promise.getCharacterName(), null, 500);
 		player.setMesh(381004);
 		player.setHairstyle(315);
 		player.setGold(1111);
@@ -91,20 +108,8 @@ public class Mock extends AbstractModel {
 		player.setLevel(130);
 		player.setRebornCount(0);
 		player.setProfession(15);
-		this.players.put(identity, player);
-		return identity;
-	}
-
-	@Override
-	protected ItemPrototype fetchItemPrototype(long id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected ItemInstance fetchItemInstance(long id) {
-		// TODO Auto-generated method stub
-		return null;
+		this.players.put(promise.getIdentity(), player);
+		return player;
 	}
 
 }

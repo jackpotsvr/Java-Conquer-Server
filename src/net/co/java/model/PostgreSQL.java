@@ -17,7 +17,6 @@ import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemPrototype.EquipmentPrototype;
 import net.co.java.item.ItemPrototype;
 import net.co.java.server.Server.Map;
-import net.co.java.server.Server.Map.Location;
 
 /**
  * The PostgreSQL model is to use the Java Conquer Server with PostgreSQL databases
@@ -88,28 +87,6 @@ public class PostgreSQL extends AbstractModel {
 	}
 
 	@Override
-	public boolean hasCharacter(String server, String username) throws AccessException {
-		try {
-			Connection conn = getConnection();
-			PreparedStatement stmt = conn.prepareStatement("SELECT count(*) FROM accounts WHERE account_username = ?");
-			stmt.setString(1, username);
-			ResultSet rs = stmt.executeQuery();
-			
-			if(rs.next())
-			{
-				if(rs.getInt(1) == 1)
-				{
-					return true; 
-				}
-			}	
-		} catch (SQLException e) {
-			throw new AccessException(e);
-		}
-		
-		return false;
-	}
-
-	@Override
 	public ItemInstance[] getInventory(Player player) {
 		// TODO Auto-generated method stub
 		return null;
@@ -134,14 +111,24 @@ public class PostgreSQL extends AbstractModel {
 	}
 
 	@Override
-	public long getIdentity(String character) throws AccessException {
+	public AuthorizationPromise createAuthorizationPromise(String accountName)
+			throws AccessException {
 		Long identity = this.createPlayerIdentity();
-		Player player = new Player(identity, character, null, 500);
+		String characterName = "Jackpotsvr";
+		AuthorizationPromise promise = new AuthorizationPromise(identity, accountName, characterName);
+		this.authPromises.put(identity, promise);
+		return promise;
+	}
+
+	@Override
+	public Player loadPlayer(Long identity) throws AccessException {
+		AuthorizationPromise promise = this.getAuthorizationPromise(identity);
+		Player player = new Player(promise.getIdentity(), promise.getCharacterName(), null, 500);
 		
 		try {
 			Connection conn = getConnection();
 			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM characters WHERE character_name = ?");
-			stmt.setString(1, character);
+			stmt.setString(1, promise.getCharacterName());
 			ResultSet rs = stmt.executeQuery();
 
 			if(rs.next()) {
@@ -162,13 +149,13 @@ public class PostgreSQL extends AbstractModel {
 				player.setRebornCount(rs.getInt("character_reborn"));
 				player.setHP(rs.getInt("character_curhp"));
 				player.setMana(rs.getInt("character_curmp"));
-				this.players.put(identity, player);
+				this.players.put(promise.getIdentity(), player);
 		
 			}	
 		} catch (SQLException e) {
 			throw new AccessException(e);
 		}
-		return identity;	
+		return player;	
 	}
 
 }

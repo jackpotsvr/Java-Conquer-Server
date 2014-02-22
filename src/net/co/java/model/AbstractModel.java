@@ -26,6 +26,9 @@ public abstract class AbstractModel implements Model {
 	/** Cached item instances for used items */
 	protected final Map<Long, ItemInstance> itemInstances = Collections.synchronizedMap(new HashMap<Long, ItemInstance>());
 	
+	/** AuthorizationPromises */
+	protected final Map<Long, AuthorizationPromise> authPromises = Collections.synchronizedMap(new HashMap<Long, AuthorizationPromise>());
+	
 	private volatile long INCREMENTING_IDENTITY = 0;
 	
 	/**
@@ -71,6 +74,11 @@ public abstract class AbstractModel implements Model {
 			return itemInstances.get(id);
 		}
 		return fetchItemInstance(id);
+	}
+	
+	@Override
+	public AuthorizationPromise getAuthorizationPromise(Long identity) {
+		return authPromises.remove(identity);
 	}
 
 }

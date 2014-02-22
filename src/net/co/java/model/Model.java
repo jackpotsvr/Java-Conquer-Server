@@ -9,7 +9,7 @@ import net.co.java.item.ItemPrototype;
 
 /**
  * Administrators of this private server should be able to use a database of their own preference,
- * for instance using MySQL, Postgres, SQLLite, using Java serialisation or static mock data.
+ * for instance using MySQL, PostgreSQL, SQLLite, using Java serialization or static mock data.
  * This interface is a stub for models that provide access to the data model.
  * @author Jan-Willem Gmelig Meyling
  *
@@ -17,33 +17,40 @@ import net.co.java.item.ItemPrototype;
 public interface Model {
 	
 	/**
-	 * Check if a user is authorised
+	 * Check if the account credentials are correct
 	 * @param server
 	 * @param accountName
 	 * @param password
-	 * @return true if the user is authorised
+	 * @return true if the user is authorized
 	 */
 	boolean isAuthorised(String server, String accountName, String password) throws AccessException;
 	
 	/**
-	 * Check if a user has a character (else, character creation)
-	 * @param server
-	 * @param username
-	 * @return true if the user has a character
-	 */
-	boolean hasCharacter(String server, String username) throws AccessException;
-	
-	/**
-	 * Create a Player object and return the identity at which the Player
-	 * instance is stored
-	 * @param character
+	 * Create an AuthorizationPromise
+	 * @param accountName
 	 * @return
 	 * @throws AccessException
 	 */
-	long getIdentity(String character) throws AccessException;
+	AuthorizationPromise createAuthorizationPromise(String accountName) throws AccessException;
 	
 	/**
-	 * Get the player object for a username
+	 * Get an AuthorizationPromise
+	 * @param accountName
+	 * @return
+	 * @throws AccessException
+	 */
+	AuthorizationPromise getAuthorizationPromise(Long identity) throws AccessException;
+	
+	/**
+	 * Load a user when the identity is sent for the first time to the game server
+	 * @param promise
+	 * @return
+	 * @throws AccessException
+	 */
+	public Player loadPlayer(Long identity) throws AccessException;
+	
+	/**
+	 * Get the player object for a given identity
 	 * @param client
 	 * @param username
 	 * @return Player
