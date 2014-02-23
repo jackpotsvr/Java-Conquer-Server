@@ -114,7 +114,24 @@ public class PostgreSQL extends AbstractModel {
 	public AuthorizationPromise createAuthorizationPromise(String accountName)
 			throws AccessException {
 		Long identity = this.createPlayerIdentity();
-		String characterName = "Jackpotsvr";
+
+		String characterName;
+
+		try {
+			Connection conn = getConnection();
+			PreparedStatement stmt = conn.prepareStatement("SELECT character_name FROM characters WHERE account_username = ?");
+			stmt.setString(1, accountName);
+			ResultSet rs = stmt.executeQuery();
+			
+			if(rs.next()) {
+				characterName = rs.getString(1);
+			} else {
+				characterName = null;
+			}
+		} catch (SQLException e) {
+				throw new AccessException(e);
+		}
+
 		AuthorizationPromise promise = new AuthorizationPromise(identity, accountName, characterName);
 		this.authPromises.put(identity, promise);
 		return promise;

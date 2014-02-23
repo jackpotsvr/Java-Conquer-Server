@@ -284,22 +284,32 @@ public class Server {
 					// Read the identity and token from the packet
 					// and set these as keys for the cipher
 					identity = packet.readUnsignedInt(4);
-					player = model.loadPlayer(identity);
-					player.setClient(this);
+					AuthorizationPromise promise = model.getAuthorizationPromise(identity);
+			
 					long token = packet.readUnsignedInt(8);
 					this.setKeys(token, identity);
 					
 					// Inform the client that the login was successful
-					new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "ANSWER_OK")
-							.setMessageType(MessageType.LoginInfo)
-							.build().send(this);
-					// Create the Entity object for the player, bound to
-					// the current identity and client thread
-					//player.setLocation(Map.CentralPlain.new Location(382, 341), null);
-					// Send the character information packet
-					player.characterInformation().send(this);
-					// Send an item
-					EquipmentInstance.get(2342239l).new ItemInformationPacket(Mode.DEFAULT, EquipmentSlot.Inventory).send(this);
+					if (promise.hasCharacter())
+					{		
+						player = model.loadPlayer(identity);
+						player.setClient(this);
+						new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "ANSWER_OK")
+								.setMessageType(MessageType.LoginInfo)
+								.build().send(this);
+						// Create the Entity object for the player, bound to
+						// the current identity and client thread
+						//player.setLocation(Map.CentralPlain.new Location(382, 341), null);
+						// Send the character information packet
+						player.characterInformation().send(this);
+						// Send an item
+						EquipmentInstance.get(2342239l).new ItemInformationPacket(Mode.DEFAULT, EquipmentSlot.Inventory).send(this);
+					}
+					else {
+						new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "NEW_ROLE")
+						.setMessageType(MessageType.LoginInfo)
+						.build().send(this);
+					}
 					break;
 				case ENTITY_MOVE_PACKET:
 					player.walk(packet.readUnsignedByte(8), packet);
