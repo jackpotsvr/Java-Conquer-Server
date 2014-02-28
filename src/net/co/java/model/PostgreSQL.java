@@ -138,8 +138,7 @@ public class PostgreSQL extends AbstractModel {
 	}
 
 	@Override
-	public Player loadPlayer(Long identity) throws AccessException {
-		AuthorizationPromise promise = this.getAuthorizationPromise(identity);
+	public Player loadPlayer(AuthorizationPromise promise) throws AccessException {
 		Player player = new Player(promise.getIdentity(), promise.getCharacterName(), null, 500);
 		
 		try {

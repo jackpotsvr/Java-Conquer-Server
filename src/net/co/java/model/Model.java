@@ -47,12 +47,11 @@ public interface Model {
 	 * @return
 	 * @throws AccessException
 	 */
-	public Player loadPlayer(Long identity) throws AccessException;
+	public Player loadPlayer(AuthorizationPromise promise) throws AccessException;
 	
 	/**
 	 * Get the player object for a given identity
-	 * @param client
-	 * @param username
+	 * @param identity
 	 * @return Player
 	 */
 	Player getPlayer(Long identity);

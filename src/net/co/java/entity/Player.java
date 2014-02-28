@@ -33,7 +33,7 @@ public class Player extends Entity {
 	private int pkPoints = 0;
 	private int profession = 15;
 	private int rebornCount = 0;
-	private Player spouse;
+	private String spouse;
 	
 	private static int INVENTORY_SIZE = 28;
 	private ItemInstance[] inventory = new ItemInstance[INVENTORY_SIZE];
@@ -151,18 +151,11 @@ public class Player extends Entity {
 		this.rebornCount = rebornCount;
 	}
 
-	public Player getSpouse() {
-		return spouse;
-	}
-	
-	public String getSpouseName() {
-		if ( spouse != null ) {
-			return spouse.getName();
-		}
-		return "None";
+	public String getSpouse() {
+		return spouse == null ? "None" : spouse;
 	}
 
-	public void setSpouse(Player spouse) {
+	public void setSpouse(String spouse) {
 		this.spouse = spouse;
 	}
 
@@ -197,7 +190,9 @@ public void setEquipment(HashMap<EquipmentSlot, Equipment> equipment) {
 	}
 	
 	public PacketWriter characterInformation() {
-		int size = 71 + this.name.length() + ((this.spouse == null) ? 4 : this.spouse.name.length());
+		String spouseName = getSpouse();
+		int size = 71 + this.name.length() + spouseName.length();
+		
 		return new PacketWriter(PacketType.CHAR_INFO_PACKET, size)
 		.putUnsignedInteger(this.identity)
 		.putUnsignedInteger(this.mesh)
@@ -222,8 +217,8 @@ public void setEquipment(HashMap<EquipmentSlot, Equipment> equipment) {
 		.putUnsignedByte(2) // String count
 		.putUnsignedByte(this.name.length())
 		.putString(this.name)
-		.putUnsignedByte(this.getSpouseName().length())
-		.putString(this.getSpouseName());
+		.putUnsignedByte(spouseName.length())
+		.putString(spouseName);
 	}
 	
 	public GeneralData retrieveLocation() {

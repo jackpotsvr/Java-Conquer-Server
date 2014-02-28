@@ -292,7 +292,7 @@ public class Server {
 					// Inform the client that the login was successful
 					if (promise.hasCharacter())
 					{		
-						player = model.loadPlayer(identity);
+						player = model.loadPlayer(promise);
 						player.setClient(this);
 						new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "ANSWER_OK")
 								.setMessageType(MessageType.LoginInfo)
@@ -305,7 +305,8 @@ public class Server {
 						// Send an item
 						EquipmentInstance.get(2342239l).new ItemInformationPacket(Mode.DEFAULT, EquipmentSlot.Inventory).send(this);
 					}
-					else {
+					else
+					{
 						new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "NEW_ROLE")
 						.setMessageType(MessageType.LoginInfo)
 						.build().send(this);
