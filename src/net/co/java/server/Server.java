@@ -11,6 +11,7 @@ import net.co.java.config.Config;
 import net.co.java.entity.Entity;
 import net.co.java.entity.Player;
 import net.co.java.item.EquipmentSlot;
+import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemInstance.Mode;
 import net.co.java.model.AccessException;
@@ -306,7 +307,23 @@ public class Server {
 						// Send the character information packet
 						player.characterInformation().send(this);
 						// Send an item
-						EquipmentInstance.get(2342239l).new ItemInformationPacket(Mode.DEFAULT, EquipmentSlot.Inventory).send(this);
+						model.setInventory(player);
+						model.loadEquipment(player);
+						
+						// to do, just sents first item now. 
+						player.getInventory().getFirst().new ItemInformationPacket(Mode.DEFAULT, EquipmentSlot.Inventory).send(this);
+						
+						// send all the items to the client (equpiment) 
+						for(int i = 1; i<9; i++)
+						{
+							if(player.getEquipmentSlots()[i] != null)
+								player.getEquipmentSlots()[i].new ItemInformationPacket(Mode.DEFAULT, EquipmentSlot.valueOf(i)).send(this);
+						}
+				
+						//player.getInventory().
+						
+				
+						//EquipmentInstance.get(2342239l).new ItemInformationPacket(Mode.DEFAULT, EquipmentSlot.Inventory).send(this);
 					}
 					else
 					{
@@ -344,7 +361,7 @@ public class Server {
 					}
 					break;
 				
-				default:
+				default: 	
 					System.out.println("Unimplemented " + packet.getPacketType().toString());
 					break;
 				}

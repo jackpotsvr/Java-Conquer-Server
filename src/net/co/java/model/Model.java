@@ -72,6 +72,26 @@ public interface Model {
 	ItemInstance[] getInventory(Player player) throws AccessException;
 	
 	/**
+	 * Used to set the inventory from a player, with items loaded from a model. 
+	 * @param player
+	 * @throws AccessException
+	 */
+	void setInventory(Player player) throws AccessException;
+	
+	/** 
+	 * Set all the equipments from database. 
+	 * @param player
+	 * @throws AccessException
+	 */
+	void loadEquipment(Player player) throws AccessException;
+	
+	/**
+	 * Used to load an item prototype from DB if it wasn't already. 
+	 * @param item_sid
+	 */
+	void addItemPrototype(long item_sid) throws AccessException; 
+	
+	/**
 	 * @param player
 	 * @return the equipments for a player
 	 */

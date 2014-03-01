@@ -1,6 +1,7 @@
 package net.co.java.entity;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import net.co.java.guild.Guild;
 import net.co.java.guild.GuildRank;
@@ -35,14 +36,32 @@ public class Player extends Entity {
 	private int rebornCount = 0;
 	private String spouse;
 	
-	private static int INVENTORY_SIZE = 28;
-	private ItemInstance[] inventory = new ItemInstance[INVENTORY_SIZE];
-	private HashMap<EquipmentSlot, EquipmentInstance> equipment = new HashMap<EquipmentSlot, EquipmentInstance>(10);
+	private static int INVENTORY_SIZE = 40;
+	//private ItemInstance[] inventory = new ItemInstance[INVENTORY_SIZE];
+	private LinkedList<ItemInstance> inventory = new LinkedList<ItemInstance>(); 
+	//private HashMap<EquipmentSlot, EquipmentInstance> equipment = new HashMap<EquipmentSlot, EquipmentInstance>(10);
+	
+	private EquipmentInstance[] equipmentSlots = new EquipmentInstance[9];
+	/*
+	    Inventory = 0 (not used for equipmentSlots) 
+		Head = 1
+		Necklace = 2
+		Armor = 3
+		Right = 4
+		Left = 5
+		Ring = 6
+		Bottle = 7
+		Boots = 8
+	 */
 	
 	public Player(Long identity, String name, Location location, int HP) {
 		super(identity, 223, 315, name, location, HP);
 	}
 	
+	public EquipmentInstance[] getEquipmentSlots() {
+		return equipmentSlots;
+	}
+
 	public void setClient(Client client) {
 		this.client = client;
 	}
@@ -179,8 +198,13 @@ public void setEquipment(HashMap<EquipmentSlot, Equipment> equipment) {
 	public int getMaxHP() {
 		// TODO Auto-generated method stub
 		return 0;
+	}	
+
+
+	public LinkedList<ItemInstance> getInventory() {
+		return inventory;
 	}
-	
+
 	/**
 	 * @return the {@code Client} instance for this {@code User},
 	 * or null if the player is not online

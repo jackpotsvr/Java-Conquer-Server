@@ -51,12 +51,17 @@ public class PostgreSQL extends AbstractModel {
 		// We spawn a BullMessenger in Twin City for testing purposes here
 		Map.CentralPlain.addEntity(new Monster(Map.CentralPlain.new Location(378, 343), 564564, "BullMessenger",  112, 117, 55000));
 		// Load the item data
+		/*
 		ItemPrototype.read(new File("ini/COItems.txt"));
 		// Create an item
+		
 		new EquipmentInstance(2342239l, (EquipmentPrototype) ItemPrototype.get(480029l))
 			.setFirstSocket(EquipmentInstance.Socket.SuperFury)
 			.setSecondSocket(EquipmentInstance.Socket.SuperRainbowGem)
-			.setDura(1500).setBless(3).setPlus(7).setEnchant(172);
+			.setDura(1500).setBless(3).setPlus(7).setEnchant(172); 
+			
+		*/ 
+		
 	}
 	
 	/**
@@ -93,6 +98,151 @@ public class PostgreSQL extends AbstractModel {
 	public ItemInstance[] getInventory(Player player) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public void loadEquipment(Player player) throws AccessException
+	{
+		try {
+			Connection conn = getConnection();
+			PreparedStatement stmt = conn.prepareStatement("SELECT item_slot, a.item_id, item_sid, item_dura, item_firstsocket, item_secondsocket, "
+					+ "item_plus, item_bless, item_enchant "
+					+ "FROM item_possession a "
+					+ "JOIN unique_items b ON (a.item_id = b.item_id) "
+					+ "WHERE (character_name = ?) AND (item_slot != 0);");
+			
+			stmt.setString(1, player.getName());
+			
+			ResultSet rsItems = stmt.executeQuery(); 
+			
+			while (rsItems.next())
+			{
+				long item_sid = rsItems.getLong("item_sid"); 
+				if (itemPrototypes.get(item_sid)  == null) 
+				{ 
+					addItemPrototype(item_sid);
+				}
+				
+				player.getEquipmentSlots()[rsItems.getInt("item_slot")] = 
+						(
+								new EquipmentInstance(rsItems.getLong("item_id"), (EquipmentPrototype) ItemPrototype.get(item_sid))
+								.setFirstSocket(EquipmentInstance.Socket.valueOf(rsItems.getInt("item_firstsocket")))
+								.setSecondSocket(EquipmentInstance.Socket.valueOf(rsItems.getInt("item_secondsocket")))
+								.setDura(rsItems.getInt("item_dura"))
+								.setBless(rsItems.getInt("item_bless"))
+								.setPlus(rsItems.getInt("item_plus"))
+								.setEnchant(rsItems.getInt("item_enchant"))
+						);
+			}
+			
+			conn.close();
+			stmt.close();
+			rsItems.close();
+				
+		} catch (SQLException e) {
+			throw new AccessException(e);
+		}
+		
+	}
+	
+	public void setInventory(Player player) throws AccessException
+	{
+		
+		try {
+			Connection conn = getConnection();
+			PreparedStatement stmt = conn.prepareStatement("SELECT a.item_id, item_sid, item_dura, item_firstsocket, item_secondsocket, "
+					+ "item_plus, item_bless, item_enchant "
+					+ "FROM item_possession a "
+					+ "JOIN unique_items b ON (a.item_id = b.item_id) "
+					+ "WHERE (character_name = ?) AND (item_slot = 0);");
+			stmt.setString(1, player.getName());
+			
+			ResultSet rsItems = stmt.executeQuery(); 
+			
+			//EquipmentInstance.Socket(13); 
+			
+	
+			while (rsItems.next())
+			{
+				long item_sid = rsItems.getLong("item_sid"); 
+				if (itemPrototypes.get(item_sid)  == null) 
+				{ 
+					addItemPrototype(item_sid);
+				}
+				
+				player.getInventory().add
+						(
+								new EquipmentInstance(rsItems.getLong("item_id"), (EquipmentPrototype) ItemPrototype.get(item_sid))
+								.setFirstSocket(EquipmentInstance.Socket.valueOf(rsItems.getInt("item_firstsocket")))
+								.setSecondSocket(EquipmentInstance.Socket.valueOf(rsItems.getInt("item_secondsocket")))
+								.setDura(rsItems.getInt("item_dura"))
+								.setBless(rsItems.getInt("item_bless"))
+								.setPlus(rsItems.getInt("item_plus"))
+								.setEnchant(rsItems.getInt("item_enchant"))
+						);	
+			}
+		
+			
+			conn.close();
+			stmt.close();
+			rsItems.close();
+			
+		} catch (SQLException e) {
+			throw new AccessException(e);
+		}
+		
+		//itemInstances.get(arg0)
+		//player.getInventory().add(x)
+	}
+	
+	public void addItemPrototype(long item_sid) throws AccessException
+	{
+		// to be done 
+		
+		try {
+			Connection conn = getConnection();
+			PreparedStatement stmt = conn.prepareStatement("SELECT item_name, item_maxdura, item_worth, item_cpsworth, item_classreq, "
+					+ "item_profreq, item_lvlreq, item_sexreq, item_strreq, item_agireq, item_minatk, item_maxatk, item_defence, item_mdef, "
+					+ "item_mattack, item_dodge, item_agility "
+					+ "FROM items "
+					+ "WHERE item_sid = ?"); 
+			stmt.setLong(1, item_sid);
+			ResultSet rs = stmt.executeQuery();
+			
+			while (rs.next())
+			{
+				this.itemPrototypes.put
+						(item_sid, 
+								new EquipmentPrototype
+								(
+										item_sid,
+										rs.getString("item_name"),
+										rs.getInt("item_maxdura"),
+										rs.getInt("item_worth"),
+										rs.getInt("item_cpsworth"),
+										rs.getInt("item_classreq"),
+										rs.getInt("item_profreq"),
+										rs.getInt("item_lvlreq"),
+										rs.getInt("item_sexreq"),
+										rs.getInt("item_strreq"),
+										rs.getInt("item_agireq"),
+										rs.getInt("item_minatk"),
+										rs.getInt("item_maxatk"),
+										rs.getInt("item_defence"),
+										rs.getInt("item_mdef"),
+										rs.getInt("item_mattack"),
+										rs.getInt("item_dodge"),
+										rs.getInt("item_agility")
+								)
+						);
+			}
+			
+			rs.close();
+			stmt.close();
+			conn.close();
+			
+		} catch (SQLException e) {
+			throw new AccessException(e);
+		}
 	}
 
 	@Override

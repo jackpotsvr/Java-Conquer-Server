@@ -172,7 +172,7 @@ public class ItemPrototype {
 		
 		public final int agility;
 
-		EquipmentPrototype(Long identifier, String name, int maxDura, int worth, int CPWorth,
+		public EquipmentPrototype(Long identifier, String name, int maxDura, int worth, int CPWorth,
 				int classReq, int profReq, int lvlReq,
 				int sexReq, int strReq, int agiReq, int minAtk, int maxAtk,
 				int defence, int mDef, int mAttack, int dodge, int agility) {

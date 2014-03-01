@@ -119,4 +119,22 @@ public class Mock extends AbstractModel {
 		return false;
 	}
 
+	@Override
+	public void setInventory(Player player) throws AccessException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addItemPrototype(long item_sid) throws AccessException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void loadEquipment(Player player) throws AccessException {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

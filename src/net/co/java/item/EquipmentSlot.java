@@ -3,6 +3,8 @@
  */
 package net.co.java.item;
 
+import net.co.java.item.ItemInstance.EquipmentInstance.Socket;
+
 /**
  * Enum for EquipmentSlot
  * You can fetch the corresponding value by EquipmentSlot.None.value
@@ -28,5 +30,12 @@ public enum EquipmentSlot {
 	
 	EquipmentSlot(int i) {
 		this.value = i;
+	}
+	
+	public static EquipmentSlot valueOf(int value) {
+		for ( EquipmentSlot e : EquipmentSlot.values() )
+			if ( e.value == value )
+				return e;
+		return null;
 	}
 }
