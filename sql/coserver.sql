@@ -1,4 +1,4 @@
-﻿DROP TABLE characters;
+DROP TABLE characters;
 DROP TABLE account;
 
 
@@ -90,17 +90,16 @@ CREATE TABLE unique_items
 	item_bless				INTEGER,
 	item_enchant				INTEGER,
 
-
-	CONSTRAINT fk_unique_items FOREIGN KEY (item_sid) REFERENCES items
+	CONSTRAINT fk_unique_items_sid FOREIGN KEY (item_sid) REFERENCES items
 );
 
-CREATE TABLE item_bezit
+CREATE TABLE item_possession
 (
-	character_name 				varchar(16),
+	character_name 			varchar(16),
 	item_ID					INTEGER,
 	item_slot 				INTEGER, -- 0 is invetory	http://conquerwiki.com/wiki/Item_Position_Enum
-	invetory_index				INTEGER -- If in invetory, this will say in which slot.
-		CONSTRAINT ck_invetory_index CHECK (invetory_index >= 0 AND invetory_index < 40)
+	
+	CONSTRAINT fk_unique_items_id FOREIGN KEY (item_id) REFERENCES items
 )
 
 

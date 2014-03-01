@@ -310,8 +310,9 @@ public class Server {
 						model.setInventory(player);
 						model.loadEquipment(player);
 						
-						// to do, just sents first item now. 
-						player.getInventory().getFirst().new ItemInformationPacket(Mode.DEFAULT, EquipmentSlot.Inventory).send(this);
+						for ( ItemInstance it : player.getInventory() ) {
+							it.new ItemInformationPacket(Mode.DEFAULT, EquipmentSlot.Inventory).send(this);
+						}
 						
 						// send all the items to the client (equpiment) 
 						for(int i = 1; i<9; i++)

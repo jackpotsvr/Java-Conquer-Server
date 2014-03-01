@@ -2,6 +2,10 @@ package net.co.java.model;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -31,6 +35,8 @@ public class PostgreSQL extends AbstractModel {
 	private final String USERNAME;
 	
 	private final String PASSWORD;
+	
+	private static SecureRandom random = new SecureRandom();
 	
 	/**
 	 * Construct a new PostgreSQL model
@@ -76,17 +82,20 @@ public class PostgreSQL extends AbstractModel {
 	public boolean isAuthorised(String server, String username, String password) throws AccessException {
 		try {
 			Connection conn = getConnection();
-			PreparedStatement stmt = conn.prepareStatement("SELECT password FROM account WHERE account_username = ?");
+			PreparedStatement stmt = conn.prepareStatement("SELECT password, salt FROM account WHERE account_username = ?");
 			stmt.setString(1, username);
 			ResultSet rs = stmt.executeQuery();
 			
 			conn.close();
 			
-			if(rs.next()) {
-				return rs.getString("password").equals(password);
-			} else {
-				return false;
-			}
+			if(rs.next()) 
+			{
+				if ( SHA512(SHA512(password) + (rs.getString("salt"))).equalsIgnoreCase(rs.getString("password")))
+					return true;
+			} 
+
+			return false;
+		
 		} catch (SQLException e) {
 			// Delegate the Exception
 			throw new AccessException(e);
@@ -276,13 +285,19 @@ public class PostgreSQL extends AbstractModel {
 			stmt.setString(1, accountName);
 			ResultSet rs = stmt.executeQuery();
 			
-			conn.close();
+			
+			
 			
 			if(rs.next()) {
 				characterName = rs.getString(1);
 			} else {
 				characterName = null;
 			}
+			
+			conn.close();
+			rs.close();
+			stmt.close();
+			
 		} catch (SQLException e) {
 				throw new AccessException(e);
 		}
@@ -326,6 +341,8 @@ public class PostgreSQL extends AbstractModel {
 			}
 			
 			conn.close();
+			stmt.close();
+			rs.close(); 
 		} catch (SQLException e) {
 			throw new AccessException(e);
 		}
@@ -374,6 +391,7 @@ public class PostgreSQL extends AbstractModel {
 				
 				stmt.execute();
 				conn.close(); 
+				stmt.close();
 				
 				return true;
 			} else {
@@ -383,6 +401,30 @@ public class PostgreSQL extends AbstractModel {
 					
 		} catch (SQLException e) {
 			throw new AccessException(e);
+		}
+	}
+	
+	
+	/**
+	 * Method to generate PHP-like SHA-512 hashstring.
+	 * @param toHash
+	 * @return HEX SHA-512 hash
+	 * @throws UnsupportedEncodingException	If UTF-8 isn't available on current system
+	 * @throws NoSuchAlgorithmException	If SHA-512 isn't available on current system
+	 */
+	private static String SHA512(String toHash) {
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA-512");
+		    byte[] hash = md.digest(toHash.getBytes("UTF-8"));
+		    StringBuffer sb = new StringBuffer();
+		    for (int i = 0; i < hash.length; i++) {
+		        sb.append(Integer.toString((hash[i] & 0xFF) + 0x100, 16).substring(1));
+		    }
+		    return sb.toString();
+		} catch (NoSuchAlgorithmException e) {
+			throw new InternalError("SHA-512 not supported");
+		} catch ( UnsupportedEncodingException e ) {
+			throw new InternalError("UTF-8 not supported");
 		}
 	}
 

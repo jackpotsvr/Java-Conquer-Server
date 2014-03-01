@@ -106,8 +106,9 @@ public class ItemUsage {
 		case EquipItem:
 			// Remove the item from the inventory
 			new ItemUsage(identity, parameter, Mode.RemoveInventory).build().send(client);
+			// TODO Swap possible existing item in slot to the inventory
 			// Equip the item
-			EquipmentInstance.get(identity).new ItemInformationPacket(ItemInstance.Mode.DEFAULT, EquipmentSlot.RightHand).send(client);
+			EquipmentInstance.get(identity).new ItemInformationPacket(ItemInstance.Mode.DEFAULT, EquipmentSlot.valueOf((int) parameter)).send(client);
 			break;
 		case UnEquipItem:
 			EquipmentInstance item = EquipmentInstance.get(identity);
