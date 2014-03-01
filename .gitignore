@@ -6,6 +6,4 @@
 *.DS_Store
 /bin
 /Client
-/ref/Thomas_Old
-/ref/Re-UnitedCo Source
-/ref/HybridCO C++ (Fixed)
+/ref
