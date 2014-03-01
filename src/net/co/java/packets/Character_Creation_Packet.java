@@ -1,30 +1,56 @@
 package net.co.java.packets;
 
-//import conquerServer.ServerThread;
-//
-//public class Character_Creation_Packet extends IncommingPacket
-//{
-//	private String accountName;
-//	private String characterName;
-//	private String password;
-//	
-//	/*
-//	 *  2001 (female small), 2002 (female big), 1003 (male thin), 1004 (male big)
-//	 */
-//	int body; 
-//	int proffession; // in-game 'class' e.g. Taoist, Archer etc ...  
-//	long identity; 
-//	
-//	public Character_Creation_Packet(PacketType packetType, byte[] data, ServerThread thread)
-//	{
-//		super(packetType, data);
-//		accountName = this.readString(4, 16); 
-//		characterName = this.readString(20, 16);
-//		password = this.readString(36, 16);
-//		body = this.readUnsignedShort(52);
-//		proffession = this.readUnsignedShort(54);
-//		identity = this.readUnsignedInt(56); 
-//		
-//		System.out.println(characterName);
-//	}
-//}
+public class Character_Creation_Packet
+{
+	private final String accountName;
+	private final String characterName;
+	private final String password;
+	
+	/*
+	 *  2001 (female small), 2002 (female big), 1003 (male thin), 1004 (male big)
+	 */
+
+	private final int  body; 
+	private final int   proffession; // in-game 'class' e.g. Taoist, Archer etc ...  
+	private final long  identity; 
+	
+	public Character_Creation_Packet(IncomingPacket ip)
+	{
+		accountName = ip.readString(4, 16).replaceAll("[\u0000]", "");  /* ERROR: invalid byte sequence for encoding "UTF8": 0x00  FIX*/ 
+		characterName = ip.readString(20, 16).replaceAll("[\u0000]", "");  /* ERROR: invalid byte sequence for encoding "UTF8": 0x00  FIX*/ 
+		password = ip.readString(36, 16).replaceAll("[\u0000]", "");  /* ERROR: invalid byte sequence for encoding "UTF8": 0x00  FIX*/ 
+		body = ip.readUnsignedShort(52);
+		proffession = ip.readUnsignedShort(54);
+		identity = ip.readUnsignedInt(56); 
+		
+	}
+
+	public String getAccountName() {
+		return accountName;
+	}
+
+	public String getCharacterName() {
+		return characterName;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public int getBody() {
+		return body;
+	}
+
+	public int getProffession() {
+		return proffession;
+	}
+
+	public long getIdentity() {
+		return identity;
+	}
+	
+	
+	
+}
+
+

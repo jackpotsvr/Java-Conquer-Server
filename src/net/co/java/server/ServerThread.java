@@ -20,6 +20,7 @@ import net.co.java.packets.PacketType.UnimplementedPacketTypeException;
  */
 public abstract class ServerThread implements Runnable {
 	
+	private boolean cont = true;
 	private final Socket client;
 	private final InputStream in;
 	private final OutputStream out;
@@ -43,7 +44,7 @@ public abstract class ServerThread implements Runnable {
 	@Override
 	public void run() {
 		connected();
-		for(;;) {
+		while(cont) {
 			try {
 				retrievePacket();
 				workQueue();
@@ -64,7 +65,14 @@ public abstract class ServerThread implements Runnable {
 				e.printStackTrace();
 			}
 		}
-		disconnected();
+		try {
+			client.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			disconnected();			
+		}
 	}
 	
 	/**
@@ -144,10 +152,9 @@ public abstract class ServerThread implements Runnable {
 	 * Close the connection for this {@code Socket}.
 	 * Also closes the connections' {@code InputStream}
 	 * and {@code OutputStream}.
-	 * @throws IOException
 	 */
-	public void close() throws IOException {
-		client.close();
+	public void close() {
+		cont = false;
 	}
 	
 }

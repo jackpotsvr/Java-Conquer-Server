@@ -6,6 +6,7 @@ import net.co.java.entity.Player;
 import net.co.java.item.EquipmentSlot;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemPrototype;
+import net.co.java.packets.Character_Creation_Packet;
 
 /**
  * Administrators of this private server should be able to use a database of their own preference,
@@ -55,6 +56,14 @@ public interface Model {
 	 * @return Player
 	 */
 	Player getPlayer(Long identity);
+	
+	/**
+	 * Add a new character in the model
+	 * @param ip
+	 * @return true if successfully created a character
+	 * @throws AccessException if there was an error connecting to the model
+	 */
+	boolean createCharacter(Character_Creation_Packet ip) throws AccessException;
 	
 	/**
 	 * @param player

@@ -16,6 +16,7 @@ import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemPrototype.EquipmentPrototype;
 import net.co.java.item.ItemPrototype;
+import net.co.java.packets.Character_Creation_Packet;
 import net.co.java.server.Server.Map;
 
 /**
@@ -74,6 +75,8 @@ public class PostgreSQL extends AbstractModel {
 			stmt.setString(1, username);
 			ResultSet rs = stmt.executeQuery();
 			
+			conn.close();
+			
 			if(rs.next()) {
 				return rs.getString("password").equals(password);
 			} else {
@@ -123,6 +126,8 @@ public class PostgreSQL extends AbstractModel {
 			stmt.setString(1, accountName);
 			ResultSet rs = stmt.executeQuery();
 			
+			conn.close();
+			
 			if(rs.next()) {
 				characterName = rs.getString(1);
 			} else {
@@ -143,9 +148,10 @@ public class PostgreSQL extends AbstractModel {
 		
 		try {
 			Connection conn = getConnection();
-			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM characters WHERE character_name = ?");
+			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM characters WHERE character_name = ? AND account_username = ?");
 			stmt.setString(1, promise.getCharacterName());
-			ResultSet rs = stmt.executeQuery();
+			stmt.setString(2, promise.getAccountName());
+			ResultSet rs = stmt.executeQuery();	
 
 			if(rs.next()) {
 				player.setLevel(rs.getInt("character_level"));
@@ -167,11 +173,67 @@ public class PostgreSQL extends AbstractModel {
 				player.setMana(rs.getInt("character_curmp"));
 				this.players.put(promise.getIdentity(), player);
 		
-			}	
+			}
+			
+			conn.close();
 		} catch (SQLException e) {
 			throw new AccessException(e);
 		}
 		return player;	
+	}
+
+	@Override
+	public boolean createCharacter(Character_Creation_Packet ip) throws AccessException {
+		
+		try {
+			Connection conn = getConnection();
+			
+			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM characters WHERE character_name = ?"); 
+			stmt.setString(1, ip.getCharacterName());
+			ResultSet rs = stmt.executeQuery();	
+			
+			if(!rs.next()) /* If query resulted in no results, character name has not been taking yet.  */
+			{	
+				rs.close();
+				stmt = conn.prepareStatement("INSERT INTO characters "
+						+ "(account_username, character_name, character_level, character_experience, character_strength, character_agility, "
+						+ "character_vitality, character_spirit, character_attributepoints, character_profession, character_mesh, character_gold, character_cps, "
+						+ "character_map, character_x, character_y, character_hair, character_reborn, character_curhp, character_curmp)"
+						+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				
+				stmt.setString(1, ip.getAccountName());
+				stmt.setString(2, ip.getCharacterName());
+				stmt.setInt(3, 1); // level 1
+				stmt.setInt(4, 0);
+				stmt.setInt(5, 1); // str
+				stmt.setInt(6, 1); // agi
+				stmt.setInt(7, 1); // vit
+				stmt.setInt(8, 1); // spi
+				stmt.setInt(9, 0); // rem attributes
+				stmt.setInt(10, ip.getProffession());
+				stmt.setInt(11, (38000 + ip.getBody())); // mesh (standard avatar = 38) 
+				stmt.setInt(12, 0); // gold
+				stmt.setInt(13, 0); //cps
+				stmt.setInt(14, 1002); // tc
+				stmt.setInt(15, 439); // x
+				stmt.setInt(16, 383); // y
+				stmt.setInt(17, 315); // hair
+				stmt.setInt(18, 0); // rb count
+				stmt.setInt(19, 100);
+				stmt.setInt(20, 0);
+				
+				stmt.execute();
+				conn.close(); 
+				
+				return true;
+			} else {
+				return false;
+			}
+			
+					
+		} catch (SQLException e) {
+			throw new AccessException(e);
+		}
 	}
 
 }

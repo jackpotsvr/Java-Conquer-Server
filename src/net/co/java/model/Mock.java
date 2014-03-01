@@ -11,6 +11,7 @@ import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemPrototype.EquipmentPrototype;
 import net.co.java.item.ItemPrototype;
+import net.co.java.packets.Character_Creation_Packet;
 import net.co.java.server.Server.Map;
 
 /**
@@ -109,6 +110,13 @@ public class Mock extends AbstractModel {
 		player.setProfession(15);
 		this.players.put(promise.getIdentity(), player);
 		return player;
+	}
+
+	@Override
+	public boolean createCharacter(Character_Creation_Packet ip)
+			throws AccessException {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

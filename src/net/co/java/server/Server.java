@@ -17,6 +17,7 @@ import net.co.java.model.AccessException;
 import net.co.java.model.AuthorizationPromise;
 import net.co.java.model.Model;
 import net.co.java.model.PostgreSQL;
+import net.co.java.packets.Character_Creation_Packet;
 import net.co.java.packets.GeneralData;
 import net.co.java.packets.IncomingPacket;
 import net.co.java.packets.ItemUsage;
@@ -135,9 +136,9 @@ public class Server {
 			 * @throws AccessException 
 			 */
 			private void AuthLogin(IncomingPacket packet) throws AccessException {
-				String accountName	= packet.readString(4,16).replaceAll("[\u0000]", "");;
-				String password	= packet.readPassword().replaceAll("[\u0000]", "");;
-				String serverName	= packet.readString(36, 16).replaceAll("[\u0000]", "");;
+				String accountName	= packet.readString(4,16).replaceAll("[\u0000]", "");
+				String password	= packet.readPassword().replaceAll("[\u0000]", "");
+				String serverName	= packet.readString(36, 16).replaceAll("[\u0000]", "");
 				
 				if (model.isAuthorised(serverName, accountName, password)) {
 					PacketWriter pw = new PacketWriter(PacketType.AUTH_LOGIN_FORWARD, 0x20);
@@ -251,9 +252,11 @@ public class Server {
 			@Override
 			protected void disconnected() {
 				AMOUNT_OF_PLAYERS--;
-				player.getLocation().getMap().removeEntity(player);
-				player.removeEntity().sendToSurroundings(player);
 				System.out.println("Amount of players: " + AMOUNT_OF_PLAYERS);
+				if ( player != null ) {
+					player.getLocation().getMap().removeEntity(player);
+					player.removeEntity().sendToSurroundings(player);
+				}
 			}
 			
 			/**
@@ -325,6 +328,22 @@ public class Server {
 					MessagePacket mp = new MessagePacket(packet);
 					System.out.println(mp.getFrom() + " said " + mp.getMessage() + ".");
 					break;
+				case CHARACTER_CREATION_PACKET:
+					if (model.createCharacter(new Character_Creation_Packet(packet)))
+					{
+						new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "ANSWER_OK")
+						.setMessageType(MessageType.LoginInfo)
+						.build().send(this);
+						this.close();
+					}
+					else
+					{
+						new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "Failed to create character. Character name already in use.")
+						.setMessageType(MessageType.Dialog)
+						.build().send(this);
+					}
+					break;
+				
 				default:
 					System.out.println("Unimplemented " + packet.getPacketType().toString());
 					break;
