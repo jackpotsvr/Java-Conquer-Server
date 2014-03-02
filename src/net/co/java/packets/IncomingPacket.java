@@ -68,7 +68,12 @@ public class IncomingPacket {
 	public String readString(int offset, int length) {
         byte[] output = new byte[length];
         System.arraycopy(data, offset, output, 0, length);
-        return new String(output);
+        /* 
+         * We had to replace the null termination for Strings because
+         * they did not work well with database models:
+         * ERROR: invalid byte sequence for encoding "UTF8": 0x00  FIX 
+         */ 
+        return new String(output).replaceAll("[\u0000]", "");
 	}
 	
 	/**

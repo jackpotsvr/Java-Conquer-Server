@@ -268,7 +268,6 @@ public class PostgreSQL extends AbstractModel {
 				player.setDexterity(rs.getInt("character_agility"));
 				player.setVitality(rs.getInt("character_vitality"));
 				player.setSpirit(rs.getInt("character_spirit"));
-				player.setAttributePoints(rs.getInt("character_attributepoints"));
 				player.setProfession(rs.getInt("character_profession"));
 				player.setMesh(rs.getInt("character_mesh"));
 				player.setGold(rs.getInt("character_gold"));

@@ -20,14 +20,13 @@ public class Player extends Entity {
 	
 
 	private Client client;
-	private int gold = 1000;
-	private int cps = 215;
-	private int experience = 34195965;
-	private int strength = 51;
-	private int dexterity = 52;
-	private int vitality = 53;
-	private int spirit = 54;
-	private int attributePoints = 500;
+	private int gold = 0;
+	private int cps = 0;
+	private int experience = 0;
+	private int strength = 1;
+	private int dexterity = 1;
+	private int vitality = 1;
+	private int spirit = 1;
 	
 	protected Guild guild = null;	                
 	protected GuildRank guildRank = GuildRank.None; 
@@ -119,12 +118,48 @@ public class Player extends Entity {
 		this.spirit = spirit;
 	}
 
+	/**
+	 * @return the amount of remaining attribute points.
+	 * Attribute points are calculated based on your reborn path
+	 * and current level. 
+	 */
 	public int getAttributePoints() {
-		return attributePoints;
-	}
-
-	public void setAttributePoints(int attributePoints) {
-		this.attributePoints = attributePoints;
+		// Reborn characters start at level 15 and level attribute
+		// point assignment starts at level 15 as well
+		if ( level < 15 )
+			return 0;
+		// 52 Attribute points by default and 3 attribute points per level after level 15
+		int ap = 52 + 3 * (level - 15);
+		if(rebornCount > 1) {
+			// After rebirth, players will receive 30 attribute points
+			ap += 30;
+			// In addition, more bonus attribute points (55 at most) will
+			// be awarded if you were reborn at higher level.
+			int fstRbLvl = 130;
+			boolean fstRbWater = false;
+			if (fstRbWater) {
+				// Water taoists can reborn at level 110 and therefore
+				// have different stats
+				ap += ((fstRbLvl - 110) / 2);
+			} else {
+				ap += fstRbLvl - 120;
+			}
+			// Second reborn additional attribute points
+			if(rebornCount > 2) {
+				int secRbLvl = 130;
+				boolean secRbWater = false;
+				if (secRbWater) {
+					// Water taoists can reborn at level 110 and therefore
+					// have different stats
+					ap += ((secRbLvl - 110) / 2);
+				} else {
+					ap += secRbLvl - 120;
+				}
+			}
+		}
+		// Remove the assigned points
+		ap -= strength + dexterity + vitality + spirit;
+		return ap;
 	}
 
 	public int getPkPoints() {
@@ -161,8 +196,47 @@ public class Player extends Entity {
 
 	@Override
 	public int getMaxHP() {
-		return vitality * 24 + strength * 3 + dexterity * 3 + spirit * 3;
-	}	
+		int hp = vitality * 24;
+		hp += strength * 3;
+		hp += dexterity * 3;
+		hp += spirit * 3;
+		
+		if(profession >= 10 && profession <= 15) {
+			if ( level >= 110 ) {
+				hp *= 1.15;
+			} else if ( level >= 100 ) {
+				hp *= 1.12;
+			} else if ( level >= 70 ) {
+				hp *= 1.1;
+			} else if ( level >= 40 ) {
+				hp *= 1.08;
+			} else if ( level >= 15 ) {
+				hp *= 1.05;
+			}
+		}
+		
+		for ( EquipmentInstance eq : inventory.getEquipments()) {
+			hp += eq.enchant;
+		}
+		
+		return hp;
+	}
+	
+	public int getMaxMana() {
+		int mana = spirit * 5;
+		if(profession >= 100) {
+			if ( level >= 110 ) {
+				mana *= 6;
+			} else if ( level >= 100 ) {
+				mana *= 5;
+			} else if ( level >= 70 ) {
+				mana *= 4;
+			} else if ( level >= 40 ) {
+				mana *= 3;
+			}
+		}
+		return mana;
+	}
 	
 	/**
 	 * @return the {@code Client} instance for this {@code User},
@@ -188,7 +262,7 @@ public class Player extends Entity {
 		.putUnsignedShort(this.dexterity)
 		.putUnsignedShort(this.vitality)
 		.putUnsignedShort(this.spirit)
-		.putUnsignedShort(this.attributePoints)
+		.putUnsignedShort(this.getAttributePoints())
 		.putUnsignedShort(this.HP)
 		.putUnsignedShort(this.mana)
 		.putUnsignedShort(this.pkPoints)
@@ -381,6 +455,18 @@ public class Player extends Entity {
 			ItemInstance[] result = new ItemInstance[position];
 			for ( int i = 0; i < position; i++ )
 				result[i] = items[i];
+			return result;
+		}
+		
+		public EquipmentInstance[] getEquipments() {
+			int amount = 0;
+			for ( int i = 0; i < equipments.length; i++ )
+				if ( equipments[i] != null )
+					amount++;
+			EquipmentInstance[] result = new EquipmentInstance[amount];
+			for ( int i = 0, k = 0; i < equipments.length; i++ )
+				if ( equipments[i] != null )
+					result[k++] = equipments[i];
 			return result;
 		}
 		

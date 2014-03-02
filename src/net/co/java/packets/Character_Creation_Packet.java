@@ -16,9 +16,9 @@ public class Character_Creation_Packet
 	
 	public Character_Creation_Packet(IncomingPacket ip)
 	{
-		accountName = ip.readString(4, 16).replaceAll("[\u0000]", "");  /* ERROR: invalid byte sequence for encoding "UTF8": 0x00  FIX*/ 
-		characterName = ip.readString(20, 16).replaceAll("[\u0000]", "");  /* ERROR: invalid byte sequence for encoding "UTF8": 0x00  FIX*/ 
-		password = ip.readString(36, 16).replaceAll("[\u0000]", "");  /* ERROR: invalid byte sequence for encoding "UTF8": 0x00  FIX*/ 
+		accountName = ip.readString(4, 16);
+		characterName = ip.readString(20, 16);
+		password = ip.readString(36, 16);
 		body = ip.readUnsignedShort(52);
 		proffession = ip.readUnsignedShort(54);
 		identity = ip.readUnsignedInt(56); 

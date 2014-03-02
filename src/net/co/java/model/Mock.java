@@ -24,6 +24,8 @@ import net.co.java.server.Server.Map;
  */
 public class Mock extends AbstractModel {
 	
+	private Player player;
+	
 	public Mock() throws FileNotFoundException {
 		createSomeStuff();
 	}
@@ -51,7 +53,7 @@ public class Mock extends AbstractModel {
 	public AuthorizationPromise createAuthorizationPromise(String accountName)
 			throws AccessException {
 		Long identity = this.createPlayerIdentity();
-		String characterName = "Jackpotsvr";
+		String characterName = ( player == null ) ? null : player.getName();
 		AuthorizationPromise promise = new AuthorizationPromise(identity, accountName, characterName);
 		this.authPromises.put(identity, promise);
 		return promise;
@@ -59,7 +61,7 @@ public class Mock extends AbstractModel {
 
 	@Override
 	public Player loadPlayer(AuthorizationPromise promise) throws AccessException {
-		Player player = new Player(promise.getIdentity(), promise.getCharacterName(), null, 500);
+/*		Player player = new Player(promise.getIdentity(), promise.getCharacterName(), null, 500);
 		player.setMesh(381004);
 		player.setHairstyle(315);
 		player.setGold(1111);
@@ -76,7 +78,7 @@ public class Mock extends AbstractModel {
 		player.setLevel(130);
 		player.setRebornCount(0);
 		player.setProfession(15);
-		player.setProficiencyExp(Proficiency.BLADE, 210000000);
+		player.setProficiencyExp(Proficiency.BLADE, 210000000);*/
 		this.players.put(promise.getIdentity(), player);
 		player.setLocation(Map.CentralPlain.new Location(382, 341), null);
 		return player;
@@ -85,8 +87,20 @@ public class Mock extends AbstractModel {
 	@Override
 	public boolean createCharacter(Character_Creation_Packet ip)
 			throws AccessException {
-		// TODO Auto-generated method stub
-		return false;
+		player = new Player(ip.getIdentity(), ip.getCharacterName(), null, 0);
+		player.setLevel(1);
+		player.setStrength(1);
+		player.setDexterity(1);
+		player.setSpirit(1);
+		player.setVitality(1);
+		player.setProfession(ip.getProffession());
+		player.setMesh((38000 + ip.getBody()));
+		player.setGold(0);
+		player.setCps(0);
+		player.setRebornCount(0);
+		player.setHP(player.getMaxHP());
+		player.setExperience(0);
+		return true;
 	}
 
 	@Override

@@ -171,7 +171,12 @@ public abstract class Entity implements Spawnable {
 	
 	public void setHP(int HP) {
 		// Prevent health points below zero
-		this.HP = ( HP > 0 ) ? HP : 0;
+		if ( HP < 0 )
+			HP = 0;
+		int maxHP = getMaxHP();
+		if ( HP > maxHP )
+			HP = maxHP;
+		this.HP = HP;
 	}
 	
 	public boolean isDead() {
@@ -183,6 +188,7 @@ public abstract class Entity implements Spawnable {
 	}
 	
 	public abstract int getMaxHP();
+	public abstract int getMaxMana();
 
 	@Override
 	public Location getLocation() {

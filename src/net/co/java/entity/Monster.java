@@ -15,7 +15,7 @@ public class Monster extends Entity {
 	@Override
 	public int getMaxHP() {
 		// TODO Auto-generated method stub
-		return 0;
+		return getHP();
 	}
 
 	@Override
@@ -47,6 +47,12 @@ public class Monster extends Entity {
 		.putUnsignedByte(1)
 		.putUnsignedByte(name.length())
 		.putString(name);
+	}
+
+	@Override
+	public int getMaxMana() {
+		// TODO Auto-generated method stub
+		return getMana();
 	}
 	
 }
