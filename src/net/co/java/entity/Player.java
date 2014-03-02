@@ -335,7 +335,7 @@ public class Player extends Entity {
 		// public static final int STEED = 12;	
 		private int position = 0;
 		private final ItemInstance[] items = new ItemInstance[CAPACITY];
-		private final EquipmentInstance[] equipments = new EquipmentInstance[9];
+		private final EquipmentInstance[] equipments = new EquipmentInstance[10];
 		
 		/**
 		 * Add an item to the Players inventory and update the client through
@@ -387,7 +387,7 @@ public class Player extends Entity {
 		 * @return true if successfully equipped the item, or false if not.
 		 */
 		public boolean equip(int slot, EquipmentInstance equipment) {
-			if ( slot > 0 && slot < 10 ) {
+			if ( slot > 0 && slot < 11 ) {
 				if ( contains(equipment) ) {
 					// Remove the item from the inventory
 					removeItem(equipment);
@@ -410,7 +410,7 @@ public class Player extends Entity {
 		 */
 		public boolean unequip(int slot) {
 			// Slot should be an equipment slot and inventory should not be full
-			if ( slot > 0 && slot < 10 && !isFull()) {
+			if ( slot > 0 && slot < 11 && !isFull()) {
 				EquipmentInstance oldItem = equipments[slot];
 				if ( oldItem != null ) {
 					addItem(oldItem);

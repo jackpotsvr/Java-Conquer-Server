@@ -18,7 +18,8 @@ public  enum PacketType {
 	ENTITY_SPAWN_PACKET (0x03F6),
 	ITEM_INFORMATION_PACKET(0x3F0),
 	ITEM_USAGE_PACKET (0x3F1),
-	PROFICIENCY(0x401);
+	PROFICIENCY(0x401);//,
+	//PORTAL_PACKET (0x24);
 	
 	private final int type;
 	
