@@ -161,8 +161,47 @@ public class Player extends Entity {
 
 	@Override
 	public int getMaxHP() {
-		return vitality * 24 + strength * 3 + dexterity * 3 + spirit * 3;
-	}	
+		int hp = vitality * 24;
+		hp += strength * 3;
+		hp += dexterity * 3;
+		hp += spirit * 3;
+		
+		if(profession >= 10 && profession <= 15) {
+			if ( level >= 110 ) {
+				hp *= 1.15;
+			} else if ( level >= 100 ) {
+				hp *= 1.12;
+			} else if ( level >= 70 ) {
+				hp *= 1.1;
+			} else if ( level >= 40 ) {
+				hp *= 1.08;
+			} else if ( level >= 15 ) {
+				hp *= 1.05;
+			}
+		}
+		
+		for ( EquipmentInstance eq : inventory.getEquipments()) {
+			hp += eq.enchant;
+		}
+		
+		return hp;
+	}
+	
+	public int getMaxMana() {
+		int mana = spirit * 5;
+		if(profession >= 100) {
+			if ( level >= 110 ) {
+				mana *= 6;
+			} else if ( level >= 100 ) {
+				mana *= 5;
+			} else if ( level >= 70 ) {
+				mana *= 4;
+			} else if ( level >= 40 ) {
+				mana *= 3;
+			}
+		}
+		return mana;
+	}
 	
 	/**
 	 * @return the {@code Client} instance for this {@code User},
@@ -381,6 +420,18 @@ public class Player extends Entity {
 			ItemInstance[] result = new ItemInstance[position];
 			for ( int i = 0; i < position; i++ )
 				result[i] = items[i];
+			return result;
+		}
+		
+		public EquipmentInstance[] getEquipments() {
+			int amount = 0;
+			for ( int i = 0; i < equipments.length; i++ )
+				if ( equipments[i] != null )
+					amount++;
+			EquipmentInstance[] result = new EquipmentInstance[amount];
+			for ( int i = 0, k = 0; i < equipments.length; i++ )
+				if ( equipments[i] != null )
+					result[k++] = equipments[i];
 			return result;
 		}
 		

@@ -314,6 +314,8 @@ public class Server {
 						model.loadInventory(player);
 						model.loadEquipment(player);
 						player.sendProficiencies();
+						System.out.println("I think the max HP is " + player.getMaxHP());
+						System.out.println("I think the max Mana is " + player.getMaxMana());
 					}
 					else
 					{
