@@ -23,6 +23,7 @@ import net.co.java.packets.MessagePacket;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
 import net.co.java.packets.MessagePacket.MessageType;
+import net.co.java.server.Server.Map.Location;
 
 /**
  * The server is the main class for the Conquer Online server. 
@@ -51,8 +52,8 @@ public class Server {
 	 * @throws IOException
 	 */
 	public Server() throws IOException {
-		//this.model = new PostgreSQL(Config.HOST, Config.USERNAME, Config.PASSWORD);
-		this.model = new Mock();
+		this.model = new PostgreSQL(Config.HOST, Config.USERNAME, Config.PASSWORD);
+		//this.model = new Mock();
 		this.new AuthServer();
 		this.new GameServer();
 	}
@@ -373,6 +374,12 @@ public class Server {
 					player.jump(coordinates[0], coordinates[1], packet);
 					break;
 				case LOCATION:
+					player.retrieveLocation().build().send(this);
+					break;
+				case PORTAL:
+					int[] values = gd.getShorts();
+					System.out.printf("GENERAL DATA: %s , %s ,%s", values[0], values[1], values[2]);
+					player.setLocation(Map.CentralPlain.new Location(250, 180), null);
 					player.retrieveLocation().build().send(this);
 					break;
 				default:

@@ -179,6 +179,7 @@ public class GeneralData {
 		UNIMPLEMENTED		(0x00), // 0
 		LOCATION 			(0x4A), // 74 
 		CHANGE_DIRECTION 	(0x4F), // 79
+		PORTAL 				(0x55), // 85
 		GET_SURROUNDINGS	(0x72), //114
 		ENTITY_REMOVE		(0x84), // 132
 		JUMP				(0x85); //133
