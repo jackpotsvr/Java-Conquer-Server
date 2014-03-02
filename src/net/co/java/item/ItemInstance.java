@@ -1,7 +1,5 @@
 package net.co.java.item;
 
-import java.util.HashMap;
-
 import net.co.java.item.ItemPrototype.EquipmentPrototype;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
@@ -25,10 +23,6 @@ public class ItemInstance {
 	public ItemInstance(Long UID, ItemPrototype ip) {
 		this.uniqueIdentifier = UID;
 		this.itemPrototype = ip;
-		// Add the item to the Map
-		synchronized(ITEM_INSTANCES) {
-			ITEM_INSTANCES.put(UID, this);
-		}
 	}
 	
 	public static enum Mode {
@@ -98,14 +92,14 @@ public class ItemInstance {
 	}
 
 	public class ItemInformationPacket extends PacketWriter {
-	
-		public ItemInformationPacket(ItemInstance.Mode mode, EquipmentSlot slot) {
+		
+		public ItemInformationPacket(ItemInstance.Mode mode, int slot) {
 			super(PacketType.ITEM_INFORMATION_PACKET, 36);
 			this.putUnsignedInteger(uniqueIdentifier);
 			this.putUnsignedInteger(itemPrototype.identifier);
 			this.setOffset(16);
 			this.putUnsignedShort(mode.value);
-			this.putUnsignedByte(slot.value);
+			this.putUnsignedByte(slot);
 			
 			if(ItemInstance.this instanceof EquipmentInstance) {
 				EquipmentInstance equipment = (EquipmentInstance) ItemInstance.this;
@@ -120,14 +114,6 @@ public class ItemInstance {
 				this.putUnsignedByte(equipment.bless);
 				this.putUnsignedByte(equipment.enchant);
 			}
-		}
-	}
-
-	private static HashMap<Long, ItemInstance> ITEM_INSTANCES = new HashMap<Long, ItemInstance>();
-	
-	public static ItemInstance get(long id) {
-		synchronized(ITEM_INSTANCES) {
-			return ITEM_INSTANCES.get(id);
 		}
 	}
 
@@ -214,13 +200,6 @@ public class ItemInstance {
 		public EquipmentInstance setEnchant(int enchant) {
 			this.enchant = enchant;
 			return this;
-		}
-		
-		public static EquipmentInstance get(long id) {
-			ItemInstance item = ItemInstance.get(id);
-			if ( item instanceof EquipmentInstance)
-				return (EquipmentInstance) item;
-			return null;
 		}
 
 		/* (non-Javadoc)

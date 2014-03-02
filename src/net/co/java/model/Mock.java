@@ -2,11 +2,12 @@ package net.co.java.model;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
+import java.util.InputMismatchException;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 import net.co.java.entity.Monster;
 import net.co.java.entity.Player;
-import net.co.java.item.EquipmentSlot;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemPrototype.EquipmentPrototype;
@@ -31,12 +32,7 @@ public class Mock extends AbstractModel {
 		// We spawn a BullMessenger in Twin City for testing purposes here
 		Map.CentralPlain.addEntity(new Monster(Map.CentralPlain.new Location(378, 343), 564564, "BullMessenger",  112, 117, 55000));
 		// Load the item data
-		ItemPrototype.read(new File("ini/COItems.txt"));
-		// Create an item
-		new EquipmentInstance(2342239l, (EquipmentPrototype) ItemPrototype.get(480029l))
-			.setFirstSocket(EquipmentInstance.Socket.SuperFury)
-			.setSecondSocket(EquipmentInstance.Socket.SuperRainbowGem)
-			.setDura(1500).setBless(3).setPlus(7).setEnchant(172);
+		readItemPrototypes(new File("ini/COItems.txt"));
 	}
 	
 	@Override
@@ -45,36 +41,7 @@ public class Mock extends AbstractModel {
 	}
 
 	@Override
-	public ItemInstance[] getInventory(Player player) {
-		return new ItemInstance[] { EquipmentInstance.get(2342239l) };
-	}
-
-	@Override
-	public HashMap<EquipmentSlot, EquipmentInstance> getEquipments(Player player) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ItemPrototype getItemPrototype(long staticID) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ItemInstance getItemInstance(long id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	protected ItemPrototype fetchItemPrototype(long id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected ItemInstance fetchItemInstance(long id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -109,6 +76,7 @@ public class Mock extends AbstractModel {
 		player.setRebornCount(0);
 		player.setProfession(15);
 		this.players.put(promise.getIdentity(), player);
+		player.setLocation(Map.CentralPlain.new Location(382, 341), null);
 		return player;
 	}
 
@@ -120,21 +88,85 @@ public class Mock extends AbstractModel {
 	}
 
 	@Override
-	public void setInventory(Player player) throws AccessException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void addItemPrototype(long item_sid) throws AccessException {
-		// TODO Auto-generated method stub
-		
+	public void loadInventory(Player player) throws AccessException {
+		ItemInstance item = new EquipmentInstance(2342239l, this.getEquipmentPrototype(480029l))
+			.setFirstSocket(EquipmentInstance.Socket.SuperFury)
+			.setSecondSocket(EquipmentInstance.Socket.SuperRainbowGem)
+			.setDura(1500).setBless(3).setPlus(7).setEnchant(172);
+		itemInstances.put(2342239l, item);
+		player.inventory.addItem(item);
+		ItemInstance item2 = new EquipmentInstance(2342240l, this.getEquipmentPrototype(480029l))
+			.setFirstSocket(EquipmentInstance.Socket.SuperDragon)
+			.setSecondSocket(EquipmentInstance.Socket.SuperPhoenix)
+			.setDura(1500).setBless(3).setPlus(7).setEnchant(172);
+		itemInstances.put(2342240l, item2);
+		player.inventory.addItem(item2);
 	}
 
 	@Override
 	public void loadEquipment(Player player) throws AccessException {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	private void readItemPrototypes(File file) throws FileNotFoundException {
+		Scanner sc = new Scanner(file);		
+		if(sc.hasNext()&&sc.next().equalsIgnoreCase("[Items]")) {
+			while(sc.hasNext()) {
+				try {
+					constructItemPrototype(sc.next());
+				} catch (Exception e) {	}
+			}
+		}
+		
+		sc.close();
+		System.out.println("Loaded " + itemPrototypes.size() + " item prototypes");
+	}
+
+	/**
+	 * 
+	 * @param string element
+	 * @return a new {@code ItemPrototype} instance
+	 * @throws InputMismatchException
+     * @throws NoSuchElementException if input is exhausted
+	 */
+	private ItemPrototype constructItemPrototype(String string) {
+		String[] split = string.split("=");
+		Long id = Long.valueOf(split[0]);
+		boolean isEquipment = ItemPrototype.isEquipment(id);
+		Scanner sc = new Scanner(split[1]);
+		sc.useDelimiter("-[^\\w]*");
+		
+		String name = sc.next();
+		int classReq = sc.nextInt();
+		int profReq = sc.nextInt();
+		int lvlReq = sc.nextInt();
+		int sexReq = sc.nextInt();
+		int strReq = sc.nextInt();
+		int agiReq = sc.nextInt();
+		int worth = sc.nextInt();
+		int minAtk = sc.nextInt();
+		int maxAtk = sc.nextInt();
+		int defence = sc.nextInt();
+		int mDef = sc.nextInt();
+		int mAttack = sc.nextInt();
+		int dodge = sc.nextInt();
+		int agility = sc.nextInt();
+		int CPWorth = sc.nextInt();
+		
+		int maxDura = 0;
+		if(sc.hasNextInt()) {
+			maxDura = sc.nextInt() * 100;
+		}
+	
+		sc.close();
+		
+		ItemPrototype item = isEquipment ? new EquipmentPrototype(id, name, maxDura, worth,
+				CPWorth, classReq, profReq, lvlReq, sexReq, strReq, agiReq,
+				minAtk, maxAtk, defence, mDef, mAttack, dodge, agility)
+				: new ItemPrototype(id, name, maxDura, worth, CPWorth);
+		itemPrototypes.put(id, item);
+		return item;
 	}
 
 }

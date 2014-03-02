@@ -1,12 +1,5 @@
 package net.co.java.item;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.InputMismatchException;
-import java.util.NoSuchElementException;
-import java.util.Scanner;
-
 /**
  * Item prototype is used for the static attribute
  * of unique item instances
@@ -21,13 +14,12 @@ public class ItemPrototype {
 	public final int worth;
 	public final int CPWorth;
 	
-	ItemPrototype(Long identifier, String name, int maxDura, int worth, int CPWorth) {
+	public ItemPrototype(Long identifier, String name, int maxDura, int worth, int CPWorth) {
 		this.identifier = identifier;
 		this.name = name;
 		this.maxDura = maxDura;
 		this.worth = worth;	
 		this.CPWorth = CPWorth;
-		ITEM_PROTOTYPES.put(identifier, this);
 	}
 	
 	
@@ -131,7 +123,7 @@ public class ItemPrototype {
 				+ CPWorth + "]";
 	}
 
-	static boolean isEquipment(long identifier) {
+	public static boolean isEquipment(long identifier) {
 		return (  110000 <= identifier && identifier <= 160250 ) || // Armour
 				( 410003 <= identifier && identifier <= 580339 ) || // Weapons
 				( 900300 <= identifier && identifier <= 900999 );   // Shields
@@ -208,74 +200,6 @@ public class ItemPrototype {
 		}
 		
 		
-	}
-
-	private final static HashMap<Long, ItemPrototype> ITEM_PROTOTYPES = new HashMap<Long, ItemPrototype>(9999);
-
-	public static ItemPrototype get(long id) {
-		return ITEM_PROTOTYPES.get(id);
-	}
-	
-	/**
-	 * 
-	 * @param string element
-	 * @return a new {@code ItemPrototype} instance
-	 * @throws InputMismatchException
-     * @throws NoSuchElementException if input is exhausted
-	 */
-	static ItemPrototype read(String string) {
-		String[] split = string.split("=");
-		Long id = Long.valueOf(split[0]);
-		boolean isEquipment = isEquipment(id);
-		Scanner sc = new Scanner(split[1]);
-		sc.useDelimiter("-[^\\w]*");
-		
-		String name = sc.next();
-		int classReq = sc.nextInt();
-		int profReq = sc.nextInt();
-		int lvlReq = sc.nextInt();
-		int sexReq = sc.nextInt();
-		int strReq = sc.nextInt();
-		int agiReq = sc.nextInt();
-		int worth = sc.nextInt();
-		int minAtk = sc.nextInt();
-		int maxAtk = sc.nextInt();
-		int defence = sc.nextInt();
-		int mDef = sc.nextInt();
-		int mAttack = sc.nextInt();
-		int dodge = sc.nextInt();
-		int agility = sc.nextInt();
-		int CPWorth = sc.nextInt();
-		
-		int maxDura = 0;
-		if(sc.hasNextInt()) {
-			maxDura = sc.nextInt() * 100;
-		}
-	
-		sc.close();
-		
-		return isEquipment ? new EquipmentPrototype(id, name, maxDura, worth,
-				CPWorth, classReq, profReq, lvlReq, sexReq, strReq, agiReq,
-				minAtk, maxAtk, defence, mDef, mAttack, dodge, agility)
-				: new ItemPrototype(id, name, maxDura, worth, CPWorth);
-	}
-
-	public static void read(File file) throws FileNotFoundException {
-		Scanner sc = new Scanner(file);		
-		if(sc.hasNext()&&sc.next().equalsIgnoreCase("[Items]")) {
-			while(sc.hasNext()) {
-				try {
-					read(sc.next());
-				} catch (Exception e) {	}
-			}
-		}
-		
-		sc.close();
-		System.out.println("Loaded " + ITEM_PROTOTYPES.size() + " item prototypes");
-	}
-	
-	public static void main(String[] args) throws FileNotFoundException {
-		read(new File("ini/COItems.txt"));
 	}
 
 }

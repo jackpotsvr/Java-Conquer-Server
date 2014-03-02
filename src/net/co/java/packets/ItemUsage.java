@@ -1,7 +1,5 @@
 package net.co.java.packets;
 
-import net.co.java.item.ItemInstance;
-import net.co.java.item.EquipmentSlot;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.server.Server.GameServer.Client;
 
@@ -104,18 +102,10 @@ public class ItemUsage {
 			new ItemUsage(client.getIdentity(), 0, mode, timestamp).build().send(client);
 			break;
 		case EquipItem:
-			// Remove the item from the inventory
-			new ItemUsage(identity, parameter, Mode.RemoveInventory).build().send(client);
-			// TODO Swap possible existing item in slot to the inventory
-			// Equip the item
-			EquipmentInstance.get(identity).new ItemInformationPacket(ItemInstance.Mode.DEFAULT, EquipmentSlot.valueOf((int) parameter)).send(client);
+			client.getPlayer().inventory.equip((int) parameter, (EquipmentInstance) client.getModel().getItemInstance(identity));
 			break;
 		case UnEquipItem:
-			EquipmentInstance item = EquipmentInstance.get(identity);
-			// Remove the item from equipment [ Parameter = slot ]
-			new ItemUsage(identity, parameter, ItemUsage.Mode.RemoveEquipment).build().send(client);
-			// Add the item to the backpack
-			item.new ItemInformationPacket(ItemInstance.Mode.DEFAULT, EquipmentSlot.Inventory).send(client);
+			client.getPlayer().inventory.unequip((int) parameter);
 			break;
 		case AddVendingItem:
 		case BuyItem:

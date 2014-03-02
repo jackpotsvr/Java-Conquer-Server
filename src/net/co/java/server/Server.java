@@ -10,12 +10,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import net.co.java.config.Config;
 import net.co.java.entity.Entity;
 import net.co.java.entity.Player;
-import net.co.java.item.EquipmentSlot;
-import net.co.java.item.ItemInstance;
-import net.co.java.item.ItemInstance.EquipmentInstance;
-import net.co.java.item.ItemInstance.Mode;
 import net.co.java.model.AccessException;
 import net.co.java.model.AuthorizationPromise;
+import net.co.java.model.Mock;
 import net.co.java.model.Model;
 import net.co.java.model.PostgreSQL;
 import net.co.java.packets.Character_Creation_Packet;
@@ -54,8 +51,8 @@ public class Server {
 	 * @throws IOException
 	 */
 	public Server() throws IOException {
-		this.model = new PostgreSQL(Config.HOST, Config.USERNAME, Config.PASSWORD);
-		//this.model = new Mock();
+		//this.model = new PostgreSQL(Config.HOST, Config.USERNAME, Config.PASSWORD);
+		this.model = new Mock();
 		this.new AuthServer();
 		this.new GameServer();
 	}
@@ -268,6 +265,13 @@ public class Server {
 			}
 			
 			/**
+			 * @return the model for this server
+			 */
+			public Model getModel() {
+				return model;
+			}
+			
+			/**
 			 * @return the identity for this Client
 			 */
 			public long getIdentity() {
@@ -307,24 +311,8 @@ public class Server {
 						// Send the character information packet
 						player.characterInformation().send(this);
 						// Send an item
-						model.setInventory(player);
+						model.loadInventory(player);
 						model.loadEquipment(player);
-						
-						for ( ItemInstance it : player.getInventory() ) {
-							it.new ItemInformationPacket(Mode.DEFAULT, EquipmentSlot.Inventory).send(this);
-						}
-						
-						// send all the items to the client (equpiment) 
-						for(int i = 1; i<9; i++)
-						{
-							if(player.getEquipmentSlots()[i] != null)
-								player.getEquipmentSlots()[i].new ItemInformationPacket(Mode.DEFAULT, EquipmentSlot.valueOf(i)).send(this);
-						}
-				
-						//player.getInventory().
-						
-				
-						//EquipmentInstance.get(2342239l).new ItemInformationPacket(Mode.DEFAULT, EquipmentSlot.Inventory).send(this);
 					}
 					else
 					{

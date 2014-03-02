@@ -1,22 +1,17 @@
 package net.co.java.model;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 
 import net.co.java.entity.Monster;
 import net.co.java.entity.Player;
-import net.co.java.item.EquipmentSlot;
-import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemPrototype.EquipmentPrototype;
 import net.co.java.item.ItemPrototype;
@@ -36,8 +31,6 @@ public class PostgreSQL extends AbstractModel {
 	
 	private final String PASSWORD;
 	
-	private static SecureRandom random = new SecureRandom();
-	
 	/**
 	 * Construct a new PostgreSQL model
 	 * @param host
@@ -54,27 +47,15 @@ public class PostgreSQL extends AbstractModel {
 	
 	private void createSomeStuff() throws FileNotFoundException{
 		System.out.println("Creating the magical world of Conquer Online");
-		// We spawn a BullMessenger in Twin City for testing purposes here
+		// TODO We spawn a BullMessenger in Twin City for testing purposes here
 		Map.CentralPlain.addEntity(new Monster(Map.CentralPlain.new Location(378, 343), 564564, "BullMessenger",  112, 117, 55000));
-		// Load the item data
-		/*
-		ItemPrototype.read(new File("ini/COItems.txt"));
-		// Create an item
-		
-		new EquipmentInstance(2342239l, (EquipmentPrototype) ItemPrototype.get(480029l))
-			.setFirstSocket(EquipmentInstance.Socket.SuperFury)
-			.setSecondSocket(EquipmentInstance.Socket.SuperRainbowGem)
-			.setDura(1500).setBless(3).setPlus(7).setEnchant(172); 
-			
-		*/ 
-		
 	}
 	
 	/**
 	 * @return a new SQL connection to work with
-	 * @throws SQLException
+	 * @throws SQLException 
 	 */
-	protected Connection getConnection() throws SQLException {
+	protected Connection getConnection() throws SQLException  {
 		return DriverManager.getConnection(HOST, USERNAME, PASSWORD);
 	}
 
@@ -102,12 +83,6 @@ public class PostgreSQL extends AbstractModel {
 		}
 		
 	}
-
-	@Override
-	public ItemInstance[] getInventory(Player player) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	
 	public void loadEquipment(Player player) throws AccessException
 	{
@@ -125,22 +100,20 @@ public class PostgreSQL extends AbstractModel {
 			
 			while (rsItems.next())
 			{
-				long item_sid = rsItems.getLong("item_sid"); 
-				if (itemPrototypes.get(item_sid)  == null) 
-				{ 
-					addItemPrototype(item_sid);
-				}
+				long item_sid = rsItems.getLong("item_sid");
+				int slot = rsItems.getInt("item_slot");
 				
-				player.getEquipmentSlots()[rsItems.getInt("item_slot")] = 
-						(
-								new EquipmentInstance(rsItems.getLong("item_id"), (EquipmentPrototype) ItemPrototype.get(item_sid))
-								.setFirstSocket(EquipmentInstance.Socket.valueOf(rsItems.getInt("item_firstsocket")))
-								.setSecondSocket(EquipmentInstance.Socket.valueOf(rsItems.getInt("item_secondsocket")))
-								.setDura(rsItems.getInt("item_dura"))
-								.setBless(rsItems.getInt("item_bless"))
-								.setPlus(rsItems.getInt("item_plus"))
-								.setEnchant(rsItems.getInt("item_enchant"))
-						);
+				EquipmentPrototype proto = this.getEquipmentPrototype(item_sid);
+				EquipmentInstance equip = new EquipmentInstance(rsItems.getLong("item_id"), proto)
+					.setFirstSocket(EquipmentInstance.Socket.valueOf(rsItems.getInt("item_firstsocket")))
+					.setSecondSocket(EquipmentInstance.Socket.valueOf(rsItems.getInt("item_secondsocket")))
+					.setDura(rsItems.getInt("item_dura"))
+					.setBless(rsItems.getInt("item_bless"))
+					.setPlus(rsItems.getInt("item_plus"))
+					.setEnchant(rsItems.getInt("item_enchant"));
+				
+				itemInstances.put(rsItems.getLong("item_id"), equip);
+				player.inventory.equip(slot, equip);
 			}
 			
 			conn.close();
@@ -153,7 +126,7 @@ public class PostgreSQL extends AbstractModel {
 		
 	}
 	
-	public void setInventory(Player player) throws AccessException
+	public void loadInventory(Player player) throws AccessException
 	{
 		
 		try {
@@ -166,28 +139,23 @@ public class PostgreSQL extends AbstractModel {
 			stmt.setString(1, player.getName());
 			
 			ResultSet rsItems = stmt.executeQuery(); 
-			
-			//EquipmentInstance.Socket(13); 
-			
-	
+				
 			while (rsItems.next())
 			{
 				long item_sid = rsItems.getLong("item_sid"); 
-				if (itemPrototypes.get(item_sid)  == null) 
-				{ 
-					addItemPrototype(item_sid);
-				}
+				// TODO This does not work with ItemInstances that require ItemPrototypes yet
+				EquipmentPrototype proto = this.getEquipmentPrototype(item_sid);
 				
-				player.getInventory().add
-						(
-								new EquipmentInstance(rsItems.getLong("item_id"), (EquipmentPrototype) ItemPrototype.get(item_sid))
-								.setFirstSocket(EquipmentInstance.Socket.valueOf(rsItems.getInt("item_firstsocket")))
-								.setSecondSocket(EquipmentInstance.Socket.valueOf(rsItems.getInt("item_secondsocket")))
-								.setDura(rsItems.getInt("item_dura"))
-								.setBless(rsItems.getInt("item_bless"))
-								.setPlus(rsItems.getInt("item_plus"))
-								.setEnchant(rsItems.getInt("item_enchant"))
-						);	
+				EquipmentInstance item = new EquipmentInstance(rsItems.getLong("item_id"), proto)
+					.setFirstSocket(EquipmentInstance.Socket.valueOf(rsItems.getInt("item_firstsocket")))
+					.setSecondSocket(EquipmentInstance.Socket.valueOf(rsItems.getInt("item_secondsocket")))
+					.setDura(rsItems.getInt("item_dura"))
+					.setBless(rsItems.getInt("item_bless"))
+					.setPlus(rsItems.getInt("item_plus"))
+					.setEnchant(rsItems.getInt("item_enchant"));
+				
+				itemInstances.put(rsItems.getLong("item_id"), item);
+				player.inventory.addItem(item);
 			}
 		
 			
@@ -198,78 +166,53 @@ public class PostgreSQL extends AbstractModel {
 		} catch (SQLException e) {
 			throw new AccessException(e);
 		}
-		
-		//itemInstances.get(arg0)
-		//player.getInventory().add(x)
 	}
-	
-	public void addItemPrototype(long item_sid) throws AccessException
-	{
-		// to be done 
-		
+
+	@Override
+	protected ItemPrototype fetchItemPrototype(long item_sid) throws AccessException {
 		try {
 			Connection conn = getConnection();
 			PreparedStatement stmt = conn.prepareStatement("SELECT item_name, item_maxdura, item_worth, item_cpsworth, item_classreq, "
 					+ "item_profreq, item_lvlreq, item_sexreq, item_strreq, item_agireq, item_minatk, item_maxatk, item_defence, item_mdef, "
 					+ "item_mattack, item_dodge, item_agility "
 					+ "FROM items "
-					+ "WHERE item_sid = ?"); 
+					+ "WHERE item_sid = ?");
 			stmt.setLong(1, item_sid);
 			ResultSet rs = stmt.executeQuery();
 			
-			while (rs.next())
+			if (rs.next())
 			{
-				this.itemPrototypes.put
-						(item_sid, 
-								new EquipmentPrototype
-								(
-										item_sid,
-										rs.getString("item_name"),
-										rs.getInt("item_maxdura"),
-										rs.getInt("item_worth"),
-										rs.getInt("item_cpsworth"),
-										rs.getInt("item_classreq"),
-										rs.getInt("item_profreq"),
-										rs.getInt("item_lvlreq"),
-										rs.getInt("item_sexreq"),
-										rs.getInt("item_strreq"),
-										rs.getInt("item_agireq"),
-										rs.getInt("item_minatk"),
-										rs.getInt("item_maxatk"),
-										rs.getInt("item_defence"),
-										rs.getInt("item_mdef"),
-										rs.getInt("item_mattack"),
-										rs.getInt("item_dodge"),
-										rs.getInt("item_agility")
-								)
-						);
+				// TODO This does not work with ItemInstances that require ItemPrototypes yet
+				return new EquipmentPrototype
+					(
+						item_sid,
+						rs.getString("item_name"),
+						rs.getInt("item_maxdura"),
+						rs.getInt("item_worth"),
+						rs.getInt("item_cpsworth"),
+						rs.getInt("item_classreq"),
+						rs.getInt("item_profreq"),
+						rs.getInt("item_lvlreq"),
+						rs.getInt("item_sexreq"),
+						rs.getInt("item_strreq"),
+						rs.getInt("item_agireq"),
+						rs.getInt("item_minatk"),
+						rs.getInt("item_maxatk"),
+						rs.getInt("item_defence"),
+						rs.getInt("item_mdef"),
+						rs.getInt("item_mattack"),
+						rs.getInt("item_dodge"),
+						rs.getInt("item_agility")
+					);
 			}
-			
-			rs.close();
-			stmt.close();
+		
 			conn.close();
-			
 		} catch (SQLException e) {
-			throw new AccessException(e);
-		}
-	}
-
-	@Override
-	public HashMap<EquipmentSlot, EquipmentInstance> getEquipments(Player player) {
-		// TODO Auto-generated method stub
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 		return null;
-	}
 
-	@Override
-	protected ItemPrototype fetchItemPrototype(long id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected ItemInstance fetchItemInstance(long id) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

@@ -1,11 +1,9 @@
 package net.co.java.model;
 
-import java.util.HashMap;
-
 import net.co.java.entity.Player;
-import net.co.java.item.EquipmentSlot;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemPrototype;
+import net.co.java.item.ItemPrototype.EquipmentPrototype;
 import net.co.java.packets.Character_Creation_Packet;
 
 /**
@@ -66,17 +64,11 @@ public interface Model {
 	boolean createCharacter(Character_Creation_Packet ip) throws AccessException;
 	
 	/**
-	 * @param player
-	 * @return the inventory for a player
-	 */
-	ItemInstance[] getInventory(Player player) throws AccessException;
-	
-	/**
 	 * Used to set the inventory from a player, with items loaded from a model. 
 	 * @param player
 	 * @throws AccessException
 	 */
-	void setInventory(Player player) throws AccessException;
+	void loadInventory(Player player) throws AccessException;
 	
 	/** 
 	 * Set all the equipments from database. 
@@ -84,18 +76,6 @@ public interface Model {
 	 * @throws AccessException
 	 */
 	void loadEquipment(Player player) throws AccessException;
-	
-	/**
-	 * Used to load an item prototype from DB if it wasn't already. 
-	 * @param item_sid
-	 */
-	void addItemPrototype(long item_sid) throws AccessException; 
-	
-	/**
-	 * @param player
-	 * @return the equipments for a player
-	 */
-	HashMap<EquipmentSlot, ItemInstance.EquipmentInstance> getEquipments(Player player) throws AccessException;
 	
 	/** 
 	 * @param staticID
@@ -107,6 +87,12 @@ public interface Model {
 	 * @param id
 	 * @return an ItemInstance
 	 */
-	ItemInstance getItemInstance(long id) throws AccessException;
+	ItemInstance getItemInstance(long id);
+
+	/**
+	 * @param id
+	 * @return an ItemInstance
+	 */
+	EquipmentPrototype getEquipmentPrototype(long staticID) throws AccessException;
 	
 }

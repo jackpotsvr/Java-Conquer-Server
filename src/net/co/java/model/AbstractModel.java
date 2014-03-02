@@ -7,6 +7,7 @@ import java.util.Map;
 import net.co.java.entity.Player;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemPrototype;
+import net.co.java.item.ItemPrototype.EquipmentPrototype;
 
 /**
  * The AbstractModelis an abstract Model providing caching for the identities of
@@ -46,34 +47,30 @@ public abstract class AbstractModel implements Model {
 	 *            for the ItemPrototype
 	 * @return {@code ItemPrototype}
 	 */
-	protected abstract ItemPrototype fetchItemPrototype(long id);
-
-	/**
-	 * Fetch an ItemInstance from the data model when not existing in the memory
-	 * 
-	 * @param id for the ItemInstance
-	 * @return {@code ItemInstance}
-	 */
-	protected abstract ItemInstance fetchItemInstance(long id);
+	protected abstract ItemPrototype fetchItemPrototype(long id) throws AccessException;
 	
 	public Player getPlayer(Long id) {
 		return players.get(id);
 	}
 
 	@Override
-	public ItemPrototype getItemPrototype(long staticID) {
+	public ItemPrototype getItemPrototype(long staticID) throws AccessException {
 		if (itemPrototypes.containsKey(staticID)) {
 			return itemPrototypes.get(staticID);
 		}
-		return fetchItemPrototype(staticID);
+		ItemPrototype proto = fetchItemPrototype(staticID);
+		itemPrototypes.put(staticID, proto);
+		return proto;
+	}
+	
+	@Override
+	public EquipmentPrototype getEquipmentPrototype(long staticID) throws AccessException {
+		return (EquipmentPrototype) getItemPrototype(staticID);
 	}
 
 	@Override
 	public ItemInstance getItemInstance(long id) {
-		if (itemInstances.containsKey(id)) {
-			return itemInstances.get(id);
-		}
-		return fetchItemInstance(id);
+		return itemInstances.get(id);
 	}
 	
 	@Override

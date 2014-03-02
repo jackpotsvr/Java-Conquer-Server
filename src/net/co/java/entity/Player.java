@@ -1,14 +1,12 @@
 package net.co.java.entity;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-
 import net.co.java.guild.Guild;
 import net.co.java.guild.GuildRank;
-import net.co.java.item.EquipmentSlot;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
+import net.co.java.item.ItemInstance.Mode;
 import net.co.java.packets.GeneralData;
+import net.co.java.packets.ItemUsage;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
 import net.co.java.packets.GeneralData.SubType;
@@ -36,30 +34,10 @@ public class Player extends Entity {
 	private int rebornCount = 0;
 	private String spouse;
 	
-	private static int INVENTORY_SIZE = 40;
-	//private ItemInstance[] inventory = new ItemInstance[INVENTORY_SIZE];
-	private LinkedList<ItemInstance> inventory = new LinkedList<ItemInstance>(); 
-	//private HashMap<EquipmentSlot, EquipmentInstance> equipment = new HashMap<EquipmentSlot, EquipmentInstance>(10);
-	
-	private EquipmentInstance[] equipmentSlots = new EquipmentInstance[9];
-	/*
-	    Inventory = 0 (not used for equipmentSlots) 
-		Head = 1
-		Necklace = 2
-		Armor = 3
-		Right = 4
-		Left = 5
-		Ring = 6
-		Bottle = 7
-		Boots = 8
-	 */
+	public final Inventory inventory = new Inventory();
 	
 	public Player(Long identity, String name, Location location, int HP) {
 		super(identity, 223, 315, name, location, HP);
-	}
-	
-	public EquipmentInstance[] getEquipmentSlots() {
-		return equipmentSlots;
 	}
 
 	public void setClient(Client client) {
@@ -199,12 +177,7 @@ public void setEquipment(HashMap<EquipmentSlot, Equipment> equipment) {
 		// TODO Auto-generated method stub
 		return 0;
 	}	
-
-
-	public LinkedList<ItemInstance> getInventory() {
-		return inventory;
-	}
-
+	
 	/**
 	 * @return the {@code Client} instance for this {@code User},
 	 * or null if the player is not online
@@ -282,6 +255,149 @@ public void setEquipment(HashMap<EquipmentSlot, Equipment> equipment) {
 		.putUnsignedByte(1)
 		.putUnsignedByte(name.length())
 		.putString(name);
+	}
+
+	public class Inventory {
+		
+		private static final int CAPACITY = 40;
+		public static final int INVENTORY = 0;
+		public static final int HELM = 1;
+		public static final int NECKLACE = 2;
+		public static final int ARMOR = 3;
+		public static final int RIGHT_HAND = 4;
+		public static final int LEFT_HAND = 5;
+		public static final int RING = 6;
+		public static final int TALISMAN = 7;
+		public static final int BOOTS = 8;
+		public static final int GARMENT = 9;
+		// public static final int ATTACK_TALISMAN = 10;
+		// public static final int DEFENSE_TALISMAN = 11;
+		// public static final int STEED = 12;	
+		private int position = 0;
+		private final ItemInstance[] items = new ItemInstance[CAPACITY];
+		private final EquipmentInstance[] equipments = new EquipmentInstance[9];
+		
+		/**
+		 * Add an item to the Players inventory and update the client through
+		 * an ItemInformation Packet
+		 * @param item to be added to the inventory
+		 * @return true if the item is successfully added to the inventory,
+		 * false if the inventory was full
+		 */
+		public boolean addItem(ItemInstance item) {
+			if(position < CAPACITY) {
+				items[position++] = item;
+				// Send a packet to the client to add the item to the inventory
+				item.new ItemInformationPacket(Mode.DEFAULT, INVENTORY).send(client);
+				return true;
+			}
+			return false;
+		}
+		
+		/**
+		 * Remove an item from the Players inventory and update the client through
+		 * an ItemUsage packet
+		 * @param item to be removed from the inventory
+		 * @return true if the item is successfully removed from the inventory,
+		 * false if the inventory did not contain the item
+		 */
+		public boolean removeItem(ItemInstance item) {
+			for ( int i = 0; i < position; i++ ) {
+				if (items[i] == item ) {
+					for ( int j = i + 1; i < position; i++ ) {
+						items[j-1] = items[j];
+					}
+					position--;
+					// Send a packet to the client to remove the item from the inventory
+					new ItemUsage(item.uniqueIdentifier, INVENTORY, ItemUsage.Mode.RemoveInventory).build().send(client);
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		/**
+		 * Equip an item. If the inventory contains the item, remove it from the
+		 * inventory first. The item which used the equipment slot before this
+		 * equip interaction, is transfered to the inventory. 
+		 * Send a ItemInformation packet such that the newly equipped item
+		 * appears in the client
+		 * @param slot
+		 * @param equipment
+		 * @return true if successfully equipped the item, or false if not.
+		 */
+		public boolean equip(int slot, EquipmentInstance equipment) {
+			if ( slot > 0 && slot < 10 ) {
+				if ( contains(equipment) ) {
+					// Remove the item from the inventory
+					removeItem(equipment);
+				}
+				unequip(slot);
+				equipments[slot] = equipment;
+				// Send a packet to the client to equip the item at the equipment slot
+				equipment.new ItemInformationPacket(Mode.DEFAULT, slot).send(client);
+				return true;
+			} else {
+				// Item can't be equipped
+				return false;
+			}
+		}
+	
+		/**
+		 * Unequip an item, and transfer the item to the inventory.
+		 * @param slot
+		 * @return true if the inventory is not full
+		 */
+		public boolean unequip(int slot) {
+			// Slot should be an equipment slot and inventory should not be full
+			if ( slot > 0 && slot < 10 && !isFull()) {
+				EquipmentInstance oldItem = equipments[slot];
+				if ( oldItem != null ) {
+					addItem(oldItem);
+					equipments[slot] = null;
+					// Send a packet to the client to remove the item from the equipment slot
+					new ItemUsage(oldItem.uniqueIdentifier, slot, ItemUsage.Mode.RemoveEquipment).build().send(client);
+				}
+				return true;
+			}
+			return false;
+		}
+	
+		/**
+		 * @param item
+		 * @return true if the inventory contains the given item
+		 */
+		public boolean contains(ItemInstance item) {
+			for ( int i = 0; i < position; i++ )
+				if ( items[i] == item )
+					return true;
+			return false;
+		}
+		
+		/**
+		 * @return true if the inventory is empty
+		 */
+		public boolean isEmpty() {
+			return position == 0;
+		}
+		
+		/**
+		 * @return true if the inventory is full
+		 */
+		public boolean isFull() {
+			return position == CAPACITY;
+		}
+		
+		/**
+		 * @return an array of items in the inventory
+		 */
+		public ItemInstance[] getItems() {
+			ItemInstance[] result = new ItemInstance[position];
+			for ( int i = 0; i < position; i++ )
+				result[i] = items[i];
+			return result;
+		}
+		
 	}
 
 }
