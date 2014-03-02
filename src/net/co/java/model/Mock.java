@@ -105,7 +105,24 @@ public class Mock extends AbstractModel {
 
 	@Override
 	public void loadEquipment(Player player) throws AccessException {
-		// TODO Auto-generated method stub
+		EquipmentInstance LeftBlade = new EquipmentInstance(1l, this.getEquipmentPrototype(410339l))
+				.setFirstSocket(EquipmentInstance.Socket.SuperFury)
+				.setSecondSocket(EquipmentInstance.Socket.SuperRainbowGem)
+				.setDura(5000).setBless(3).setPlus(9).setEnchant(169);
+		EquipmentInstance RightBlade = new EquipmentInstance(2l, this.getEquipmentPrototype(410339l))
+				.setFirstSocket(EquipmentInstance.Socket.SuperDragon)
+				.setSecondSocket(EquipmentInstance.Socket.SuperPhoenix)
+				.setDura(5000).setBless(2).setPlus(9).setEnchant(172);
+		EquipmentInstance Armor = new EquipmentInstance(3l, this.getEquipmentPrototype(135999l))
+			.setFirstSocket(EquipmentInstance.Socket.SuperDragon)
+			.setSecondSocket(EquipmentInstance.Socket.SuperPhoenix)
+			.setDura(5000).setBless(4).setPlus(9).setEnchant(154);
+		itemInstances.put(LeftBlade.uniqueIdentifier, LeftBlade);
+		itemInstances.put(RightBlade.uniqueIdentifier, RightBlade);
+		itemInstances.put(Armor.uniqueIdentifier, Armor);
+		player.inventory.equip(Player.Inventory.LEFT_HAND, LeftBlade);
+		player.inventory.equip(Player.Inventory.RIGHT_HAND, RightBlade);
+		player.inventory.equip(Player.Inventory.ARMOR, Armor);
 		
 	}
 	
