@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 import net.co.java.entity.Monster;
 import net.co.java.entity.Player;
+import net.co.java.entity.Proficiency;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemPrototype.EquipmentPrototype;
@@ -64,7 +65,7 @@ public class Mock extends AbstractModel {
 		player.setGold(1111);
 		player.setCps(215);
 		player.setExperience(34195965);
-		player.setStrength(51);
+		player.setStrength(180);
 		player.setDexterity(50);
 		player.setVitality(50);
 		player.setSpirit(50);
@@ -75,6 +76,7 @@ public class Mock extends AbstractModel {
 		player.setLevel(130);
 		player.setRebornCount(0);
 		player.setProfession(15);
+		player.setProficiencyExp(Proficiency.BLADE, 210000000);
 		this.players.put(promise.getIdentity(), player);
 		player.setLocation(Map.CentralPlain.new Location(382, 341), null);
 		return player;

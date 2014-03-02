@@ -1,5 +1,8 @@
 package net.co.java.entity;
 
+import java.util.HashMap;
+import java.util.Map.Entry;
+
 import net.co.java.guild.Guild;
 import net.co.java.guild.GuildRank;
 import net.co.java.item.ItemInstance;
@@ -156,26 +159,9 @@ public class Player extends Entity {
 		this.spouse = spouse;
 	}
 
-	/*	public HashMap<Integer, Item> getInventory() {
-	return inventory;
-}
-
-public void setInventory(HashMap<Integer, Item> inventory) {
-	this.inventory = inventory;
-}
-
-public HashMap<EquipmentSlot, Equipment> getEquipment() {
-	return equipment;
-}
-
-public void setEquipment(HashMap<EquipmentSlot, Equipment> equipment) {
-	this.equipment = equipment;
-}*/
-
 	@Override
 	public int getMaxHP() {
-		// TODO Auto-generated method stub
-		return 0;
+		return vitality * 24 + strength * 3 + dexterity * 3 + spirit * 3;
 	}	
 	
 	/**
@@ -399,5 +385,43 @@ public void setEquipment(HashMap<EquipmentSlot, Equipment> equipment) {
 		}
 		
 	}
-
+	
+	private final HashMap<Proficiency, Integer> proficiencies = new HashMap<Proficiency, Integer>();
+	
+	private static final int[] PROF_LEVEL_EXP = {
+        1200, 68000, 250000, 640000, 1600000,
+        4000000, 10000000, 22000000, 40000000, 90000000, 95000000, 142500000, 213750000,
+        320625000, 480937500, 721406250, 1082109375, 1623164063, 2100000000, 2100000000
+    };
+	
+	public void setProficiencyExp(Proficiency p, int value) {
+		if ( value > 0 )
+			proficiencies.put(p, value);
+	}
+	
+	public int getProficiencyExp(Proficiency p) {
+		return proficiencies.get(p); 
+	}
+	
+	public int getProficiencyLvl(int exp) {
+		for ( int i = PROF_LEVEL_EXP.length - 1; i >= 0;  i-- ) {
+			if ( exp >= PROF_LEVEL_EXP[i] ) {
+				return i + 1;
+			}
+		}
+		return 0;
+	}
+	
+	public void sendProficiencies() {
+		for ( Entry<Proficiency, Integer> entry : proficiencies.entrySet() ) {
+			int exp = entry.getValue();
+			int lvl = getProficiencyLvl(exp);
+			new PacketWriter(PacketType.PROFICIENCY, 16)
+			.putUnsignedInteger(entry.getKey().prof)
+			.putUnsignedInteger(lvl)
+			.putUnsignedInteger(exp)
+			.send(this);
+		}
+	}
+	
 }

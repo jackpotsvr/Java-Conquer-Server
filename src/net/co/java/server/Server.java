@@ -313,6 +313,7 @@ public class Server {
 						// Send an item
 						model.loadInventory(player);
 						model.loadEquipment(player);
+						player.sendProficiencies();
 					}
 					else
 					{
@@ -332,6 +333,8 @@ public class Server {
 					break;
 				case MESSAGE_PACKET:
 					MessagePacket mp = new MessagePacket(packet);
+					if(mp.getMessage().equalsIgnoreCase("exit"))
+						close();
 					System.out.println(mp.getFrom() + " said " + mp.getMessage() + ".");
 					break;
 				case CHARACTER_CREATION_PACKET:
