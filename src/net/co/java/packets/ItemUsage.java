@@ -8,7 +8,7 @@ import net.co.java.server.Server.GameServer.Client;
  * @author Thomas Gmelig Meyling
  * @author Jan-Willem Gmelig Meyling
  */
-public class ItemUsage {
+public class ItemUsage implements PacketHandler {
 
 	private final long identity;
 	private final long parameter;
@@ -85,9 +85,7 @@ public class ItemUsage {
 		return timestamp;
 	}
 	
-	/**
-	 * @return a PacketWriter based on this ItemUsage packet
-	 */
+	@Override
 	public PacketWriter build() {
 		return new PacketWriter(PacketType.ITEM_USAGE_PACKET, 28)
 		.putUnsignedInteger(identity)
@@ -95,7 +93,8 @@ public class ItemUsage {
 		.putUnsignedInteger(mode.index)
 		.putUnsignedInteger(timestamp);
 	}
-	
+
+	@Override
 	public void handle(Client client) {
 		switch(mode){
 		case Ping:

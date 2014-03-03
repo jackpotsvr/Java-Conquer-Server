@@ -34,6 +34,8 @@ public class Player extends Entity {
 	private int pkPoints = 0;
 	private int profession = 15;
 	private int rebornCount = 0;
+	private int stamina = 10;
+	
 	private String spouse;
 	
 	public final Inventory inventory = new Inventory();
@@ -56,6 +58,10 @@ public class Player extends Entity {
 
 	public int getCps() {
 		return cps;
+	}
+	
+	public int getSkillLevel(Skill skill) {
+		return 2;
 	}
 
 	public void setCps(int cps) {
@@ -508,6 +514,31 @@ public class Player extends Entity {
 			.putUnsignedInteger(exp)
 			.send(this);
 		}
+	}
+	
+	public void sendSkills(){
+		new PacketWriter(PacketType.SKILL_PACKET, 12)
+		.putUnsignedInteger(468743)
+		.putUnsignedShort(1045)
+		.putUnsignedShort(2)
+		.send(this);
+	}
+	
+	public void sendStamina() {
+		new PacketWriter(PacketType.UPDATE_PACKET, 36)
+		.putUnsignedInteger(identity)
+		.putUnsignedInteger(1)
+		.putUnsignedByte(9)
+		.setOffset(18)
+		.putUnsignedInteger(stamina).send(this);
+	}
+
+	public int getStamina() {
+		return stamina;
+	}
+
+	public void setStamina(int stamina) {
+		this.stamina = stamina;
 	}
 	
 }

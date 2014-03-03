@@ -9,7 +9,7 @@ package net.co.java.packets;
  * @author Jan-Willem Gmelig Meyling
  * @author Thomas Gmelig Meyling
  */
-public class MessagePacket {
+public class MessagePacket implements PacketWrapper {
 
 	public final static String SYSTEM = "SYSTEM";
 	public final static String ALL_USERS = "ALLUSERS";
@@ -132,9 +132,7 @@ public class MessagePacket {
 		return 32 + from.length() + to.length() + message.length();
 	}
 
-	/**
-	 * @return A PacketWriter instance based on this MessagePacket
-	 */
+	@Override
 	public PacketWriter build() {
 		return new PacketWriter(PacketType.MESSAGE_PACKET, getPacketSize())
 		.putUnsignedInteger(aRGB)

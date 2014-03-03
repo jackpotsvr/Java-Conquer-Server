@@ -2,6 +2,9 @@ package net.co.java.packets;
 
 import java.math.BigInteger;
 
+import net.co.java.entity.Skill;
+import net.co.java.server.Server.GameServer.Client;
+
 /**
  * The Interact packet is most commonly used for direct melee/archer attacks,
  * but also used for certain player to player actions, such as marriage.
@@ -10,7 +13,7 @@ import java.math.BigInteger;
  * @author Thomas Gmelig Meyling
  * 
  */
-public class InteractPacket {
+public class InteractPacket implements PacketHandler {
 	
 	private final long timestamp;
 	private final long identity;
@@ -18,7 +21,8 @@ public class InteractPacket {
 	private final int x;
 	private final int y;
 	private final Mode mode;
-	private final long skillid;
+	private final Skill skill;
+	private final IncomingPacket ip;
 	
 	/**
 	 * Construct a new {@code InteractPacket} based on a {@code IncomingPacket}
@@ -28,13 +32,14 @@ public class InteractPacket {
 		this.timestamp = ip.readUnsignedInt(4);
 		this.identity = ip.readUnsignedInt(8);
 		this.mode = Mode.valueOf(ip.readUnsignedByte(20));
+		this.ip = ip;
 		
 		int skillid = ip.readUnsignedShort(24);
 		skillid ^= 0x915d;
 		skillid ^= identity & 0xFFFF;
 		skillid = (skillid << 0x3 | skillid >> 0xd ) & 0xFFFF;
 		skillid -= 0xeb42;
-		this.skillid = skillid;
+		this.skill = Skill.valueOf(skillid);
 		
 		long x = ip.readUnsignedShort(16);
 		x = x ^ ( identity & 0xFFFF ) ^ 0x2ed6;
@@ -105,15 +110,49 @@ public class InteractPacket {
 	/**
 	 * @return the damage
 	 */
-	public long getSkill() {
-		return skillid;
+	public Skill getSkill() {
+		return skill;
+	}
+
+	@Override
+	public void handle(Client player) {
+		switch(mode){
+		case AcceptMarriage:
+			break;
+		case ArcherAttack:
+			break;
+		case DashEffect:
+			break;
+		case Death:
+			break;
+		case MagicAttack:
+			skill.handle(player, this);
+			break;
+		case MagicReflect:
+			break;
+		case None:
+			break;
+		case PhysicalAttack:
+			break;
+		case RequestMarriage:
+			break;
+		case RushAttack:
+			break;
+		case SendFlowers:
+			break;
+		case WeaponReflect:
+			break;
+		default:
+			break;
+		
+		}
 	}
 
 	@Override
 	public String toString() {
-		return "InteractPacket [timer=" + timestamp + ", identity=" + identity
+		return "InteractPacket [timestamp=" + timestamp + ", identity=" + identity
 				+ ", target=" + target + ", x=" + x + ", y=" + y + ", mode="
-				+ mode + ", skillid=" + skillid + "]";
+				+ mode + ", skill=" + skill + "]";
 	}
 	
 	/**
@@ -150,6 +189,16 @@ public class InteractPacket {
 					return m;
 			return null;
 		}
+	}
+
+	@Override
+	public PacketWriter build() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public IncomingPacket getIp() {
+		return ip;
 	}	
 
 }

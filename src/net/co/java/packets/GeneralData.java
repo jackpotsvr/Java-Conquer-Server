@@ -1,6 +1,8 @@
 package net.co.java.packets;
 
-import java.util.Arrays;
+import net.co.java.entity.Entity;
+import net.co.java.server.Server.Map;
+import net.co.java.server.Server.GameServer.Client;
 
 /**
  * The General Data packet performs a variety of tasks for the client, these vary from
@@ -8,7 +10,7 @@ import java.util.Arrays;
  * @author Thomas Gmelig Meyling
  * @author Jan-Willem Gmelig Meyling
  */
-public class GeneralData {
+public class GeneralData implements PacketHandler {
 	
 	private SubType subType;
 	private final long timestamp;
@@ -17,6 +19,7 @@ public class GeneralData {
 	private int[] shorts;
 	private int shortValue;
 	private long intValue;
+	private IncomingPacket ip;
 
 	/**
 	 * Construct an empty GeneralData packet
@@ -41,7 +44,7 @@ public class GeneralData {
 			ip.readUnsignedShort(14),
 			ip.readUnsignedShort(16)
 		};
-		System.out.println(Arrays.toString(shorts));
+		this.ip = ip;
 	}
 
 	/**
@@ -155,9 +158,31 @@ public class GeneralData {
 		return this;
 	}
 
-	/**
-	 * @return A PacketWriter with the data for this GeneralData packet
-	 */
+	@Override
+	public void handle(Client client) {
+		switch(subType){
+		case GET_SURROUNDINGS:
+			for (Entity e : client.getPlayer().getSurroundings())
+				e.spawn().send(client);
+			break;
+		case JUMP:
+			client.getPlayer().jump(shorts[0], shorts[1], ip);
+			break;
+		case LOCATION:
+			client.getPlayer().retrieveLocation().build().send(client);
+			break;
+		case PORTAL:
+			System.out.printf("GENERAL DATA: %s , %s ,%s", shorts[0], shorts[1], shorts[2]);
+			client.getPlayer().setLocation(Map.CentralPlain.new Location(250, 180), null);
+			client.getPlayer().retrieveLocation().build().send(client);
+			break;
+		default:
+			System.out.println("Unimplemented " + subType.toString());
+			break;
+		}
+	}
+
+	@Override
 	public PacketWriter build() {
 		return new PacketWriter(PacketType.GENERAL_DATA_PACKET, 0x18)
 		.putUnsignedInteger(timestamp)

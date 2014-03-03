@@ -24,7 +24,6 @@ import net.co.java.packets.MessagePacket;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
 import net.co.java.packets.MessagePacket.MessageType;
-import net.co.java.server.Server.Map.Location;
 
 /**
  * The server is the main class for the Conquer Online server. 
@@ -316,22 +315,8 @@ public class Server {
 						model.loadInventory(player);
 						model.loadEquipment(player);
 						player.sendProficiencies();
-						
-						new PacketWriter(PacketType.SKILL_PACKET, 12)
-						.putUnsignedInteger(468743)
-						.putUnsignedShort(1045)
-						.putUnsignedShort(2)
-						.send(this);
-						
-						new PacketWriter(PacketType.UPDATE_PACKET, 36)
-						.putUnsignedInteger(player.getIdentity())
-						.putUnsignedInteger(1)
-						.putUnsignedByte(9)
-						.setOffset(18)
-						.putUnsignedInteger(10).send(this);
-						
-						System.out.println("I think the max HP is " + player.getMaxHP());
-						System.out.println("I think the max Mana is " + player.getMaxMana());
+						player.sendSkills();
+						player.sendStamina();
 					}
 					else
 					{
@@ -344,7 +329,7 @@ public class Server {
 					player.walk(packet.readUnsignedByte(8), packet);
 					break;
 				case GENERAL_DATA_PACKET:
-					handleGeneralData(packet);
+					new GeneralData(packet).handle(this);
 					break;
 				case ITEM_USAGE_PACKET:
 					new ItemUsage(packet).handle(this);
@@ -371,45 +356,10 @@ public class Server {
 					}
 					break;
 				case INTERACT_PACKET:
-					InteractPacket ip = new InteractPacket(packet);
-					new PacketWriter(PacketType.SKILL_ANIMATION_PACKET, 20)
-					.putUnsignedInteger(ip.getIdentity())
-					.putUnsignedShort(ip.getX())
-					.putUnsignedShort(ip.getY())
-					.putUnsignedShort((int) ip.getSkill())
-					.putUnsignedShort(2)
-					.putUnsignedShort(0) // No damage
-					.send(this);
+					new InteractPacket(packet).handle(this);
 					break;
 				default: 	
 					System.out.println("Unimplemented " + packet.getPacketType().toString());
-					break;
-				}
-			}
-			
-			private void handleGeneralData(IncomingPacket packet) {
-				GeneralData gd = new GeneralData(packet);
-				switch(gd.getSubType()){
-				case GET_SURROUNDINGS:
-					for (Entity e : player.getSurroundings())
-						e.spawn().send(this);
-					break;
-				case JUMP:
-					int[] coordinates = gd.getShorts();
-					System.out.println(packet.toString());
-					player.jump(coordinates[0], coordinates[1], packet);
-					break;
-				case LOCATION:
-					player.retrieveLocation().build().send(this);
-					break;
-				case PORTAL:
-					int[] values = gd.getShorts();
-					System.out.printf("GENERAL DATA: %s , %s ,%s", values[0], values[1], values[2]);
-					player.setLocation(Map.CentralPlain.new Location(250, 180), null);
-					player.retrieveLocation().build().send(this);
-					break;
-				default:
-					System.out.println("Unimplemented " + gd.getSubType().toString());
 					break;
 				}
 			}
