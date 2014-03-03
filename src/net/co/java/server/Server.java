@@ -18,6 +18,7 @@ import net.co.java.model.PostgreSQL;
 import net.co.java.packets.Character_Creation_Packet;
 import net.co.java.packets.GeneralData;
 import net.co.java.packets.IncomingPacket;
+import net.co.java.packets.InteractPacket;
 import net.co.java.packets.ItemUsage;
 import net.co.java.packets.MessagePacket;
 import net.co.java.packets.PacketType;
@@ -52,8 +53,8 @@ public class Server {
 	 * @throws IOException
 	 */
 	public Server() throws IOException {
-		this.model = new PostgreSQL(Config.HOST, Config.USERNAME, Config.PASSWORD);
-		//this.model = new Mock();
+		//this.model = new PostgreSQL(Config.HOST, Config.USERNAME, Config.PASSWORD);
+		this.model = new Mock();
 		this.new AuthServer();
 		this.new GameServer();
 	}
@@ -315,6 +316,20 @@ public class Server {
 						model.loadInventory(player);
 						model.loadEquipment(player);
 						player.sendProficiencies();
+						
+						new PacketWriter(PacketType.SKILL_PACKET, 12)
+						.putUnsignedInteger(468743)
+						.putUnsignedShort(1045)
+						.putUnsignedShort(2)
+						.send(this);
+						
+						new PacketWriter(PacketType.UPDATE_PACKET, 36)
+						.putUnsignedInteger(player.getIdentity())
+						.putUnsignedInteger(1)
+						.putUnsignedByte(9)
+						.setOffset(18)
+						.putUnsignedInteger(10).send(this);
+						
 						System.out.println("I think the max HP is " + player.getMaxHP());
 						System.out.println("I think the max Mana is " + player.getMaxMana());
 					}
@@ -355,7 +370,10 @@ public class Server {
 						.build().send(this);
 					}
 					break;
-				
+				case INTERACT_PACKET:
+					System.out.println(new InteractPacket(packet).toString());
+					System.out.println(packet.toString());
+					break;
 				default: 	
 					System.out.println("Unimplemented " + packet.getPacketType().toString());
 					break;

@@ -99,7 +99,7 @@ public class IncomingPacket {
 	
 	@Override
 	public String toString() {
-		return packetType.toString() + " : " + Arrays.toString(data);
+		return packetType.toString() + " : " + Arrays.toString(data) + " (" + data.length + ")";
 	}
 	
 	public void send(ServerThread client) {
