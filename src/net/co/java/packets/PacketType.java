@@ -116,6 +116,12 @@ public  enum PacketType {
 	SKILL_PACKET(0x44F),
 	
 	/**
+	 * The Magic Attack Packet, used for offensive and defensive spells of all
+	 * kind.
+	 */
+	SKILL_ANIMATION_PACKET(0x451),
+	
+	/**
 	 * The Weapon Proficiency Packet is sent during login and when you learn a
 	 * new Proficiency.
 	 */

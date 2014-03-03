@@ -371,8 +371,15 @@ public class Server {
 					}
 					break;
 				case INTERACT_PACKET:
-					System.out.println(new InteractPacket(packet).toString());
-					System.out.println(packet.toString());
+					InteractPacket ip = new InteractPacket(packet);
+					new PacketWriter(PacketType.SKILL_ANIMATION_PACKET, 20)
+					.putUnsignedInteger(ip.getIdentity())
+					.putUnsignedShort(ip.getX())
+					.putUnsignedShort(ip.getY())
+					.putUnsignedShort((int) ip.getSkill())
+					.putUnsignedShort(2)
+					.putUnsignedShort(0) // No damage
+					.send(this);
 					break;
 				default: 	
 					System.out.println("Unimplemented " + packet.getPacketType().toString());
@@ -389,6 +396,7 @@ public class Server {
 					break;
 				case JUMP:
 					int[] coordinates = gd.getShorts();
+					System.out.println(packet.toString());
 					player.jump(coordinates[0], coordinates[1], packet);
 					break;
 				case LOCATION:

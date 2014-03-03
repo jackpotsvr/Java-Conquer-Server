@@ -1,5 +1,7 @@
 package net.co.java.packets;
 
+import java.math.BigInteger;
+
 /**
  * The Interact packet is most commonly used for direct melee/archer attacks,
  * but also used for certain player to player actions, such as marriage.
@@ -10,33 +12,59 @@ package net.co.java.packets;
  */
 public class InteractPacket {
 	
-	private final long timer;
+	private final long timestamp;
 	private final long identity;
 	private final long target;
 	private final int x;
 	private final int y;
 	private final Mode mode;
-	private final long damage;
+	private final long skillid;
 	
 	/**
 	 * Construct a new {@code InteractPacket} based on a {@code IncomingPacket}
 	 * @param ip
 	 */
 	public InteractPacket(IncomingPacket ip) {
-		timer = ip.readUnsignedInt(4);
-		identity = ip.readUnsignedInt(8);
-		target = ip.readUnsignedInt(12);
-		x = ip.readUnsignedShort(16);
-		y = ip.readUnsignedShort(18);
-		mode = Mode.valueOf(ip.readUnsignedByte(20));
-		damage = ip.readUnsignedInt(24);
+		this.timestamp = ip.readUnsignedInt(4);
+		this.identity = ip.readUnsignedInt(8);
+		this.mode = Mode.valueOf(ip.readUnsignedByte(20));
+		
+		int skillid = ip.readUnsignedShort(24);
+		skillid ^= 0x915d;
+		skillid ^= identity & 0xFFFF;
+		skillid = (skillid << 0x3 | skillid >> 0xd ) & 0xFFFF;
+		skillid -= 0xeb42;
+		this.skillid = skillid;
+		
+		long x = ip.readUnsignedShort(16);
+		x = x ^ ( identity & 0xFFFF ) ^ 0x2ed6;
+		x = ((x << 1) | ((x & 0x8000) >> 15)) & 0xffff;
+        x |= 0xffff0000;
+        x -= 0xffff22ee;
+        this.x = (int) x;
+        
+        long y = ip.readUnsignedShort(18);
+        y = y ^ (identity & 0xffff) ^ 0xb99b;
+        y = ((y << 5) | ((y & 0xF800) >> 11)) & 0xffff;
+        y |= 0xffff0000;
+        y -= 0xffff8922;
+        this.y = (int) y;
+
+        BigInteger target = ip.readUnsingedLong(12);
+        this.target = target.and(BigInteger.valueOf(0xffffe000)).shiftRight(13)
+			.or(target.and(BigInteger.valueOf(0x1fff)).shiftLeft(19))
+			.xor(BigInteger.valueOf(0x5F2D2463))
+			.xor(BigInteger.valueOf(identity))
+			.subtract(BigInteger.valueOf(0x746F4AE6))
+			.longValue();
+        
 	}
 
 	/**
 	 * @return the timer value
 	 */
 	public long getTimer() {
-		return timer;
+		return timestamp;
 	}
 
 	/**
@@ -77,15 +105,15 @@ public class InteractPacket {
 	/**
 	 * @return the damage
 	 */
-	public long getDamage() {
-		return damage;
+	public long getSkill() {
+		return skillid;
 	}
 
 	@Override
 	public String toString() {
-		return "InteractPacket [timer=" + timer + ", identity=" + identity
+		return "InteractPacket [timer=" + timestamp + ", identity=" + identity
 				+ ", target=" + target + ", x=" + x + ", y=" + y + ", mode="
-				+ mode + ", damage=" + damage + "]";
+				+ mode + ", skillid=" + skillid + "]";
 	}
 	
 	/**

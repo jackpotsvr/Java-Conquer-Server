@@ -1,5 +1,6 @@
 package net.co.java.packets;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 
 import net.co.java.cipher.Cryptographer;
@@ -41,6 +42,14 @@ public class IncomingPacket {
 	}
 	
 	/**
+	 * @param position
+	 * @return byte at position
+	 */
+	public byte getByte(int position) {
+		return data[position];
+	}
+	
+	/**
 	 * Returns unsigned short at specified offset (2 bytes)
 	 * @param offset
 	 * @return {int} as the range of ushort is 0 to 2^16-1
@@ -57,6 +66,15 @@ public class IncomingPacket {
 	public long readUnsignedInt(int offset) {
 		return ((data[offset + 3] & 0xFF) << 24 |(data[offset + 2] & 0xFF) << 16
                 |(data[offset + 1] & 0xFF) << 8 |(data[offset] & 0xFF)); 
+	}
+	
+	/**
+	 * Read an unsigned long at specified offset (4 bytes)
+	 * @param offset
+	 * @return unsigned long
+	 */
+	public BigInteger readUnsingedLong(int offset) {
+		return new BigInteger(1, new byte[] { data[offset+3], data[offset+2], data[offset+1], data[offset] });
 	}
 
 	/**
