@@ -61,24 +61,16 @@ public class Mock extends AbstractModel {
 
 	@Override
 	public Player loadPlayer(AuthorizationPromise promise) throws AccessException {
-/*		Player player = new Player(promise.getIdentity(), promise.getCharacterName(), null, 500);
-		player.setMesh(381004);
-		player.setHairstyle(315);
 		player.setGold(1111);
 		player.setCps(215);
-		player.setExperience(34195965);
 		player.setStrength(180);
 		player.setDexterity(50);
 		player.setVitality(50);
 		player.setSpirit(50);
-		player.setAttributePoints(200);
-		player.setHP(500);
-		player.setPkPoints(10);
-		player.setMana(120);
+		player.setHP(5000);
 		player.setLevel(130);
-		player.setRebornCount(0);
 		player.setProfession(15);
-		player.setProficiencyExp(Proficiency.BLADE, 210000000);*/
+		player.setProficiencyExp(Proficiency.BLADE, 210000000);
 		this.players.put(promise.getIdentity(), player);
 		player.setLocation(Map.CentralPlain.new Location(382, 341), null);
 		return player;
