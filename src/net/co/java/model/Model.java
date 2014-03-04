@@ -27,15 +27,15 @@ public interface Model {
 	/**
 	 * Create an AuthorizationPromise
 	 * @param accountName
-	 * @return
+	 * @return AuthorisationPromise from AuthServer to GameServer
 	 * @throws AccessException
 	 */
 	AuthorizationPromise createAuthorizationPromise(String accountName) throws AccessException;
 	
 	/**
 	 * Get an AuthorizationPromise
-	 * @param accountName
-	 * @return
+	 * @param identity
+	 * @return AuthorisationPromise for a given Identity
 	 * @throws AccessException
 	 */
 	AuthorizationPromise getAuthorizationPromise(Long identity) throws AccessException;
@@ -43,7 +43,7 @@ public interface Model {
 	/**
 	 * Load a user when the identity is sent for the first time to the game server
 	 * @param promise
-	 * @return
+	 * @return Player instance for a given AuthorisationPromise
 	 * @throws AccessException
 	 */
 	public Player loadPlayer(AuthorizationPromise promise) throws AccessException;
@@ -90,7 +90,7 @@ public interface Model {
 	ItemInstance getItemInstance(long id);
 
 	/**
-	 * @param id
+	 * @param staticID
 	 * @return an ItemInstance
 	 */
 	EquipmentPrototype getEquipmentPrototype(long staticID) throws AccessException;
