@@ -53,7 +53,25 @@ public class Mock extends AbstractModel {
 	public AuthorizationPromise createAuthorizationPromise(String accountName)
 			throws AccessException {
 		Long identity = this.createPlayerIdentity();
-		String characterName = ( player == null ) ? null : player.getName();
+		String characterName = null;
+		if (player != null ) {
+			characterName = player.getName();
+		} else  if(accountName.equalsIgnoreCase("jackpotsvr")) {
+			player = new Player(identity, accountName, null, 0);
+			player.setLevel(1);
+			player.setStrength(1);
+			player.setDexterity(1);
+			player.setSpirit(1);
+			player.setVitality(1);
+			player.setProfession(15);
+			player.setMesh((38000 + 1003));
+			player.setGold(0);
+			player.setCps(0);
+			player.setRebornCount(0);
+			player.setHP(player.getMaxHP());
+			player.setExperience(0);
+			characterName = accountName;
+		}
 		AuthorizationPromise promise = new AuthorizationPromise(identity, accountName, characterName);
 		this.authPromises.put(identity, promise);
 		return promise;

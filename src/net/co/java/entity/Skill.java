@@ -13,15 +13,23 @@ public enum Skill {
 	FAST_BLADE(1045) {
 
 		@Override
-		public void handle(Client hero, InteractPacket ip) {
-			new PacketWriter(PacketType.SKILL_ANIMATION_PACKET, 20)
-			.putUnsignedInteger(ip.getIdentity())
-			.putUnsignedShort(ip.getX())
-			.putUnsignedShort(ip.getY())
-			.putUnsignedShort((int) ip.getSkill().skillID)
-			.putUnsignedShort(2)
-			.putUnsignedShort(0) // No damage
-			.send(hero);
+		public void handle(Client client, InteractPacket ip) {
+			Player hero = client.getPlayer();
+			int stamina = hero.getStamina();
+			
+			if ( stamina >= 20 ) {
+				new PacketWriter(PacketType.SKILL_ANIMATION_PACKET, 20)
+				.putUnsignedInteger(ip.getIdentity())
+				.putUnsignedShort(ip.getX())
+				.putUnsignedShort(ip.getY())
+				.putUnsignedShort((int) ip.getSkill().skillID)
+				.putUnsignedShort(2)
+				.putUnsignedShort(0) // No damage
+				.send(client);
+				
+				hero.setStamina(stamina - 20);
+				hero.sendStamina();
+			}
 		}
 		
 	};
@@ -34,7 +42,7 @@ public enum Skill {
 	
 	public int getSkillID() { return skillID; }
 	
-	public abstract void handle(Client hero, InteractPacket ip);
+	public abstract void handle(Client client, InteractPacket ip);
 	
 	public PacketWriter SkillAnimationPacket(Player hero, Map<Entity, Long> targets, int AimX, int AimY, long target) {
 		PacketWriter pw = new PacketWriter(PacketType.SKILL_ANIMATION_PACKET, 20 + targets.size());

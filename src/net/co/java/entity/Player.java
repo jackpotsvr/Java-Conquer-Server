@@ -34,7 +34,7 @@ public class Player extends Entity {
 	private int pkPoints = 0;
 	private int profession = 15;
 	private int rebornCount = 0;
-	private int stamina = 10;
+	private int stamina = 100;
 	
 	private String spouse;
 	
@@ -529,7 +529,7 @@ public class Player extends Entity {
 		.putUnsignedInteger(identity)
 		.putUnsignedInteger(1)
 		.putUnsignedByte(9)
-		.setOffset(18)
+		.setOffset(16)
 		.putUnsignedInteger(stamina).send(this);
 	}
 

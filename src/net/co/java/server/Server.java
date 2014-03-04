@@ -338,6 +338,13 @@ public class Server {
 					MessagePacket mp = new MessagePacket(packet);
 					if(mp.getMessage().equalsIgnoreCase("exit"))
 						close();
+					if(mp.getMessage().startsWith("/st ")) {
+						int st = Integer.parseInt(mp.getMessage().substring(4));
+						System.out.println("Player setting stamina " + player.getStamina() + " -> " + st);
+						player.setStamina(st);
+						player.sendStamina();
+						
+					}
 					System.out.println(mp.getFrom() + " said " + mp.getMessage() + ".");
 					break;
 				case CHARACTER_CREATION_PACKET:
