@@ -110,10 +110,15 @@ public  enum PacketType {
 	INTERACT_PACKET(0x3FE),	
 	
 	/**
+	 * The Skill Packet is sent during login and when you learn a new skill.
+	 */
+	SKILL_PACKET(0x44F),
+	
+	/**
 	 * The Skill Experience packet can be used to update both Skills and
 	 * Proficiency.
 	 */
-	SKILL_PACKET(0x44F),
+	SKILL_UPDATE_PACKET(0x450),
 	
 	/**
 	 * The Magic Attack Packet, used for offensive and defensive spells of all

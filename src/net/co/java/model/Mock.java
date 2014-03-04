@@ -152,12 +152,12 @@ public class Mock extends AbstractModel {
 
 	@Override
 	protected void fetchSkill(Player hero) throws AccessException {
-		hero.setSkillExp(Skill.FAST_BLADE, 67000);
+		hero.setSkillExp(Skill.FAST_BLADE, 68001);
 	}
 
 	@Override
 	protected void fetchProficiency(Player hero) throws AccessException {
-		hero.setProficiencyExp(Proficiency.BLADE, 210000000);
+		hero.setProficiencyExp(Proficiency.BLADE, 2000000000);
 	}
 
 	@Override

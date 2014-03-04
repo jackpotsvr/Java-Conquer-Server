@@ -335,16 +335,11 @@ public class Server {
 					break;
 				case MESSAGE_PACKET:
 					MessagePacket mp = new MessagePacket(packet);
-					if(mp.getMessage().equalsIgnoreCase("exit"))
-						close();
-					if(mp.getMessage().startsWith("/st ")) {
-						int st = Integer.parseInt(mp.getMessage().substring(4));
-						System.out.println("Player setting stamina " + player.getStamina() + " -> " + st);
-						player.setStamina(st);
-						player.sendStamina();
-						
+					if(mp.getMessage().startsWith("$")) {
+						new Command(mp).handle(this);
+					} else {
+						System.out.println(mp.getFrom() + " said " + mp.getMessage() + ".");
 					}
-					System.out.println(mp.getFrom() + " said " + mp.getMessage() + ".");
 					break;
 				case CHARACTER_CREATION_PACKET:
 					if (model.createCharacter(new Character_Creation_Packet(packet)))

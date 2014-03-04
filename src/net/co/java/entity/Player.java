@@ -30,6 +30,17 @@ public class Player extends Entity {
 	public final Inventory inventory = new Inventory();
 	
 	
+	private final HashMap<Proficiency, Integer> proficiencies = new HashMap<Proficiency, Integer>();
+
+	private final HashMap<Skill, Integer> skills = new HashMap<Skill, Integer>();
+
+	private static final int[] PROF_LEVEL_EXP = {
+	    1200, 68000, 250000, 640000, 1600000,
+	    4000000, 10000000, 22000000, 40000000, 90000000, 95000000, 142500000, 213750000,
+	    320625000, 480937500, 721406250, 1082109375, 1623164063, 2100000000, 2100000000
+	};
+
+
 	public Player(Long identity, String name, Location location, int HP) {
 		super(identity, 223, 315, name, location, HP);
 	}
@@ -190,6 +201,14 @@ public class Player extends Entity {
 		this.spouse = spouse;
 	}
 
+	public int getStamina() {
+		return stamina;
+	}
+
+	public void setStamina(int stamina) {
+		this.stamina = stamina;
+	}
+
 	@Override
 	public int getMaxHP() {
 		int hp = vitality * 24;
@@ -242,75 +261,27 @@ public class Player extends Entity {
 		return client;
 	}
 	
-	public PacketWriter characterInformation() {
-		String spouseName = getSpouse();
-		int size = 71 + this.name.length() + spouseName.length();
-		
-		return new PacketWriter(PacketType.CHAR_INFO_PACKET, size)
-		.putUnsignedInteger(this.identity)
-		.putUnsignedInteger(this.mesh)
-		.putUnsignedShort(this.hairstyle)
-		.putUnsignedInteger(this.gold)
-		.putUnsignedInteger(this.cps)
-		.putUnsignedInteger(this.experience)
-		.setOffset(46)
-		.putUnsignedShort(this.strength)
-		.putUnsignedShort(this.dexterity)
-		.putUnsignedShort(this.vitality)
-		.putUnsignedShort(this.spirit)
-		.putUnsignedShort(this.getAttributePoints())
-		.putUnsignedShort(this.HP)
-		.putUnsignedShort(this.mana)
-		.putUnsignedShort(this.pkPoints)
-		.putUnsignedByte(this.level)
-		.putUnsignedByte(this.profession)
-		.setOffset(65)
-		.putUnsignedByte(this.rebornCount)
-		.putBoolean(true) // Display names
-		.putUnsignedByte(2) // String count
-		.putUnsignedByte(this.name.length())
-		.putString(this.name)
-		.putUnsignedByte(spouseName.length())
-		.putString(spouseName);
+	public void setProficiencyExp(Proficiency p, int value) {
+		if ( value > 0 )
+			proficiencies.put(p, value);
 	}
-	
-	public GeneralData retrieveLocation() {
-		return new GeneralData(SubType.LOCATION, identity, new int[] {
-			location.getMap().getMapID(),
-			location.getxCord(),
-			location.getyCord()
-		});
+
+	public void setSkillExp(Skill s, int value) {
+		if ( value > 0 )
+			skills.put(s, value);
 	}
-	
-	@Override
-	public PacketWriter SpawnPacket() {
-		return new PacketWriter(PacketType.ENTITY_SPAWN_PACKET, 82 + name.length())
-		.putUnsignedInteger(identity)
-		.putUnsignedInteger(mesh)
-		.setOffset(20) // TODO ulong status flags?
-		.putUnsignedShort(0) // Guild ID
-		.setOffset(23)
-		.putUnsignedByte((short) guildRank.getRank()) // Guild rank
-		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.GARMENT)) // garment 24
-		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.HELM)) // helm 28
-		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.ARMOR)) // arm 32
-		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.RIGHT_HAND)) // rw 36
-		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.LEFT_HAND)) // lw 40
-		.setOffset(48)
-		.putUnsignedShort(HP) // health 48
-		.putUnsignedShort(0) // mob lvl 50
-		.putUnsignedShort(location.getxCord()) // 52
-		.putUnsignedShort(location.getyCord()) // 54
-		.putUnsignedShort(hairstyle) //56
-		.putUnsignedByte(location.getDirection()) // direction 58
-		.putUnsignedByte(action ) // action 59
-		.putUnsignedByte(rebornCount) // reborn //60
-		.setOffset(62)
-		.putUnsignedByte(level) // level
-		.setOffset(80)
-		.putUnsignedByte(1)
-		.putUnsignedByte(name.length())
-		.putString(name);		
+
+	public int getProficiencyExp(Proficiency p) {
+		return proficiencies.get(p); 
+	}
+
+	private int getProficiencyLvl(int exp) {
+		for ( int i = PROF_LEVEL_EXP.length - 1; i >= 0; i-- ) {
+			if(PROF_LEVEL_EXP[i] <= exp ) {
+				return i+1;
+			}
+		}
+		return 0;
 	}
 
 	public class Inventory {
@@ -496,38 +467,77 @@ public class Player extends Entity {
 		
 	}
 	
-	private final HashMap<Proficiency, Integer> proficiencies = new HashMap<Proficiency, Integer>();
-	private final HashMap<Skill, Integer> skills = new HashMap<Skill, Integer>();
-	
-	private static final int[] PROF_LEVEL_EXP = {
-        1200, 68000, 250000, 640000, 1600000,
-        4000000, 10000000, 22000000, 40000000, 90000000, 95000000, 142500000, 213750000,
-        320625000, 480937500, 721406250, 1082109375, 1623164063, 2100000000, 2100000000
-    };
-	
-	public void setProficiencyExp(Proficiency p, int value) {
-		if ( value > 0 )
-			proficiencies.put(p, value);
+	public PacketWriter characterInformation() {
+		String spouseName = getSpouse();
+		int size = 71 + this.name.length() + spouseName.length();
+		
+		return new PacketWriter(PacketType.CHAR_INFO_PACKET, size)
+		.putUnsignedInteger(this.identity)
+		.putUnsignedInteger(this.mesh)
+		.putUnsignedShort(this.hairstyle)
+		.putUnsignedInteger(this.gold)
+		.putUnsignedInteger(this.cps)
+		.putUnsignedInteger(this.experience)
+		.setOffset(46)
+		.putUnsignedShort(this.strength)
+		.putUnsignedShort(this.dexterity)
+		.putUnsignedShort(this.vitality)
+		.putUnsignedShort(this.spirit)
+		.putUnsignedShort(this.getAttributePoints())
+		.putUnsignedShort(this.HP)
+		.putUnsignedShort(this.mana)
+		.putUnsignedShort(this.pkPoints)
+		.putUnsignedByte(this.level)
+		.putUnsignedByte(this.profession)
+		.setOffset(65)
+		.putUnsignedByte(this.rebornCount)
+		.putBoolean(true) // Display names
+		.putUnsignedByte(2) // String count
+		.putUnsignedByte(this.name.length())
+		.putString(this.name)
+		.putUnsignedByte(spouseName.length())
+		.putString(spouseName);
 	}
-	
-	public void setSkillExp(Skill s, int value) {
-		if ( value > 0 )
-			skills.put(s, value);
+
+	@Override
+	public PacketWriter SpawnPacket() {
+		return new PacketWriter(PacketType.ENTITY_SPAWN_PACKET, 82 + name.length())
+		.putUnsignedInteger(identity)
+		.putUnsignedInteger(mesh)
+		.setOffset(20) // TODO ulong status flags?
+		.putUnsignedShort(0) // Guild ID
+		.setOffset(23)
+		.putUnsignedByte((short) guildRank.getRank()) // Guild rank
+		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.GARMENT)) // garment 24
+		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.HELM)) // helm 28
+		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.ARMOR)) // arm 32
+		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.RIGHT_HAND)) // rw 36
+		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.LEFT_HAND)) // lw 40
+		.setOffset(48)
+		.putUnsignedShort(HP) // health 48
+		.putUnsignedShort(0) // mob lvl 50
+		.putUnsignedShort(location.getxCord()) // 52
+		.putUnsignedShort(location.getyCord()) // 54
+		.putUnsignedShort(hairstyle) //56
+		.putUnsignedByte(location.getDirection()) // direction 58
+		.putUnsignedByte(action ) // action 59
+		.putUnsignedByte(rebornCount) // reborn //60
+		.setOffset(62)
+		.putUnsignedByte(level) // level
+		.setOffset(80)
+		.putUnsignedByte(1)
+		.putUnsignedByte(name.length())
+		.putString(name);		
 	}
-	
-	public int getProficiencyExp(Proficiency p) {
-		return proficiencies.get(p); 
+
+	public GeneralData retrieveLocation() {
+		return new GeneralData(SubType.LOCATION, identity, new int[] {
+			location.getMap().getMapID(),
+			location.getxCord(),
+			location.getyCord()
+		});
 	}
-	
-	private int getProficiencyLvl(int exp) {
-		for ( int i = PROF_LEVEL_EXP.length - 1; i >= 0;  i-- ) {
-			if ( exp >= PROF_LEVEL_EXP[i] ) {
-				return i + 1;
-			}
-		}
-		return 0;
-	}
-	
+
 	public void sendProficiencies() {
 		for ( Entry<Proficiency, Integer> entry : proficiencies.entrySet() ) {
 			int exp = entry.getValue();
@@ -558,14 +568,6 @@ public class Player extends Entity {
 		.putUnsignedByte(9)
 		.setOffset(16)
 		.putUnsignedInteger(stamina).send(this);
-	}
-
-	public int getStamina() {
-		return stamina;
-	}
-
-	public void setStamina(int stamina) {
-		this.stamina = stamina;
 	}
 	
 }
