@@ -14,31 +14,21 @@ import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
 import net.co.java.packets.GeneralData.SubType;
 import net.co.java.server.Server.GameServer.Client;
-import net.co.java.server.Server.Map.Location;
 
 public class Player extends Entity {
 	
 
 	private Client client;
-	private int gold = 0;
-	private int cps = 0;
-	private int experience = 0;
-	private int strength = 1;
-	private int dexterity = 1;
-	private int vitality = 1;
-	private int spirit = 1;
 	
+	private int gold = 0, cps = 0,
+			experience = 0, pkPoints = 0, profession = 15, rebornCount = 0, stamina = 100, action = 0,
+			strength = 1, dexterity = 1, vitality = 1, spirit = 1;
+			
 	protected Guild guild = null;	                
 	protected GuildRank guildRank = GuildRank.None; 
-
-	private int pkPoints = 0;
-	private int profession = 15;
-	private int rebornCount = 0;
-	private int stamina = 100;
-	
 	private String spouse;
-	
 	public final Inventory inventory = new Inventory();
+	
 	
 	public Player(Long identity, String name, Location location, int HP) {
 		super(identity, 223, 315, name, location, HP);
@@ -293,7 +283,8 @@ public class Player extends Entity {
 	}
 	
 	@Override
-	public PacketWriter spawn() {
+	public PacketWriter SpawnPacket() {
+		long rh = inventory.getEquipmentSID(Inventory.RIGHT_HAND);
 		return new PacketWriter(PacketType.ENTITY_SPAWN_PACKET, 82 + name.length())
 		.putUnsignedInteger(identity)
 		.putUnsignedInteger(mesh)
@@ -301,22 +292,22 @@ public class Player extends Entity {
 		.putUnsignedShort(0) // Guild ID
 		.setOffset(23)
 		.putUnsignedByte((short) guildRank.getRank()) // Guild rank
-		.putUnsignedInteger(0) // garment 24
-		.putUnsignedInteger(0) // helm 28
-		.putUnsignedInteger(0) // arm 32
-		.putUnsignedInteger(0) // rw 36
-		.putUnsignedInteger(0) // lw 40
+		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.GARMENT)) // garment 24
+		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.HELM)) // helm 28
+		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.ARMOR)) // arm 32
+		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.RIGHT_HAND)) // rw 36
+		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.LEFT_HAND)) // lw 40
 		.setOffset(48)
 		.putUnsignedShort(HP) // health 48
 		.putUnsignedShort(0) // mob lvl 50
 		.putUnsignedShort(location.getxCord()) // 52
 		.putUnsignedShort(location.getyCord()) // 54
 		.putUnsignedShort(hairstyle) //56
-		.putUnsignedByte(4) // direction 58
-		.putUnsignedByte(0x0) // action 59
-		.putUnsignedByte(1) // reborn //60
+		.putUnsignedByte(location.getDirection()) // direction 58
+		.putUnsignedByte(action ) // action 59
+		.putUnsignedByte(rebornCount) // reborn //60
 		.setOffset(62)
-		.putUnsignedByte(130) // level
+		.putUnsignedByte(level) // level
 		.setOffset(80)
 		.putUnsignedByte(1)
 		.putUnsignedByte(name.length())
@@ -342,7 +333,6 @@ public class Player extends Entity {
 		private int position = 0;
 		private final ItemInstance[] items = new ItemInstance[CAPACITY];
 		private final EquipmentInstance[] equipments = new EquipmentInstance[10];
-		
 		/**
 		 * Add an item to the Players inventory and update the client through
 		 * an ItemInformation Packet
@@ -354,7 +344,7 @@ public class Player extends Entity {
 			if(position < CAPACITY) {
 				items[position++] = item;
 				// Send a packet to the client to add the item to the inventory
-				item.new ItemInformationPacket(Mode.DEFAULT, INVENTORY).send(client);
+				if(sent) item.new ItemInformationPacket(Mode.DEFAULT, INVENTORY).send(client);
 				return true;
 			}
 			return false;
@@ -375,7 +365,7 @@ public class Player extends Entity {
 					}
 					position--;
 					// Send a packet to the client to remove the item from the inventory
-					new ItemUsage(item.uniqueIdentifier, INVENTORY, ItemUsage.Mode.RemoveInventory).build().send(client);
+					if(sent) new ItemUsage(item.uniqueIdentifier, INVENTORY, ItemUsage.Mode.RemoveInventory).build().send(client);
 					return true;
 				}
 			}
@@ -401,7 +391,7 @@ public class Player extends Entity {
 				unequip(slot);
 				equipments[slot] = equipment;
 				// Send a packet to the client to equip the item at the equipment slot
-				equipment.new ItemInformationPacket(Mode.DEFAULT, slot).send(client);
+				if(sent) equipment.new ItemInformationPacket(Mode.DEFAULT, slot).send(client);
 				return true;
 			} else {
 				// Item can't be equipped
@@ -422,7 +412,7 @@ public class Player extends Entity {
 					addItem(oldItem);
 					equipments[slot] = null;
 					// Send a packet to the client to remove the item from the equipment slot
-					new ItemUsage(oldItem.uniqueIdentifier, slot, ItemUsage.Mode.RemoveEquipment).build().send(client);
+					if(sent) new ItemUsage(oldItem.uniqueIdentifier, slot, ItemUsage.Mode.RemoveEquipment).build().send(client);
 				}
 				return true;
 			}
@@ -464,6 +454,9 @@ public class Player extends Entity {
 			return result;
 		}
 		
+		/**
+		 * @return the equipments for this Player
+		 */
 		public EquipmentInstance[] getEquipments() {
 			int amount = 0;
 			for ( int i = 0; i < equipments.length; i++ )
@@ -474,6 +467,32 @@ public class Player extends Entity {
 				if ( equipments[i] != null )
 					result[k++] = equipments[i];
 			return result;
+		}
+		
+		/**
+		 * @param slot
+		 * @return the SID for the equipment in a given slot, or 0.
+		 */
+		long getEquipmentSID(int slot) {
+			if(items[slot] != null)
+				return items[slot].itemPrototype.identifier;
+			return 0;
+		}
+		
+		private boolean sent = false;
+
+		/**
+		 * Send the equipments and inventory contents to the client
+		 */
+		public void send() {
+			if(!sent){
+				for ( int i = 0; i < position; i++ )
+					items[i].new ItemInformationPacket(Mode.DEFAULT, INVENTORY).send(client);
+				for ( int i = 1; i < equipments.length; i++ )
+					if ( equipments[i] != null )
+						equipments[i].new ItemInformationPacket(Mode.DEFAULT, i).send(client);
+				sent = true;
+			}
 		}
 		
 	}

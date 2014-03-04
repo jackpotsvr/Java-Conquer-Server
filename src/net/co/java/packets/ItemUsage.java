@@ -1,6 +1,7 @@
 package net.co.java.packets;
 
 import net.co.java.item.ItemInstance.EquipmentInstance;
+import net.co.java.model.AccessException;
 import net.co.java.server.Server.GameServer.Client;
 
 /**
@@ -101,7 +102,9 @@ public class ItemUsage implements PacketHandler {
 			new ItemUsage(client.getIdentity(), 0, mode, timestamp).build().send(client);
 			break;
 		case EquipItem:
-			client.getPlayer().inventory.equip((int) parameter, (EquipmentInstance) client.getModel().getItemInstance(identity));
+			try {
+				client.getPlayer().inventory.equip((int) parameter, (EquipmentInstance) client.getModel().getItemInstance(identity));
+			} catch (AccessException e) {}
 			break;
 		case UnEquipItem:
 			client.getPlayer().inventory.unequip((int) parameter);

@@ -6,6 +6,7 @@ import java.util.InputMismatchException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+import net.co.java.entity.Location;
 import net.co.java.entity.Monster;
 import net.co.java.entity.Player;
 import net.co.java.entity.Proficiency;
@@ -19,6 +20,7 @@ import net.co.java.server.Server.Map;
 /**
  * The Mock model is a model using mock data and is mainly for
  * developing and testing purposes.
+ * 
  * @author Jan-Willem Gmelig Meyling
  *
  */
@@ -33,7 +35,7 @@ public class Mock extends AbstractModel {
 	private void createSomeStuff() throws FileNotFoundException{
 		System.out.println("Creating the magical world of Conquer Online");
 		// We spawn a BullMessenger in Twin City for testing purposes here
-		Map.CentralPlain.addEntity(new Monster(Map.CentralPlain.new Location(378, 343), 564564, "BullMessenger",  112, 117, 55000));
+		Map.CentralPlain.addEntity(new Monster(new Location(Map.CentralPlain, 378, 343), 564564, "BullMessenger",  112, 117, 55000));
 		// Load the item data
 		readItemPrototypes(new File("ini/COItems.txt"));
 	}
@@ -41,12 +43,6 @@ public class Mock extends AbstractModel {
 	@Override
 	public boolean isAuthorised(String server, String username, String password) {
 		return true;
-	}
-
-	@Override
-	protected ItemPrototype fetchItemPrototype(long id) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -78,23 +74,6 @@ public class Mock extends AbstractModel {
 	}
 
 	@Override
-	public Player loadPlayer(AuthorizationPromise promise) throws AccessException {
-		player.setGold(1111);
-		player.setCps(215);
-		player.setStrength(180);
-		player.setDexterity(50);
-		player.setVitality(50);
-		player.setSpirit(50);
-		player.setHP(5000);
-		player.setLevel(130);
-		player.setProfession(15);
-		player.setProficiencyExp(Proficiency.BLADE, 210000000);
-		this.players.put(promise.getIdentity(), player);
-		player.setLocation(Map.CentralPlain.new Location(382, 341), null);
-		return player;
-	}
-
-	@Override
 	public boolean createCharacter(Character_Creation_Packet ip)
 			throws AccessException {
 		player = new Player(ip.getIdentity(), ip.getCharacterName(), null, 0);
@@ -112,46 +91,88 @@ public class Mock extends AbstractModel {
 		player.setExperience(0);
 		return true;
 	}
+	
+	@Override
+	protected Player fetchPlayer(AuthorizationPromise promise)
+			throws AccessException {
+		Player player = this.player;
+		this.player = null;
+		player.setGold(1111);
+		player.setCps(215);
+		player.setStrength(180);
+		player.setDexterity(50);
+		player.setVitality(50);
+		player.setSpirit(50);
+		player.setHP(5000);
+		player.setLevel(130);
+		player.setProfession(15);
+		player.setLocation(new Location(Map.CentralPlain, 382, 341), null);
+		return player;
+	}
 
 	@Override
-	public void loadInventory(Player player) throws AccessException {
+	protected void fetchInventory(Player hero) throws AccessException {
 		ItemInstance item = new EquipmentInstance(2342239l, this.getEquipmentPrototype(480029l))
 			.setFirstSocket(EquipmentInstance.Socket.SuperFury)
 			.setSecondSocket(EquipmentInstance.Socket.SuperRainbowGem)
 			.setDura(1500).setBless(3).setPlus(7).setEnchant(172);
 		itemInstances.put(2342239l, item);
-		player.inventory.addItem(item);
+		hero.inventory.addItem(item);
 		ItemInstance item2 = new EquipmentInstance(2342240l, this.getEquipmentPrototype(480029l))
 			.setFirstSocket(EquipmentInstance.Socket.SuperDragon)
 			.setSecondSocket(EquipmentInstance.Socket.SuperPhoenix)
 			.setDura(1500).setBless(3).setPlus(7).setEnchant(172);
 		itemInstances.put(2342240l, item2);
-		player.inventory.addItem(item2);
+		hero.inventory.addItem(item2);
 	}
 
 	@Override
-	public void loadEquipment(Player player) throws AccessException {
+	protected void fetchEquipment(Player hero) throws AccessException {
 		EquipmentInstance LeftBlade = new EquipmentInstance(1l, this.getEquipmentPrototype(410339l))
-				.setFirstSocket(EquipmentInstance.Socket.SuperFury)
-				.setSecondSocket(EquipmentInstance.Socket.SuperRainbowGem)
-				.setDura(5000).setBless(3).setPlus(9).setEnchant(169);
+			.setFirstSocket(EquipmentInstance.Socket.SuperFury)
+			.setSecondSocket(EquipmentInstance.Socket.SuperRainbowGem)
+			.setDura(5000).setBless(3).setPlus(9).setEnchant(169);
 		EquipmentInstance RightBlade = new EquipmentInstance(2l, this.getEquipmentPrototype(410339l))
-				.setFirstSocket(EquipmentInstance.Socket.SuperDragon)
-				.setSecondSocket(EquipmentInstance.Socket.SuperPhoenix)
-				.setDura(5000).setBless(2).setPlus(9).setEnchant(172);
+			.setFirstSocket(EquipmentInstance.Socket.SuperDragon)
+			.setSecondSocket(EquipmentInstance.Socket.SuperPhoenix)
+			.setDura(5000).setBless(2).setPlus(9).setEnchant(172);
 		EquipmentInstance Armor = new EquipmentInstance(3l, this.getEquipmentPrototype(135999l))
 			.setFirstSocket(EquipmentInstance.Socket.SuperDragon)
 			.setSecondSocket(EquipmentInstance.Socket.SuperPhoenix)
 			.setDura(5000).setBless(4).setPlus(9).setEnchant(154);
+		
 		itemInstances.put(LeftBlade.uniqueIdentifier, LeftBlade);
 		itemInstances.put(RightBlade.uniqueIdentifier, RightBlade);
 		itemInstances.put(Armor.uniqueIdentifier, Armor);
-		player.inventory.equip(Player.Inventory.LEFT_HAND, LeftBlade);
-		player.inventory.equip(Player.Inventory.RIGHT_HAND, RightBlade);
-		player.inventory.equip(Player.Inventory.ARMOR, Armor);
+		
+		hero.inventory.equip(Player.Inventory.LEFT_HAND, LeftBlade);
+		hero.inventory.equip(Player.Inventory.RIGHT_HAND, RightBlade);
+		hero.inventory.equip(Player.Inventory.ARMOR, Armor);
+	}
+
+	@Override
+	protected void fetchSkill(Player hero) throws AccessException {
+		// TODO Auto-generated method stub
 		
 	}
-	
+
+	@Override
+	protected void fetchProficiency(Player hero) throws AccessException {
+		hero.setProficiencyExp(Proficiency.BLADE, 210000000);
+	}
+
+	@Override
+	protected ItemPrototype fetchItemPrototype(long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected ItemInstance fetchItemInstance(long id) throws AccessException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	private void readItemPrototypes(File file) throws FileNotFoundException {
 		Scanner sc = new Scanner(file);		
 		if(sc.hasNext()&&sc.next().equalsIgnoreCase("[Items]")) {

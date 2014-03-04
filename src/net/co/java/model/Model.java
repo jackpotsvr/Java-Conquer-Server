@@ -63,20 +63,6 @@ public interface Model {
 	 */
 	boolean createCharacter(Character_Creation_Packet ip) throws AccessException;
 	
-	/**
-	 * Used to set the inventory from a player, with items loaded from a model. 
-	 * @param player
-	 * @throws AccessException
-	 */
-	void loadInventory(Player player) throws AccessException;
-	
-	/** 
-	 * Set all the equipments from database. 
-	 * @param player
-	 * @throws AccessException
-	 */
-	void loadEquipment(Player player) throws AccessException;
-	
 	/** 
 	 * @param staticID
 	 * @return get an ItemPrototype
@@ -87,7 +73,7 @@ public interface Model {
 	 * @param id
 	 * @return an ItemInstance
 	 */
-	ItemInstance getItemInstance(long id);
+	ItemInstance getItemInstance(long id) throws AccessException;
 
 	/**
 	 * @param staticID

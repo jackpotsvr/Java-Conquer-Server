@@ -6,7 +6,6 @@ import net.co.java.packets.GeneralData;
 import net.co.java.packets.IncomingPacket;
 import net.co.java.packets.PacketWriter;
 import net.co.java.packets.GeneralData.SubType;
-import net.co.java.server.Server.Map.Location;
 
 public abstract class Entity implements Spawnable {
 
@@ -39,7 +38,7 @@ public abstract class Entity implements Spawnable {
 		if (oldLocation == null ) {
 			// Initial spawn, send spawn packet to surroundings 
 			this.location.getMap().addEntity(this);
-			this.spawn().sendToSurroundings(this);
+			this.SpawnPacket().sendToSurroundings(this);
 			return;
 		}
 		if (oldLocation.getMap() != location.getMap()) {
@@ -48,7 +47,7 @@ public abstract class Entity implements Spawnable {
 			location.getMap().addEntity(this);
 		}
 		// Prepare the packets
-		PacketWriter spawnPacket = this.spawn();
+		PacketWriter spawnPacket = this.SpawnPacket();
 		PacketWriter removePacket = this.removeEntity();
 		// Send the packets to the surroundings
 		for (Entity entity : location.getMap().getEntities()) {
@@ -61,7 +60,7 @@ public abstract class Entity implements Spawnable {
 					entity.removeEntity().send((Player) this);
 				} else if ( isInView && !isInOldView ) {
 					// Spawn new entities
-					entity.spawn().send((Player) this);
+					entity.SpawnPacket().send((Player) this);
 				}
 			}
 			// If the entity is not a player, we're done here
@@ -108,10 +107,10 @@ public abstract class Entity implements Spawnable {
 	 * @param jump
 	 */
 	public void jump(int x, int y, IncomingPacket jump) {
-		setLocation(this.location.getMap().new Location(x,y), jump);
+		setLocation(new Location(this.location.map, x, y), jump);
 	}
 
-	public abstract PacketWriter spawn();
+	public abstract PacketWriter SpawnPacket();
 
 	public PacketWriter removeEntity() {
 		return new GeneralData(SubType.ENTITY_REMOVE, identity, new int[3]).build();

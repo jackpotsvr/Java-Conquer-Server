@@ -311,9 +311,7 @@ public class Server {
 						//player.setLocation(Map.CentralPlain.new Location(382, 341), null);
 						// Send the character information packet
 						player.characterInformation().send(this);
-						// Send an item
-						model.loadInventory(player);
-						model.loadEquipment(player);
+						player.inventory.send();
 						player.sendProficiencies();
 						player.sendSkills();
 						player.sendStamina();
@@ -463,119 +461,6 @@ public class Server {
 			return result;
 		}
 		
-		/**
-		 * The Location class contains the information for a location
-		 * in a Map
-		 * @author Jan-Willem Gmelig Meyling
-		 * @author Thomas Gmelig Meyling
-		 */
-		public class Location  {
-
-			private final static int VIEW_RANGE = 18;
-			
-			private final int xCord, yCord;
-			private int direction;
-
-			/**
-			 * Construct a new Location in this Map
-			 * @param xCord
-			 * @param yCord
-			 */
-			public Location(int xCord, int yCord) {
-				this.xCord = xCord;
-				this.yCord = yCord;
-				this.direction = 0;
-			}
-
-			/**
-			 * @return the Map for this Location
-			 */
-			public Map getMap() {
-				return Map.this;
-			}
-			
-			/**
-			 * @return the x-coordinate for this Location
-			 */
-			public int getxCord() {
-				return xCord;
-			}
-			
-			public int getDirection() {
-				return direction;
-			}
-			
-			public void setDirection(int direction) {
-				this.direction = direction % 8;
-			}
-			
-			/**
-			 * @return the y-coordinate for this Location
-			 */
-			public int getyCord() {
-				return yCord;
-			}
-			
-			/**
-			 * @param x offset
-			 * @param y offset
-			 * @return a new Location in this name with a given offset
-			 * from this Location
-			 */
-			public Location atOffset(int x, int y) {
-				return new Location(xCord + x, yCord + y);
-			}
-			
-			public Location inDirection(int direction) {
-				switch (direction%8) {
-		        case 0:
-		            return new Location(xCord, yCord+1);
-		        case 1:
-		            return new Location((xCord-1), yCord+1);
-		        case 2:
-		            return new Location((xCord-1), yCord);
-		        case 3:
-		            return new Location((xCord-1), yCord-1);
-		        case 4:
-		            return new Location(xCord, yCord-1);
-		        case 5:
-		            return new Location((xCord+1), yCord-1);
-		        case 6:
-		            return new Location((xCord+1), yCord);
-		        default:
-		            return new Location((xCord+1), yCord+1);
-				}
-			}
-			
-			/**
-			 * @param location
-			 * @return true if an entity is within the default sight of
-			 * the entity at this location
-			 */
-			public boolean inView(Location location) {
-				return location.getMap().equals(getMap())
-						&& Math.sqrt(Math.pow(location.xCord - xCord, 2) + Math.pow(location.yCord - yCord, 2)) < VIEW_RANGE;
-				//		&& Math.abs(location.xCord - xCord) < VIEW_RANGE
-				//		&& Math.abs(location.yCord - yCord) < VIEW_RANGE;
-			}
-			
-			
-			@Override
-			public String toString() {
-				return Map.this.toString() + ": (" + xCord + "; " + yCord + ")";
-			}
-
-			@Override
-			public boolean equals(Object obj) {
-				if (obj instanceof Location) {
-					Location other = (Location) obj;
-					return other.getMap().equals(Map.this) && other.xCord == xCord
-							&& other.yCord == yCord;
-				}
-				return super.equals(obj);
-			}
-			
-		}
 	}
 
 	public static void main(String[] args) throws IOException {

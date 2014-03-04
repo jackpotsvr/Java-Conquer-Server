@@ -1,6 +1,7 @@
 package net.co.java.packets;
 
 import net.co.java.entity.Entity;
+import net.co.java.entity.Location;
 import net.co.java.server.Server.Map;
 import net.co.java.server.Server.GameServer.Client;
 
@@ -163,7 +164,7 @@ public class GeneralData implements PacketHandler {
 		switch(subType){
 		case GET_SURROUNDINGS:
 			for (Entity e : client.getPlayer().getSurroundings())
-				e.spawn().send(client);
+				e.SpawnPacket().send(client);
 			break;
 		case JUMP:
 			client.getPlayer().jump(shorts[0], shorts[1], ip);
@@ -173,7 +174,7 @@ public class GeneralData implements PacketHandler {
 			break;
 		case PORTAL:
 			System.out.printf("GENERAL DATA: %s , %s ,%s", shorts[0], shorts[1], shorts[2]);
-			client.getPlayer().setLocation(Map.CentralPlain.new Location(250, 180), null);
+			client.getPlayer().setLocation(new Location(Map.CentralPlain, 250, 180), null);
 			client.getPlayer().retrieveLocation().build().send(client);
 			break;
 		default:

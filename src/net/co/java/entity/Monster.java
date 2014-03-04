@@ -2,7 +2,6 @@ package net.co.java.entity;
 
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
-import net.co.java.server.Server.Map.Location;
 
 public class Monster extends Entity {
 
@@ -19,7 +18,7 @@ public class Monster extends Entity {
 	}
 
 	@Override
-	public PacketWriter spawn() {
+	public PacketWriter SpawnPacket() {
 		return new PacketWriter(PacketType.ENTITY_SPAWN_PACKET, 82 + name.length())
 		.putUnsignedInteger(identity)
 		.putUnsignedInteger(mesh)

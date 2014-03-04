@@ -1,7 +1,5 @@
 package net.co.java.entity;
 
-import net.co.java.server.Server.Map.Location;
-
 public class NPC implements Spawnable {
 	
 	private Location location;
