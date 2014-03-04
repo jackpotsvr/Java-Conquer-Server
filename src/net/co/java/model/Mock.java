@@ -10,6 +10,7 @@ import net.co.java.entity.Location;
 import net.co.java.entity.Monster;
 import net.co.java.entity.Player;
 import net.co.java.entity.Proficiency;
+import net.co.java.entity.Skill;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemPrototype.EquipmentPrototype;
@@ -35,7 +36,7 @@ public class Mock extends AbstractModel {
 	private void createSomeStuff() throws FileNotFoundException{
 		System.out.println("Creating the magical world of Conquer Online");
 		// We spawn a BullMessenger in Twin City for testing purposes here
-		Map.CentralPlain.addEntity(new Monster(new Location(Map.CentralPlain, 378, 343), 564564, "BullMessenger",  112, 117, 55000));
+		new Monster(new Location(Map.CentralPlain, 378, 343), 564564, "BullMessenger",  112, 117, 55000).spawn();
 		// Load the item data
 		readItemPrototypes(new File("ini/COItems.txt"));
 	}
@@ -53,7 +54,7 @@ public class Mock extends AbstractModel {
 		if (player != null ) {
 			characterName = player.getName();
 		} else  if(accountName.equalsIgnoreCase("jackpotsvr")) {
-			player = new Player(identity, accountName, null, 0);
+			player = new Player(identity, accountName, new Location(Map.CentralPlain, 382, 341), 0);
 			player.setLevel(1);
 			player.setStrength(1);
 			player.setDexterity(1);
@@ -76,7 +77,7 @@ public class Mock extends AbstractModel {
 	@Override
 	public boolean createCharacter(Character_Creation_Packet ip)
 			throws AccessException {
-		player = new Player(ip.getIdentity(), ip.getCharacterName(), null, 0);
+		player = new Player(ip.getIdentity(), ip.getCharacterName(), new Location(Map.CentralPlain, 382, 341), 0);
 		player.setLevel(1);
 		player.setStrength(1);
 		player.setDexterity(1);
@@ -106,7 +107,6 @@ public class Mock extends AbstractModel {
 		player.setHP(5000);
 		player.setLevel(130);
 		player.setProfession(15);
-		player.setLocation(new Location(Map.CentralPlain, 382, 341), null);
 		return player;
 	}
 
@@ -152,8 +152,7 @@ public class Mock extends AbstractModel {
 
 	@Override
 	protected void fetchSkill(Player hero) throws AccessException {
-		// TODO Auto-generated method stub
-		
+		hero.setSkillExp(Skill.FAST_BLADE, 67000);
 	}
 
 	@Override

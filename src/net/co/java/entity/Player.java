@@ -33,7 +33,7 @@ public class Player extends Entity {
 	public Player(Long identity, String name, Location location, int HP) {
 		super(identity, 223, 315, name, location, HP);
 	}
-
+	
 	public void setClient(Client client) {
 		this.client = client;
 	}
@@ -284,7 +284,6 @@ public class Player extends Entity {
 	
 	@Override
 	public PacketWriter SpawnPacket() {
-		long rh = inventory.getEquipmentSID(Inventory.RIGHT_HAND);
 		return new PacketWriter(PacketType.ENTITY_SPAWN_PACKET, 82 + name.length())
 		.putUnsignedInteger(identity)
 		.putUnsignedInteger(mesh)
@@ -311,7 +310,7 @@ public class Player extends Entity {
 		.setOffset(80)
 		.putUnsignedByte(1)
 		.putUnsignedByte(name.length())
-		.putString(name);
+		.putString(name);		
 	}
 
 	public class Inventory {
@@ -474,8 +473,8 @@ public class Player extends Entity {
 		 * @return the SID for the equipment in a given slot, or 0.
 		 */
 		long getEquipmentSID(int slot) {
-			if(items[slot] != null)
-				return items[slot].itemPrototype.identifier;
+			if(equipments[slot] != null)
+				return equipments[slot].itemPrototype.identifier;
 			return 0;
 		}
 		
@@ -498,6 +497,7 @@ public class Player extends Entity {
 	}
 	
 	private final HashMap<Proficiency, Integer> proficiencies = new HashMap<Proficiency, Integer>();
+	private final HashMap<Skill, Integer> skills = new HashMap<Skill, Integer>();
 	
 	private static final int[] PROF_LEVEL_EXP = {
         1200, 68000, 250000, 640000, 1600000,
@@ -510,11 +510,16 @@ public class Player extends Entity {
 			proficiencies.put(p, value);
 	}
 	
+	public void setSkillExp(Skill s, int value) {
+		if ( value > 0 )
+			skills.put(s, value);
+	}
+	
 	public int getProficiencyExp(Proficiency p) {
 		return proficiencies.get(p); 
 	}
 	
-	public int getProficiencyLvl(int exp) {
+	private int getProficiencyLvl(int exp) {
 		for ( int i = PROF_LEVEL_EXP.length - 1; i >= 0;  i-- ) {
 			if ( exp >= PROF_LEVEL_EXP[i] ) {
 				return i + 1;
@@ -536,11 +541,14 @@ public class Player extends Entity {
 	}
 	
 	public void sendSkills(){
-		new PacketWriter(PacketType.SKILL_PACKET, 12)
-		.putUnsignedInteger(468743)
-		.putUnsignedShort(1045)
-		.putUnsignedShort(2)
-		.send(this);
+		for ( Entry<Skill, Integer> entry : skills.entrySet() ) {
+			int exp = entry.getValue();
+			new PacketWriter(PacketType.SKILL_PACKET, 12)
+			.putUnsignedInteger(exp)
+			.putUnsignedShort(entry.getKey().skillID)
+			.putUnsignedShort(getProficiencyLvl(exp))
+			.send(this);
+		}
 	}
 	
 	public void sendStamina() {

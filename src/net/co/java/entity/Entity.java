@@ -7,6 +7,12 @@ import net.co.java.packets.IncomingPacket;
 import net.co.java.packets.PacketWriter;
 import net.co.java.packets.GeneralData.SubType;
 
+/**
+ * Abstract class for entities (eg. Monsters and Players)
+ * @author Thomas Gmelig Meyling
+ * @author Jan-Willem Gmelig Meyling
+ *
+ */
 public abstract class Entity implements Spawnable {
 
 	protected final long identity;
@@ -19,12 +25,32 @@ public abstract class Entity implements Spawnable {
 	protected int mana;
 	protected int level;
 	
+	/**
+	 * Construct a new entity
+	 * @param identity
+	 * @param mesh
+	 * @param hairstyle
+	 * @param name
+	 * @param location
+	 * @param HP
+	 */
 	public Entity(long identity, int mesh, int hairstyle, String name, Location location, int HP) {
 		this.identity = identity;
+		this.location = location;
 		this.mesh = mesh;
 		this.hairstyle = hairstyle;
 		this.name = name;
 		this.HP = HP;
+	}
+	
+	/**
+	 * This method is called to setup the initial spawn. It adds the Entity
+	 * to a new Map and sends the Spawn packet to the surrounding Players.
+	 */
+	public void spawn() {
+		if(location != null) {
+			location.getMap().addEntity(this);
+		}
 	}
 	
 	/**

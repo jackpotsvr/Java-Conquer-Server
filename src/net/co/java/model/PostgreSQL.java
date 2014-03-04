@@ -51,7 +51,7 @@ public class PostgreSQL extends AbstractModel {
 	private void createSomeStuff() throws FileNotFoundException{
 		System.out.println("Creating the magical world of Conquer Online");
 		// TODO We spawn a BullMessenger in Twin City for testing purposes here
-		Map.CentralPlain.addEntity(new Monster(new Location(Map.CentralPlain, 378, 343), 564564, "BullMessenger",  112, 117, 55000));
+		new Monster(new Location(Map.CentralPlain, 378, 343), 564564, "BullMessenger",  112, 117, 55000).spawn();
 	}
 	
 	/**

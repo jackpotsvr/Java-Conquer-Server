@@ -40,7 +40,7 @@ public class ItemUsage implements PacketHandler {
 	public ItemUsage(IncomingPacket ip) {
 		identity = ip.readUnsignedInt(4);
 		parameter = ip.readUnsignedInt(8);
-		mode = Mode.getMode(ip.readUnsignedInt(12));
+		mode = Mode.valueOf(ip.readUnsignedInt(12));
 		timestamp = ip.readUnsignedInt(16);
 		if ( mode == Mode.EquipItem ) {
 			System.out.println(ip.toString());
@@ -134,14 +134,6 @@ public class ItemUsage implements PacketHandler {
 			break;
 		}
 	}
-	
-	public static void handle(ItemUsage packet, Client client) {
-		packet.handle(client);
-	}
-	
-	public static void handle(IncomingPacket packet, Client client) {
-		new ItemUsage(packet).handle(client);
-	}
 
 	/**
 	 * Enumeration of Item usage modes
@@ -163,7 +155,7 @@ public class ItemUsage implements PacketHandler {
 			this.index = index; 
 		}
 		
-		public static Mode getMode(long index) {
+		public static Mode valueOf(long index) {
 			for (Mode m : Mode.values()) {
 				if (m.index == index) {
 					return m;

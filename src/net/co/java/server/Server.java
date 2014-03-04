@@ -310,6 +310,7 @@ public class Server {
 						// the current identity and client thread
 						//player.setLocation(Map.CentralPlain.new Location(382, 341), null);
 						// Send the character information packet
+						player.spawn();
 						player.characterInformation().send(this);
 						player.inventory.send();
 						player.sendProficiencies();
@@ -368,7 +369,7 @@ public class Server {
 					break;
 				}
 			}
-		}
+		}	
 	}
 
 	/**
@@ -405,19 +406,25 @@ public class Server {
 		}
 		
 		/**
-		 * Add an {@code Entity} to this Map - teleport or spawn.
+		 * Add an {@code Entity} to this Map, for example due a windspell, portal or spawn.
+		 * Send an EntitySpawn packet to surrounding players.
 		 * @param entity
 		 */
 		public void addEntity(Entity entity) {
-			entities.add(entity);
+			if(!entities.contains(entity)) {
+				entities.add(entity);
+				entity.SpawnPacket().sendTo(getPlayersInRange(entity));
+			}
 		}
 		
 		/**
 		 * Remove an {@code Entity} from this Map - death or teleport.
+		 * Send an Entity Remove packet to surrounding players.
 		 * @param entity
 		 */
 		public void removeEntity(Entity entity) {
-			entities.remove(entity);
+			if(entities.remove(entity))
+				entity.removeEntity().sendTo(getPlayersInRange(entity));
 		}
 		
 		/**
@@ -466,7 +473,5 @@ public class Server {
 	public static void main(String[] args) throws IOException {
 		new Server();
 	}
-	
-	
 
 }
