@@ -20,6 +20,7 @@ import net.co.java.item.ItemPrototype.EquipmentPrototype;
 import net.co.java.item.ItemPrototype;
 import net.co.java.packets.Character_Creation_Packet;
 import net.co.java.server.Server.Map;
+import net.co.java.skill.Skill;
 
 /**
  * The PostgreSQL model is to use the Java Conquer Server with PostgreSQL databases
@@ -306,8 +307,7 @@ public class PostgreSQL extends AbstractModel {
 
 	@Override
 	protected void fetchSkill(Player hero) throws AccessException {
-		// TODO Auto-generated method stub
-		
+		hero.setSkill(Skill.FAST_BLADE, 4, 0);
 	}
 
 	@Override

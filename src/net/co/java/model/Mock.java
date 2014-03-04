@@ -10,13 +10,13 @@ import net.co.java.entity.Location;
 import net.co.java.entity.Monster;
 import net.co.java.entity.Player;
 import net.co.java.entity.Proficiency;
-import net.co.java.entity.Skill;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemPrototype.EquipmentPrototype;
 import net.co.java.item.ItemPrototype;
 import net.co.java.packets.Character_Creation_Packet;
 import net.co.java.server.Server.Map;
+import net.co.java.skill.Skill;
 
 /**
  * The Mock model is a model using mock data and is mainly for
@@ -152,7 +152,9 @@ public class Mock extends AbstractModel {
 
 	@Override
 	protected void fetchSkill(Player hero) throws AccessException {
-		hero.setSkillExp(Skill.FAST_BLADE, 68001);
+		hero.setSkill(Skill.FAST_BLADE, 4, 0);
+		hero.setSkill(Skill.SCENT_SWORD, 4, 0);
+		hero.setSkill(Skill.RAGE, 8, 0);
 	}
 
 	@Override

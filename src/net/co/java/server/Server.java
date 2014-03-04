@@ -335,7 +335,7 @@ public class Server {
 					break;
 				case MESSAGE_PACKET:
 					MessagePacket mp = new MessagePacket(packet);
-					if(mp.getMessage().startsWith("$")) {
+					if(mp.getMessage().startsWith("/")) {
 						new Command(mp).handle(this);
 					} else {
 						System.out.println(mp.getFrom() + " said " + mp.getMessage() + ".");

@@ -2,8 +2,9 @@ package net.co.java.packets;
 
 import java.math.BigInteger;
 
-import net.co.java.entity.Skill;
 import net.co.java.server.Server.GameServer.Client;
+import net.co.java.skill.Skill;
+import net.co.java.skill.Skill.MagicSkill;
 
 /**
  * The Interact packet is most commonly used for direct melee/archer attacks,
@@ -126,7 +127,8 @@ public class InteractPacket implements PacketHandler {
 		case Death:
 			break;
 		case MagicAttack:
-			skill.handle(player, this);
+			if(skill instanceof MagicSkill)
+				((MagicSkill) skill).handle(player, this);
 			break;
 		case MagicReflect:
 			break;

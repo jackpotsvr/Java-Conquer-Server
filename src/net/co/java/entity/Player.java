@@ -14,6 +14,8 @@ import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
 import net.co.java.packets.GeneralData.SubType;
 import net.co.java.server.Server.GameServer.Client;
+import net.co.java.skill.Skill;
+import net.co.java.skill.SkillProficiency;
 
 public class Player extends Entity {
 	
@@ -32,7 +34,7 @@ public class Player extends Entity {
 	
 	private final HashMap<Proficiency, Integer> proficiencies = new HashMap<Proficiency, Integer>();
 
-	private final HashMap<Skill, Integer> skills = new HashMap<Skill, Integer>();
+	private final HashMap<Skill, SkillProficiency> skills = new HashMap<Skill, SkillProficiency>();
 
 	private static final int[] PROF_LEVEL_EXP = {
 	    1200, 68000, 250000, 640000, 1600000,
@@ -266,9 +268,13 @@ public class Player extends Entity {
 			proficiencies.put(p, value);
 	}
 
-	public void setSkillExp(Skill s, int value) {
-		if ( value > 0 )
-			skills.put(s, value);
+	public void setSkill(Skill s, int level, long exp) {
+		if ( level > 0 || exp > 0 )
+			skills.put(s, new SkillProficiency(this, s, level, exp));
+	}
+	
+	public SkillProficiency getSkillProficiency(Skill skill) {
+		return skills.get(skill);
 	}
 
 	public int getProficiencyExp(Proficiency p) {
@@ -551,14 +557,8 @@ public class Player extends Entity {
 	}
 	
 	public void sendSkills(){
-		for ( Entry<Skill, Integer> entry : skills.entrySet() ) {
-			int exp = entry.getValue();
-			new PacketWriter(PacketType.SKILL_PACKET, 12)
-			.putUnsignedInteger(exp)
-			.putUnsignedShort(entry.getKey().skillID)
-			.putUnsignedShort(getProficiencyLvl(exp))
-			.send(this);
-		}
+		for ( SkillProficiency skill : skills.values() )
+			skill.sendSkill();
 	}
 	
 	public void sendStamina() {

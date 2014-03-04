@@ -37,7 +37,7 @@ public abstract class ServerThread implements Runnable {
 		this.in = client.getInputStream();
 		this.out = client.getOutputStream();
 		this.cipher =  new Cryptographer();
-		this.packets = new ArrayBlockingQueue<byte[]>(10);
+		this.packets = new ArrayBlockingQueue<byte[]>(40);
 		new Thread(this).start();
 	}
 
