@@ -1,7 +1,5 @@
 package net.co.java.packets;
 
-import java.math.BigInteger;
-
 import net.co.java.server.Server.GameServer.Client;
 import net.co.java.skill.Skill;
 import net.co.java.skill.Skill.MagicSkill;
@@ -12,7 +10,6 @@ import net.co.java.skill.Skill.MagicSkill;
  * 
  * @author Jan-Willem Gmelig Meyling
  * @author Thomas Gmelig Meyling
- * 
  */
 public class InteractPacket implements PacketHandler {
 	
@@ -23,7 +20,6 @@ public class InteractPacket implements PacketHandler {
 	private final int y;
 	private final Mode mode;
 	private final Skill skill;
-	private final IncomingPacket ip;
 	
 	/**
 	 * Construct a new {@code InteractPacket} based on a {@code IncomingPacket}
@@ -33,7 +29,6 @@ public class InteractPacket implements PacketHandler {
 		this.timestamp = ip.readUnsignedInt(4);
 		this.identity = ip.readUnsignedInt(8);
 		this.mode = Mode.valueOf(ip.readUnsignedByte(20));
-		this.ip = ip;
 		
 		int skillid = ip.readUnsignedShort(24);
 		skillid ^= 0x915d;
@@ -56,13 +51,17 @@ public class InteractPacket implements PacketHandler {
         y -= 0xffff8922;
         this.y = (int) y;
 
-        BigInteger target = ip.readUnsingedLong(12);
-        this.target = target.and(BigInteger.valueOf(0xffffe000)).shiftRight(13)
-			.or(target.and(BigInteger.valueOf(0x1fff)).shiftLeft(19))
-			.xor(BigInteger.valueOf(0x5F2D2463))
-			.xor(BigInteger.valueOf(identity))
-			.subtract(BigInteger.valueOf(0x746F4AE6))
-			.longValue();
+		this.target = ip.readUnsignedInt(12);
+        /* 
+         * TODO Some additional encoding seems to be required based on the C# sources.
+         * However, in the packets we receive from the client (5013), the target is
+         * sent normally. Something strange happens with the X and Y coordinates though.
+         * 
+         * target = (((target & 0xffffe000) >> 13) | ((target & 0x1fff) << 19));
+         * target ^= 0x5F2D2463 ^ identity;
+         * target =- 0x746F4AE6;
+         * target =- 0x746F4AE6;
+         */
         
         System.out.println(this.toString());
 	}
@@ -199,9 +198,5 @@ public class InteractPacket implements PacketHandler {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	public IncomingPacket getIp() {
-		return ip;
-	}	
 
 }

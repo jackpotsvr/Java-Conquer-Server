@@ -1,7 +1,6 @@
 package net.co.java.entity;
 
 import java.util.HashMap;
-import java.util.Map.Entry;
 
 import net.co.java.guild.Guild;
 import net.co.java.guild.GuildRank;
@@ -31,18 +30,10 @@ public class Player extends Entity {
 	protected Guild guild = null;	                
 	protected GuildRank guildRank = GuildRank.None; 
 	private String spouse;
-	public final Inventory inventory = new Inventory();
 	
-	
+	public final Inventory inventory = new Inventory();	
 	private final HashMap<WeaponType, WeaponProficiency> proficiencies = new HashMap<WeaponType, WeaponProficiency>();
-
 	private final HashMap<Skill, SkillProficiency> skills = new HashMap<Skill, SkillProficiency>();
-
-	private static final int[] PROF_LEVEL_EXP = {
-	    1200, 68000, 250000, 640000, 1600000,
-	    4000000, 10000000, 22000000, 40000000, 90000000, 95000000, 142500000, 213750000,
-	    320625000, 480937500, 721406250, 1082109375, 1623164063, 2100000000, 2100000000
-	};
 
 
 	public Player(Long identity, String name, Location location, int HP) {

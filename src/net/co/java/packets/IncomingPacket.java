@@ -1,8 +1,5 @@
 package net.co.java.packets;
 
-import java.math.BigInteger;
-import java.util.Arrays;
-
 import net.co.java.cipher.Cryptographer;
 import net.co.java.entity.Entity;
 import net.co.java.entity.Player;
@@ -64,17 +61,10 @@ public class IncomingPacket {
 	 * @return long as the range of uint is 0 to 2^32-1
 	 */
 	public long readUnsignedInt(int offset) {
-		return ((data[offset + 3] & 0xFF) << 24 |(data[offset + 2] & 0xFF) << 16
-                |(data[offset + 1] & 0xFF) << 8 |(data[offset] & 0xFF)); 
-	}
-	
-	/**
-	 * Read an unsigned long at specified offset (4 bytes)
-	 * @param offset
-	 * @return unsigned long
-	 */
-	public BigInteger readUnsingedLong(int offset) {
-		return new BigInteger(1, new byte[] { data[offset+3], data[offset+2], data[offset+1], data[offset] });
+		return (	(long) data[offset] & 0xFF)
+				| (((long) data[offset + 1] & 0xFF) << 8)
+				| (((long) data[offset + 2] & 0xFF) << 16)
+				| (((long) data[offset + 3] & 0xFF) << 24);
 	}
 
 	/**
@@ -86,11 +76,11 @@ public class IncomingPacket {
 	public String readString(int offset, int length) {
         byte[] output = new byte[length];
         System.arraycopy(data, offset, output, 0, length);
-        /* 
-         * We had to replace the null termination for Strings because
-         * they did not work well with database models:
-         * ERROR: invalid byte sequence for encoding "UTF8": 0x00  FIX 
-         */ 
+		/*
+		 * We had to replace the null termination for Strings because they did
+		 * not work well with database models: ERROR: invalid byte sequence for
+		 * encoding "UTF8": 0x00 FIX
+		 */
         return new String(output).replaceAll("[\u0000]", "");
 	}
 	
@@ -117,7 +107,19 @@ public class IncomingPacket {
 	
 	@Override
 	public String toString() {
-		return packetType.toString() + " : " + Arrays.toString(data) + " (" + data.length + ")";
+		return packetType.toString() + " : " + bytesToHex(data) + " (" + data.length + ")";
+	}
+	
+	private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
+	
+	private static String bytesToHex(byte[] bytes) {
+	    char[] hexChars = new char[bytes.length * 2];
+	    for ( int j = 0; j < bytes.length; j++ ) {
+	        int v = bytes[j] & 0xFF;
+	        hexChars[j * 2] = hexArray[v >>> 4];
+	        hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+	    }
+	    return new String(hexChars);
 	}
 	
 	public void send(ServerThread client) {

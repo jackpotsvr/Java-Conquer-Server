@@ -36,7 +36,10 @@ public class Mock extends AbstractModel {
 	private void createSomeStuff() throws FileNotFoundException{
 		System.out.println("Creating the magical world of Conquer Online");
 		// We spawn a BullMessenger in Twin City for testing purposes here
-		new Monster(new Location(Map.CentralPlain, 378, 343), 564564, "BullMessenger",  112, 117, 55000).spawn();
+		new Monster(new Location(Map.CentralPlain, 370, 344, 4), 400001, "BullMessenger",  112, 117, 55000).spawn();
+		new Monster(new Location(Map.CentralPlain, 373, 344, 4), 524000, "BullMessenger",  112, 117, 55000).spawn();
+		new Monster(new Location(Map.CentralPlain, 376, 344, 4), 475000, "BullMessenger",  112, 117, 55000).spawn();
+		new Monster(new Location(Map.CentralPlain, 379, 344, 4), 499999, "BullMessenger",  112, 117, 55000).spawn();
 		// Load the item data
 		readItemPrototypes(new File("ini/COItems.txt"));
 	}

@@ -60,8 +60,8 @@ class FastBlade extends MagicSkill {
 		// The player should have the Skill and enough stamina
 		if (prof!=null && stamina >= 20 ) {
 			int range = range(prof.level);			
-			TargetBuilder tb = new TargetBuilder(hero).inCircle(range).inLinePart(ip.getX(), ip.getY());
-			System.out.println(tb.toString());
+			TargetBuilder tb = new TargetBuilder(hero).inCircle(range)
+					.inLinePart(ip.getX(), ip.getY());
 			
 			PacketWriter pw = new PacketWriter(PacketType.SKILL_ANIMATION_PACKET, 20 + tb.size() * 8)
 			.putUnsignedInteger(ip.getIdentity())
@@ -70,12 +70,12 @@ class FastBlade extends MagicSkill {
 			.putUnsignedShort(getSkillID())
 			.putUnsignedShort(prof.getLevel())
 			.putUnsignedShort(tb.size())
-			.setOffset(20);			
-			for( Entity e : tb ) pw.putUnsignedInteger(e.getIdentity()).putUnsignedInteger(1);
+			.setOffset(20);
+			
+			for( Entity e : tb )
+				pw.putUnsignedInteger(e.getIdentity()).putUnsignedInteger(1);
+			
 			pw.send(client);
-			
-			
-			
 			hero.setStamina(stamina - 20);
 			hero.sendStamina();
 		}
