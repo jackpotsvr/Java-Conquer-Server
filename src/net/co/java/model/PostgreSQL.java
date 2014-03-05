@@ -13,7 +13,6 @@ import java.sql.SQLException;
 import net.co.java.entity.Location;
 import net.co.java.entity.Monster;
 import net.co.java.entity.Player;
-import net.co.java.entity.Proficiency;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemPrototype.EquipmentPrototype;
@@ -21,6 +20,7 @@ import net.co.java.item.ItemPrototype;
 import net.co.java.packets.Character_Creation_Packet;
 import net.co.java.server.Server.Map;
 import net.co.java.skill.Skill;
+import net.co.java.skill.WeaponType;
 
 /**
  * The PostgreSQL model is to use the Java Conquer Server with PostgreSQL databases
@@ -312,7 +312,8 @@ public class PostgreSQL extends AbstractModel {
 
 	@Override
 	protected void fetchProficiency(Player hero) throws AccessException {
-		hero.setProficiencyExp(Proficiency.BLADE, 210000000);
+		hero.setProficiency(WeaponType.BLADE, 20, 65000);
+		hero.setProficiency(WeaponType.SWORD, 12, 65000);
 	}
 
 	@Override

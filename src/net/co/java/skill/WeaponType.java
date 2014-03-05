@@ -1,6 +1,6 @@
-package net.co.java.entity;
+package net.co.java.skill;
 
-public enum Proficiency {
+public enum WeaponType {
 	BLADE(410),
     SWORD(420),
     BACKSWORD(421),
@@ -19,9 +19,9 @@ public enum Proficiency {
     WAND(561),
     HALBERT(580);
 	
-	public final int prof;
+	public final int ProfID;
 	
-	private Proficiency(int prof) {
-		this.prof = prof;
+	private WeaponType(int ProfID) {
+		this.ProfID = ProfID;
 	}
 }

@@ -32,4 +32,9 @@ public class Snow extends AbstractPassiveSkill {
 		return 5010;
 	}
 
+	@Override
+	public WeaponType getWeaponType() {
+		return WeaponType.WAND;
+	}
+
 }

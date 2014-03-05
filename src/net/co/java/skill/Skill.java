@@ -134,6 +134,11 @@ public abstract class Skill {
 		 * @return the distance for this skill
 		 */
 		public abstract int distance(int level);
+		
+		/**
+		 * @return the WeaponType required for this Skill
+		 */
+		public abstract WeaponType getWeaponType();
 	}
 	
 	/**

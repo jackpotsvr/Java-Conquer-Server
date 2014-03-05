@@ -27,4 +27,9 @@ class StandedMonster extends AbstractPassiveSkill {
 		return 5020;
 	}
 
+	@Override
+	public WeaponType getWeaponType() {
+		return WeaponType.HALBERT;
+	}
+
 }

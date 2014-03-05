@@ -25,4 +25,9 @@ class Roamer extends AbstractPassiveSkill {
 		return 7040;
 	}
 
+	@Override
+	public WeaponType getWeaponType() {
+		return WeaponType.WHIP;
+	}
+
 }

@@ -29,4 +29,9 @@ class Phoenix extends AbstractPassiveSkill {
 		return 9;
 	}
 
+	@Override
+	public WeaponType getWeaponType() {
+		return WeaponType.SWORD;
+	}
+
 }

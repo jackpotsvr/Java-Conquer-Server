@@ -29,4 +29,9 @@ class Penetration extends AbstractPassiveSkill {
 		return 1290;
 	}
 
+	@Override
+	public WeaponType getWeaponType() {
+		return WeaponType.DAGGER;
+	}
+
 }

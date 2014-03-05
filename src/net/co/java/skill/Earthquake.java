@@ -24,4 +24,9 @@ class Earthquake extends AbstractPassiveSkill {
 		return 7010;
 	}
 
+	@Override
+	public WeaponType getWeaponType() {
+		return WeaponType.AXE;
+	}
+
 }

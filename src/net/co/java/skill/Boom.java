@@ -24,4 +24,9 @@ class Boom extends AbstractPassiveSkill {
 		return 5040;
 	}
 
+	@Override
+	public WeaponType getWeaponType() {
+		return WeaponType.HAMMER;
+	}
+
 }

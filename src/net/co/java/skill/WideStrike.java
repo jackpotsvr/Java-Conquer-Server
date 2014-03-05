@@ -40,4 +40,9 @@ class WideStrike extends AbstractPassiveSkill {
 		
 	}
 
+	@Override
+	public WeaponType getWeaponType() {
+		return WeaponType.GLAIVE;
+	}
+
 }

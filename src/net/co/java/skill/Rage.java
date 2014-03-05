@@ -6,7 +6,7 @@ class Rage extends AbstractPassiveSkill {
 
 	@Override
 	public double chance(int level) {
-		return .2 + .3 * level;
+		return .20 + .03 * level;
 	}
 
 	@Override
@@ -24,6 +24,11 @@ class Rage extends AbstractPassiveSkill {
 	@Override
 	public int getSkillID() {
 		return 7020;
+	}
+
+	@Override
+	public WeaponType getWeaponType() {
+		return WeaponType.CLUB;
 	}
 
 }

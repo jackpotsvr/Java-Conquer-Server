@@ -24,4 +24,9 @@ class SpeedGun extends AbstractPassiveSkill {
 		return 1260;
 	}
 
+	@Override
+	public WeaponType getWeaponType() {
+		return WeaponType.SPEAR;
+	}
+
 }

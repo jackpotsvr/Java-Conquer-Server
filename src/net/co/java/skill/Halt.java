@@ -6,7 +6,7 @@ class Halt extends AbstractPassiveSkill {
 
 	@Override
 	public double chance(int level) {
-		return .2 + .2 *level;
+		return .2 + .02 *level;
 	}
 
 	@Override
@@ -22,6 +22,11 @@ class Halt extends AbstractPassiveSkill {
 	@Override
 	public int getSkillID() {
 		return 1300;
+	}
+
+	@Override
+	public WeaponType getWeaponType() {
+		return WeaponType.LONGHAMMER;
 	}
 
 }

@@ -29,4 +29,9 @@ class Seizer extends AbstractPassiveSkill {
 		return 7000;
 	}
 
+	@Override
+	public WeaponType getWeaponType() {
+		return WeaponType.HOOK;
+	}
+
 }

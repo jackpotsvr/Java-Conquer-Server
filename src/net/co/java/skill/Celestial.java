@@ -24,4 +24,9 @@ class Celestial extends AbstractPassiveSkill {
 		return 7030;
 	}
 
+	@Override
+	public WeaponType getWeaponType() {
+		return WeaponType.SCEPTER;
+	}
+
 }

@@ -16,6 +16,8 @@ import net.co.java.packets.GeneralData.SubType;
 import net.co.java.server.Server.GameServer.Client;
 import net.co.java.skill.Skill;
 import net.co.java.skill.SkillProficiency;
+import net.co.java.skill.WeaponProficiency;
+import net.co.java.skill.WeaponType;
 
 public class Player extends Entity {
 	
@@ -32,7 +34,7 @@ public class Player extends Entity {
 	public final Inventory inventory = new Inventory();
 	
 	
-	private final HashMap<Proficiency, Integer> proficiencies = new HashMap<Proficiency, Integer>();
+	private final HashMap<WeaponType, WeaponProficiency> proficiencies = new HashMap<WeaponType, WeaponProficiency>();
 
 	private final HashMap<Skill, SkillProficiency> skills = new HashMap<Skill, SkillProficiency>();
 
@@ -263,9 +265,9 @@ public class Player extends Entity {
 		return client;
 	}
 	
-	public void setProficiencyExp(Proficiency p, int value) {
-		if ( value > 0 )
-			proficiencies.put(p, value);
+	public void setProficiency(WeaponType t, int level, long exp) {
+		if ( level > 0 || exp > 0 )
+			proficiencies.put(t, new WeaponProficiency(this, t, level, exp));
 	}
 
 	public void setSkill(Skill s, int level, long exp) {
@@ -276,18 +278,9 @@ public class Player extends Entity {
 	public SkillProficiency getSkillProficiency(Skill skill) {
 		return skills.get(skill);
 	}
-
-	public int getProficiencyExp(Proficiency p) {
-		return proficiencies.get(p); 
-	}
-
-	private int getProficiencyLvl(int exp) {
-		for ( int i = PROF_LEVEL_EXP.length - 1; i >= 0; i-- ) {
-			if(PROF_LEVEL_EXP[i] <= exp ) {
-				return i+1;
-			}
-		}
-		return 0;
+	
+	public WeaponProficiency getWeaponProficiency(WeaponType t) {
+		return proficiencies.get(t);
 	}
 
 	public class Inventory {
@@ -545,15 +538,8 @@ public class Player extends Entity {
 	}
 
 	public void sendProficiencies() {
-		for ( Entry<Proficiency, Integer> entry : proficiencies.entrySet() ) {
-			int exp = entry.getValue();
-			int lvl = getProficiencyLvl(exp);
-			new PacketWriter(PacketType.PROFICIENCY, 16)
-			.putUnsignedInteger(entry.getKey().prof)
-			.putUnsignedInteger(lvl)
-			.putUnsignedInteger(exp)
-			.send(this);
-		}
+		for ( WeaponProficiency wp : proficiencies.values())
+			wp.sendSkill();
 	}
 	
 	public void sendSkills(){
