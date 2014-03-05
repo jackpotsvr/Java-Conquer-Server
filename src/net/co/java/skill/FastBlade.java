@@ -1,5 +1,6 @@
 package net.co.java.skill;
 
+import net.co.java.entity.Entity;
 import net.co.java.entity.Player;
 import net.co.java.packets.InteractPacket;
 import net.co.java.packets.PacketType;
@@ -53,18 +54,27 @@ class FastBlade extends MagicSkill {
 	public void handle(Client client, InteractPacket ip) {
 		Player hero = client.getPlayer();
 		int stamina = hero.getStamina();
+		
 		SkillProficiency prof = hero.getSkillProficiency(this);
 		
 		// The player should have the Skill and enough stamina
 		if (prof!=null && stamina >= 20 ) {
-			new PacketWriter(PacketType.SKILL_ANIMATION_PACKET, 20)
+			int range = range(prof.level);			
+			TargetBuilder tb = new TargetBuilder(hero).inCircle(range).inLinePart(ip.getX(), ip.getY());
+			System.out.println(tb.toString());
+			
+			PacketWriter pw = new PacketWriter(PacketType.SKILL_ANIMATION_PACKET, 20 + tb.size() * 8)
 			.putUnsignedInteger(ip.getIdentity())
-			.putUnsignedShort(ip.getX())
+ 			.putUnsignedShort(ip.getX())
 			.putUnsignedShort(ip.getY())
 			.putUnsignedShort(getSkillID())
 			.putUnsignedShort(prof.getLevel())
-			.putUnsignedShort(0) // No damage
-			.send(client);
+			.putUnsignedShort(tb.size())
+			.setOffset(20);			
+			for( Entity e : tb ) pw.putUnsignedInteger(e.getIdentity()).putUnsignedInteger(1);
+			pw.send(client);
+			
+			
 			
 			hero.setStamina(stamina - 20);
 			hero.sendStamina();

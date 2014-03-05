@@ -64,6 +64,7 @@ public class InteractPacket implements PacketHandler {
 			.subtract(BigInteger.valueOf(0x746F4AE6))
 			.longValue();
         
+        System.out.println(this.toString());
 	}
 
 	/**

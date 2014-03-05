@@ -11,7 +11,7 @@ import net.co.java.server.Server.Map;
  */
 public class Location {
 
-	private final static int VIEW_RANGE = 18;
+	public final static int VIEW_RANGE = 18;
 	public final int xCord, yCord;
 	public final Map map;
 	public final int direction;

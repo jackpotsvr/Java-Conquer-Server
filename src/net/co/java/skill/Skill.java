@@ -53,6 +53,11 @@ public abstract class Skill {
 		return null;
 	}
 	
+	@Override
+	public String toString() {
+		return getSkillID() + "_" + this.getClass().getSimpleName();
+	}
+	
 	/**
 	 * @return the SkillID for this Skill
 	 */

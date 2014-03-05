@@ -225,4 +225,12 @@ public abstract class Entity implements Spawnable {
 		return location.inView(spawnable.getLocation());
 	}
 
+	@Override
+	public String toString() {
+		return "Entity [identity=" + identity + ", name=" + name + ", mesh="
+				+ mesh + ", hairstyle=" + hairstyle + ", location=" + location
+				+ ", HP=" + HP + ", mana=" + mana + ", level=" + level + "]";
+	}
+
+	
 }
