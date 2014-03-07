@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<server>
-	<Authserver port="5000" ip="0.0.0.0">
-		<Gameserver ip="127.0.0.1" port="2342"/>
-		<Gameserver ip="127.0.0.1" port="1234"/>
-	</Authserver>
-	<Gameserver port="2342" ip="127.0.0.1">
-		<Model:PostgreSQL username="bla" password="x" host="y"/>
-	</Gameserver>
-	<Gameserver port="1234" ip="127.0.0.1">
-		<Model:PostgreSQL username="bla" password="x" host="y"/>
-	</Gameserver>
+<server gameport="5816" authport="9958">
+   <model class="net.co.java.model.Mock"/>
+   <!-- <model class="net.co.java.model.PostgreSQL" host="jdbc:postgresql://localhost:5432/coserver" username="postgres" password="J1]bB6_rF#3C"/> -->
 </server>

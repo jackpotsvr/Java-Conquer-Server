@@ -10,6 +10,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.simpleframework.xml.Attribute;
+
 import net.co.java.entity.Location;
 import net.co.java.entity.Monster;
 import net.co.java.entity.Player;
@@ -29,11 +31,9 @@ import net.co.java.skill.WeaponType;
  */
 public class PostgreSQL extends AbstractModel {
 	
-	private final String HOST;
-	
-	private final String USERNAME;
-	
-	private final String PASSWORD;
+	@Attribute(name="host") private final String HOST;
+	@Attribute(name="username") private final String USERNAME;
+	@Attribute(name="password") private final String PASSWORD;
 	
 	/**
 	 * Construct a new PostgreSQL model
@@ -42,7 +42,9 @@ public class PostgreSQL extends AbstractModel {
 	 * @param password
 	 * @throws FileNotFoundException
 	 */
-	public PostgreSQL(String host, String username, String password) throws FileNotFoundException {
+	public PostgreSQL(@Attribute(name="host") String host,
+					  @Attribute(name="username") String username,
+					  @Attribute(name="password") String password) throws FileNotFoundException {
 		this.HOST = host;
 		this.USERNAME = username;
 		this.PASSWORD = password;

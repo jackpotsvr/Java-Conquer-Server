@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.simpleframework.xml.Root;
+
 import net.co.java.entity.Player;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemPrototype;
@@ -16,6 +18,7 @@ import net.co.java.item.ItemPrototype.EquipmentPrototype;
  * @author Jan-Willem Gmelig Meyling
  * @author Thomas Gmelig Meyling
  */
+@Root
 public abstract class AbstractModel implements Model {
 
 	/** Identities mapped to players for auth -> game server redirection */

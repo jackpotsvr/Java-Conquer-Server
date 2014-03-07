@@ -1,20 +1,25 @@
 package net.co.java.server;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import net.co.java.config.Config;
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.Root;
+import org.simpleframework.xml.Serializer;
+import org.simpleframework.xml.core.Persister;
+
 import net.co.java.entity.Entity;
 import net.co.java.entity.Player;
 import net.co.java.model.AccessException;
 import net.co.java.model.AuthorizationPromise;
-import net.co.java.model.Mock;
 import net.co.java.model.Model;
-import net.co.java.model.PostgreSQL;
 import net.co.java.packets.Character_Creation_Packet;
 import net.co.java.packets.GeneralData;
 import net.co.java.packets.IncomingPacket;
@@ -27,37 +32,40 @@ import net.co.java.packets.MessagePacket.MessageType;
 
 /**
  * The server is the main class for the Conquer Online server. 
- * It initialzes one GameServer and one AuthServer.
+ * It initialises one GameServer and one AuthServer.
  * 
  * @author Thomas Gmelig Meyling
  * @author Jan-Willem Gmelig Meyling
  *
  */
+@Root
 public class Server {
 	
-	private final Model model;
-	
-	/**
-	 * The default Game Server port
-	 */
-	private static final int GAME_PORT = 5816;
-
-	/**
-	 * The default Auth Server port
-	 */
-	private static final int AUTH_PORT = 9958;
+	@Element(name="model") private final Model model;
+	private final AuthServer authServer;
+	private final GameServer gameServer;
+	@Attribute(name="gameport") private static final int GAME_PORT = 5816;
+	@Attribute(name="authport") private static final int AUTH_PORT = 9958;
 	
 	/**
 	 * Construct a new Server
 	 * @throws IOException
 	 */
-	public Server() throws IOException {
-		//this.model = new PostgreSQL(Config.HOST, Config.USERNAME, Config.PASSWORD);
-		this.model = new Mock();
-		this.new AuthServer();
-		this.new GameServer();
+	public Server(@Element(name="model") Model model) throws IOException {
+		this.model = model;
+		this.authServer = new AuthServer();
+		this.gameServer = new GameServer();
 	}
 	
+	/**
+	 * @throws IOException
+	 * @see net.co.java.server.Server.AuthServer#close()
+	 */
+	public void close() throws IOException {
+		authServer.close();
+		gameServer.close();
+	}
+
 	/**
 	 * The Authentication Server handles user login requests
 	 * and allows the client to connect to the Game Server.
@@ -99,6 +107,14 @@ public class Server {
 			}
 		}
 		
+		/**
+		 * @throws IOException
+		 * @see java.net.ServerSocket#close()
+		 */
+		public void close() throws IOException {
+			socket.close();
+		}
+
 		/**
 		 * The {@code Client} is the worker thread for every client listening to
 		 * the {@code AuthServer}. It listens for incoming packets and works
@@ -188,7 +204,7 @@ public class Server {
 		 * @throws IOException
 		 */
 		GameServer() throws IOException {
-			socket = new ServerSocket(GAME_PORT);
+			this.socket = new ServerSocket(GAME_PORT);
 			new Thread(this).start();
 			System.out.println("Game server listening on port " + GAME_PORT);
 		}
@@ -222,6 +238,30 @@ public class Server {
 		 */
 		public int getAmountOfPlayers() {
 			return AMOUNT_OF_PLAYERS;
+		}
+		
+		/**
+		 * @return
+		 * @see java.net.ServerSocket#getInetAddress()
+		 */
+		public InetAddress getInetAddress() {
+			return socket.getInetAddress();
+		}
+
+		/**
+		 * @return the port number to which this Gameserver 
+		 * @see java.net.ServerSocket#getLocalPort()
+		 */
+		public int getLocalPort() {
+			return socket.getLocalPort();
+		}
+
+		/**
+		 * @throws IOException
+		 * @see java.net.ServerSocket#close()
+		 */
+		public void close() throws IOException {
+			socket.close();
 		}
 
 		/**
@@ -465,8 +505,15 @@ public class Server {
 		
 	}
 
-	public static void main(String[] args) throws IOException {
-		new Server();	 
+	/**
+	 * Load the configuration file
+	 * @param args
+	 * @throws Exception
+	 */
+	public static void main(String[] args) throws Exception {
+		Serializer serializer = new Persister();
+		File source = new File("config.xml");
+		serializer.read(Server.class, source);
 	}
 
 }
