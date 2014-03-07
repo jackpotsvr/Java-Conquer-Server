@@ -64,7 +64,7 @@ public abstract class Skill {
 	public abstract int getSkillID();
 	
 	/**
-	 * @param exp
+	 * @param level
 	 * @return the target exp for a given level
 	 */
 	public abstract int getTargetExp(int level);

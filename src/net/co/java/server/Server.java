@@ -241,7 +241,7 @@ public class Server {
 		}
 		
 		/**
-		 * @return
+		 * @return the address to which this Gameserver is bound
 		 * @see java.net.ServerSocket#getInetAddress()
 		 */
 		public InetAddress getInetAddress() {
