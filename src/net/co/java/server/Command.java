@@ -4,6 +4,7 @@ import net.co.java.packets.MessagePacket;
 import net.co.java.packets.PacketHandler;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
+import net.co.java.packets.UpdatePacket;
 import net.co.java.server.Server.GameServer.Client;
 
 public class Command implements PacketHandler {
@@ -30,19 +31,10 @@ public class Command implements PacketHandler {
 		} else if(command.equalsIgnoreCase("stamina")) {
 			int st = Integer.parseInt(args[1]);
 			client.getPlayer().setStamina(st);
-			client.getPlayer().sendStamina();
-		} else if (command.equalsIgnoreCase("uskill")) {
-			new PacketWriter(PacketType.SKILL_UPDATE_PACKET, 12)
-			.putUnsignedInteger(Long.parseLong(args[1])) // 468743 Exp
-			.putUnsignedShort(Integer.parseInt(args[2])) // 1045 FAST BLADE
-			.putUnsignedShort(Integer.parseInt(args[3])) // 0 prof, 1 magic, [2 skill]
-			.send(client);
-		} else if (command.equalsIgnoreCase("skill")) {
-			new PacketWriter(PacketType.SKILL_PACKET, 12)
-			.putUnsignedInteger(Long.parseLong(args[1])) // 468743 Exp
-			.putUnsignedShort(Integer.parseInt(args[2])) // 1045 FAST BLADE
-			.putUnsignedShort(Integer.parseInt(args[3])) // 1 lvl
-			.send(client);
+			new UpdatePacket(client.getPlayer())
+					.setAttribute(UpdatePacket.Mode.Money, 100000l)
+					.setAttribute(UpdatePacket.Mode.Stamina, 200l).build()
+					.send(client);
 		}
 	}
 

@@ -28,6 +28,16 @@ public class PacketWriter {
 		this.offset = offset;
 		return this;
 	}
+	
+	/**
+	 * Increment the offset for this PacketWriter
+	 * @param amount
+	 * @return this PacketWriter
+	 */
+	public PacketWriter incrementOffset(int amount) {
+		this.offset += amount;
+		return this;
+	}
 
 	/**
 	 * Pushes an unsigned byte to the packet Since unsigned bytes can grow up to
