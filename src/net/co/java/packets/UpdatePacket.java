@@ -44,14 +44,14 @@ public class UpdatePacket implements PacketWrapper {
 	public PacketWriter build() {
 		int StatusCount = attributes.size();
 		
-		PacketWriter pw = new PacketWriter(PacketType.UPDATE_PACKET, 12 + 8 * StatusCount)
+		PacketWriter pw = new PacketWriter(PacketType.UPDATE_PACKET, 12 + 12 * StatusCount)
 		.putUnsignedInteger(entity.getIdentity())
 		.putUnsignedInteger(StatusCount);
 		
 		for( Entry<Mode, Long> kv : attributes.entrySet() ) {
 			pw.putUnsignedByte(kv.getKey().mode)
 			.incrementOffset(3)
-			.putUnsignedInteger(kv.getValue().longValue());
+			.putUnsignedInteger(kv.getValue().longValue()).incrementOffset(4);
 		}
 		
 		return pw;

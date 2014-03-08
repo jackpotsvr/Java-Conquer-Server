@@ -1,5 +1,6 @@
 package net.co.java.entity;
 
+import java.io.Serializable;
 import java.util.List;
 
 import net.co.java.packets.GeneralData;
@@ -13,17 +14,18 @@ import net.co.java.packets.GeneralData.SubType;
  * @author Jan-Willem Gmelig Meyling
  *
  */
-public abstract class Entity implements Spawnable {
+public abstract class Entity implements Spawnable, Serializable {
 
-	protected final long identity;
+	private static final long serialVersionUID = -8544332465232461099L;
+	protected transient final long identity;
 	protected final String name;
 	
-	protected int mesh;
-	protected int hairstyle;
-	protected Location location;
-	protected int HP;
-	protected int mana;
-	protected int level;
+	protected volatile int mesh;
+	protected volatile int hairstyle;
+	protected volatile Location location;
+	protected volatile int HP;
+	protected volatile int mana;
+	protected volatile int level;
 	
 	/**
 	 * Construct a new entity

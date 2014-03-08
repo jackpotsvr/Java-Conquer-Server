@@ -11,6 +11,7 @@ import net.co.java.packets.GeneralData;
 import net.co.java.packets.ItemUsage;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
+import net.co.java.packets.UpdatePacket;
 import net.co.java.packets.GeneralData.SubType;
 import net.co.java.server.Server.GameServer.Client;
 import net.co.java.skill.Skill;
@@ -539,12 +540,7 @@ public class Player extends Entity {
 	}
 	
 	public void sendStamina() {
-		new PacketWriter(PacketType.UPDATE_PACKET, 36)
-		.putUnsignedInteger(identity)
-		.putUnsignedInteger(1)
-		.putUnsignedByte(9)
-		.setOffset(16)
-		.putUnsignedInteger(stamina).send(this);
+		new UpdatePacket(client.getPlayer()).setAttribute(UpdatePacket.Mode.Stamina, (long) getStamina()).build().send(client);
 	}
 	
 }

@@ -2,9 +2,7 @@ package net.co.java.server;
 
 import net.co.java.packets.MessagePacket;
 import net.co.java.packets.PacketHandler;
-import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
-import net.co.java.packets.UpdatePacket;
 import net.co.java.server.Server.GameServer.Client;
 
 public class Command implements PacketHandler {
@@ -29,12 +27,9 @@ public class Command implements PacketHandler {
 		else if(command.equalsIgnoreCase("stop")) {
 			// client.getGameServer().
 		} else if(command.equalsIgnoreCase("stamina")) {
-			int st = Integer.parseInt(args[1]);
+			int st = ( args.length > 1 ) ? Integer.parseInt(args[1]) : 100;
 			client.getPlayer().setStamina(st);
-			new UpdatePacket(client.getPlayer())
-					.setAttribute(UpdatePacket.Mode.Money, 100000l)
-					.setAttribute(UpdatePacket.Mode.Stamina, 200l).build()
-					.send(client);
+			client.getPlayer().sendStamina();
 		}
 	}
 
