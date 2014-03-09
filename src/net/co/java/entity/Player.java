@@ -7,12 +7,10 @@ import net.co.java.guild.GuildRank;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemInstance.Mode;
-import net.co.java.packets.GeneralData;
 import net.co.java.packets.ItemUsage;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
 import net.co.java.packets.UpdatePacket;
-import net.co.java.packets.GeneralData.SubType;
 import net.co.java.server.Server.GameServer.Client;
 import net.co.java.skill.Skill;
 import net.co.java.skill.SkillProficiency;
@@ -21,6 +19,7 @@ import net.co.java.skill.WeaponType;
 
 public class Player extends Entity {
 	
+	private static final long serialVersionUID = 8357201473468302184L;
 
 	private Client client;
 	
@@ -495,8 +494,8 @@ public class Player extends Entity {
 		return new PacketWriter(PacketType.ENTITY_SPAWN_PACKET, 82 + name.length())
 		.putUnsignedInteger(identity)
 		.putUnsignedInteger(mesh)
-		.setOffset(20) // TODO ulong status flags?
-		.putUnsignedShort(0) // Guild ID
+		.setOffset(12).putUnsignedInteger(1)  // StatusFlag = 1 for players
+		.setOffset(20).putUnsignedShort(0) // Guild ID
 		.setOffset(23)
 		.putUnsignedByte((short) guildRank.getRank()) // Guild rank
 		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.GARMENT)) // garment 24
@@ -519,14 +518,6 @@ public class Player extends Entity {
 		.putUnsignedByte(1)
 		.putUnsignedByte(name.length())
 		.putString(name);		
-	}
-
-	public GeneralData retrieveLocation() {
-		return new GeneralData(SubType.LOCATION, identity, new int[] {
-			location.getMap().getMapID(),
-			location.getxCord(),
-			location.getyCord()
-		});
 	}
 
 	public void sendProficiencies() {

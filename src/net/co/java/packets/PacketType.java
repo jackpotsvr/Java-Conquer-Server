@@ -88,6 +88,10 @@ public  enum PacketType {
 	 */
 	ENTITY_SPAWN_PACKET (0x03F6),
 	
+	STRING_PACKET(0x3F7),
+	
+	WEATHER_PACKET(0x3F8),
+	
 	/**
 	 * The Entity Status packet, also known as the "Update packet" is used to
 	 * change the appearance(in some cases), certain values unique to a
@@ -126,11 +130,16 @@ public  enum PacketType {
 	 */
 	SKILL_ANIMATION_PACKET(0x451),
 	
+	GUILD_INFORMATION(0x452),
+	
 	/**
 	 * The Weapon Proficiency Packet is sent during login and when you learn a
 	 * new Proficiency.
 	 */
-	PROFICIENCY(0x401);//,
+	PROFICIENCY(0x401),
+	
+	
+	MAP_STATUS(0x456);//,
 	//PORTAL_PACKET (0x24);
 	
 	private final int type;

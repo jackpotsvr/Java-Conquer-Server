@@ -5,6 +5,8 @@ import net.co.java.packets.PacketWriter;
 
 public class Monster extends Entity {
 
+	private static final long serialVersionUID = -3706911983201300436L;
+
 	public Monster(Location location, long identity, String name, int level, int mesh, int HP) {
 		super(identity, mesh, 0, name, location, HP);
 		this.level = level;
@@ -22,8 +24,8 @@ public class Monster extends Entity {
 		return new PacketWriter(PacketType.ENTITY_SPAWN_PACKET, 82 + name.length())
 		.putUnsignedInteger(identity)
 		.putUnsignedInteger(mesh)
-		.setOffset(20) // TODO ulong status flags?
-		.putUnsignedShort(0) // Guild ID
+		.setOffset(12).putUnsignedInteger(2)  // StatusFlag = 2 for monsters
+		.setOffset(20).putUnsignedShort(0) // Guild ID
 		.setOffset(23)
 		.putUnsignedByte(0) // Guild rank
 		.putUnsignedInteger(0) // garment 24

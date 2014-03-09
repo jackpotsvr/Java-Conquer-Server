@@ -96,6 +96,11 @@ public class MessagePacket implements PacketWrapper {
 		return this;
 	}
 	
+	public MessagePacket setType(MessageType mt) {
+		this.type = mt;
+		return this;
+	}
+	
 	/**
 	 * @return CHATID
 	 */

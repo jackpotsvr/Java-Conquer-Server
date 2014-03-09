@@ -141,7 +141,7 @@ public abstract class Entity implements Spawnable, Serializable {
 	public abstract PacketWriter SpawnPacket();
 
 	public PacketWriter removeEntity() {
-		return new GeneralData(SubType.ENTITY_REMOVE, identity, new int[3]).build();
+		return new GeneralData(SubType.ENTITY_REMOVE, this).build();
 	}
 	
 	public List<Entity> getSurroundings() {

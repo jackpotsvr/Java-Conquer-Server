@@ -2,6 +2,7 @@ package net.co.java.packets;
 
 import net.co.java.entity.Entity;
 import net.co.java.entity.Location;
+import net.co.java.entity.Player;
 import net.co.java.server.Server.Map;
 import net.co.java.server.Server.GameServer.Client;
 
@@ -13,21 +14,16 @@ import net.co.java.server.Server.GameServer.Client;
  */
 public class GeneralData implements PacketHandler {
 	
-	private SubType subType;
+	private final SubType subType;
 	private final long timestamp;
 	private long identity;
 	
-	private int[] shorts;
-	private int shortValue;
-	private long intValue;
+	private long dwParam;
+	private int wParam1;
+	private int wParam2;
+	private int wParam3;
+	
 	private IncomingPacket ip;
-
-	/**
-	 * Construct an empty GeneralData packet
-	 */
-	public GeneralData() {
-		this.timestamp = System.currentTimeMillis();
-	}
 	
 	/**
 	 * Construct an GeneralData packet filled with data from
@@ -38,95 +34,32 @@ public class GeneralData implements PacketHandler {
 		this.timestamp = ip.readUnsignedInt(4);
 		this.identity = ip.readUnsignedInt(8);
 		this.subType = SubType.get(ip.readUnsignedShort(22));
-		this.shortValue =  ip.readUnsignedShort(16);
-		this.intValue = ip.readUnsignedInt(12);
-		this.shorts = new int[] {
-			ip.readUnsignedShort(12),
-			ip.readUnsignedShort(14),
-			ip.readUnsignedShort(16)
-		};
+		this.dwParam = ip.readUnsignedInt(12);
+		this.wParam1 = ip.readUnsignedShort(16);
+		this.wParam2 = ip.readUnsignedShort(18);
+		this.wParam3 = ip.readUnsignedShort(20);
 		this.ip = ip;
 	}
+	
+	/**
+	 * LENG  TYPE  TIME      ENTITY    X     Y                       TYPE
+	 * 1800  F203  58818E1F  40420F00  7E01  5B01  7E01  5501  0000  8500
+	 * 1800  F203  1D23931F  40420F00  8301  5B01  7E01  5B01  0000  8500
+	 * 1800  F203  3628931F  40420F00  8401  5F01  8301  5B01  0000  8500
+	 * 1800  F203  ED2C931F  40420F00  8801  6001  8401  5F01  0000  8500
+	 */
 
 	/**
 	 * Construct a GeneralData packet with given data
 	 * @param subType
-	 * @param identity
-	 * @param shortValue
-	 * @param intValue
+	 * @param entity
 	 */
-	public GeneralData(SubType subType, long identity, int shortValue, long intValue) {
-		this();
-		setSubType(subType);
-		setIdentity(identity);
-		setShortValue(shortValue);
-		setIntValue(intValue);	
+	public GeneralData(SubType subType, Entity entity) {
+		this.timestamp = System.currentTimeMillis() & 0xFFFFFFFF;
+		this.subType = subType;
+		this.identity = entity.getIdentity();
 	}
 	
-	/**
-	 * Construct a GeneralData packet with given data
-	 * @param subType
-	 * @param identity
-	 * @param shorts
-	 */
-	public GeneralData(SubType subType, long identity, int[] shorts) {
-		this();
-		setSubType(subType);
-		setIdentity(identity);
-		setShorts(shorts);
-	}
-	
-	/**
-	 * Set the short value
-	 * @param shortValue
-	 * @return this GeneralData instance (builder pattern)
-	 */
-	public GeneralData setShortValue(int shortValue) {
-		this.shortValue = shortValue;
-		return this;
-	}
-
-	/**
-	 * @return the short value
-	 */
-	public int getShortValue() {
-		return shortValue;
-	}
-
-	/**
-	 * Set the integer value
-	 * @param intValue
-	 * @return this GeneralData instance (builder pattern)
-	 */
-	public GeneralData setIntValue(long intValue) {
-		this.intValue = intValue;
-		return this;
-	}
-
-	/**
-	 * @return the integer value
-	 */
-	public long getIntValue() {
-		return intValue;
-	}
-
-	/**
-	 * @return the shorts
-	 */
-	public int[] getShorts() {
-		return shorts;
-	}
-
-	/**
-	 * Set the shorts
-	 * @param shorts
-	 * @return this GeneralData instance (builder pattern)
-	 */
-	public GeneralData setShorts(int[] shorts) {
-		this.shorts = shorts;
-		return this;
-	}
-
 	/**
 	 * @return the identity
 	 */
@@ -144,39 +77,212 @@ public class GeneralData implements PacketHandler {
 	}
 
 	/**
-	 * @return the subType
+	 * @return the dwParam
 	 */
-	public SubType getSubType() {
-		return subType;
+	public long getDwParam() {
+		return dwParam;
 	}
 
 	/**
-	 * @param subType the subType to set
-	 * @return this GeneralData instance (builder pattern)
+	 * @param dwParam the dwParam to set
 	 */
-	public GeneralData setSubType(SubType subType) {
-		this.subType = subType;
+	public GeneralData setDwParam(long dwParam) {
+		this.dwParam = dwParam;
 		return this;
+	}
+
+	/**
+	 * @return the wParam1
+	 */
+	public int getwParam1() {
+		return wParam1;
+	}
+
+	/**
+	 * @param wParam1 the wParam1 to set
+	 */
+	public GeneralData setwParam1(int wParam1) {
+		this.wParam1 = wParam1;
+		return this;
+	}
+
+	/**
+	 * @return the wParam2
+	 */
+	public int getwParam2() {
+		return wParam2;
+	}
+
+	/**
+	 * @param wParam2 the wParam2 to set
+	 */
+	public GeneralData setwParam2(int wParam2) {
+		this.wParam2 = wParam2;
+		return this;
+	}
+
+	/**
+	 * @return the wParam3
+	 */
+	public int getwParam3() {
+		return wParam3;
+	}
+
+	/**
+	 * @param wParam3 the wParam3 to set
+	 * @return 
+	 */
+	public GeneralData setwParam3(int wParam3) {
+		this.wParam3 = wParam3;
+		return this;
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "GeneralData [subType=" + subType + ", timestamp=" + timestamp
+				+ ", identity=" + identity + ", dwParam=" + dwParam
+				+ ", wParam1=" + wParam1 + ", wParam2=" + wParam2
+				+ ", wParam3=" + wParam3 + "]";
 	}
 
 	@Override
 	public void handle(Client client) {
+		Player hero = client.getPlayer();
 		switch(subType){
 		case GET_SURROUNDINGS:
-			for (Entity e : client.getPlayer().getSurroundings())
+			for (Entity e : hero.getSurroundings())
 				e.SpawnPacket().send(client);
 			break;
 		case JUMP:
-			client.getPlayer().jump(shorts[0], shorts[1], ip);
+			client.getPlayer().jump((int) (dwParam & 0xFFFF), (int) (dwParam >> 16), ip);
 			break;
 		case LOCATION:
-			client.getPlayer().retrieveLocation().build().send(client);
+			{ // Update location
+				Location location = hero.getLocation();
+				
+				new GeneralData(SubType.LOCATION, hero)
+					.setDwParam(location.getMap().getMapID())
+					.setwParam1(location.getxCord())
+					.setwParam2(location.getyCord())
+					.build().send(client);
+				
+				/*
+				 * This packet is a bit unknown for now, but when sent, the
+				 * map name is shown in the center of the screen and appears in the minimap
+				 */
+				new PacketWriter(PacketType.MAP_STATUS, 24)
+					.putUnsignedInteger(System.currentTimeMillis() & 0xFFFFFFFF)
+					.putUnsignedInteger(hero.getIdentity())
+					.putUnsignedInteger(0xFFFFFFFFl)
+					.putUnsignedShort(location.getxCord())
+					.putUnsignedShort(location.getyCord())
+					.setOffset(22).putUnsignedByte(0x68).send(client);
+				
+				// Retrieve map status TODO : Status from map
+				// Sound plays
+				new PacketWriter(PacketType.MAP_STATUS, 16)
+					.putUnsignedInteger(location.getMap().getMapID()) // Map ID
+					.putUnsignedInteger(location.getMap().getMapID()) // Map unique ID
+					.putUnsignedInteger(0x0000) // Map status
+				.send(client);
+			}
+			
+			// hero.sendStamina();
+			new UpdatePacket(hero)
+				.setAttribute(UpdatePacket.Mode.RaiseFlag, 0x00l)
+				.setAttribute(UpdatePacket.Mode.Stamina, (long) hero.getStamina())
+				.setAttribute(UpdatePacket.Mode.HP, (long) hero.getHP())
+				.setAttribute(UpdatePacket.Mode.Mana, (long) hero.getMana())
+				.setAttribute(UpdatePacket.Mode.MaxHP, (long) hero.getMaxHP())
+				.setAttribute(UpdatePacket.Mode.XPCircle, 60l)
+				.setAttribute(UpdatePacket.Mode.Level, (long) hero.getLevel())
+				.setAttribute(UpdatePacket.Mode.LocationPoint, 0l)
+				.build().send(client);
+			
+			// Retrieve weather TODO : Weather from MAP
+			new PacketWriter(PacketType.WEATHER_PACKET, 20)
+				.putUnsignedByte(3) // Map effect
+				.setOffset(8).putUnsignedInteger(30) // Intensity
+				.putUnsignedInteger(75) // Direction
+				.putUnsignedInteger(1) // colour
+				.send(client);
+			
+			// Set PK Mode  TODO Retrieve from player
+			new GeneralData(SubType.CHANGE_PK_MODE, hero).setDwParam(3).build().send(client);
+			// TODO Start XP Circle
+			
+			// Send inventory, equips, skills and professions
+			hero.inventory.send();
+			hero.sendProficiencies();
+			hero.sendSkills();
+			new GeneralData(SubType.CONFIRM_PROFS, hero).build().send(client);
+			new GeneralData(SubType.CONFIRM_SPELLS, hero).build().send(client);
+			
+			// Send friends and enemies
+			new GeneralData(SubType.CONFIRM_FRIENDS, hero).build().send(client);
+			
+			// Send guilds
+			String guildname = "Yakmelk"; 
+			new PacketWriter(PacketType.STRING_PACKET, 11 + guildname.length())
+				.putUnsignedInteger(10324) // Guild ID
+				.putUnsignedByte(3) // TYPE: GuildName 
+				.putUnsignedByte(1) // String count
+				.putUnsignedByte(guildname.length()) // Str length
+				.putString(guildname)
+				.send(client);
+
+			new PacketWriter(PacketType.GUILD_INFORMATION, 40)
+				.putUnsignedInteger(10324) // Guild ID
+				.putUnsignedInteger(1000000) // Donation
+				.putUnsignedInteger(1250000) // Fund
+				.putUnsignedInteger(134) // Members count
+				.setOffset(20).putUnsignedByte(90) // position
+				.putString("Jackpotsvr", 16) // leader
+				.send(client);
+			
+			
+			new MessagePacket(MessagePacket.SYSTEM, hero.getName(), "Guild bulletin!")
+				.setMessageType(MessagePacket.MessageType.GuildBulletin).build().send(client);;
+			new GeneralData(SubType.CONFIRM_GUILD, hero).build().send(client);
+			
+			// Send animations
+			/* 2NDMetempsychosis   for 2nd RB light of vigor
+			 * letter1  - letter7 for King rank etc.
+			 * coronet3 & coronet4 for unknown animations
+			 */
+			String animation = "coronet3";
+			new PacketWriter(PacketType.STRING_PACKET, 11 + animation.length())
+				.putUnsignedInteger(hero.getIdentity())
+				.putUnsignedByte(10) // Type
+				.putUnsignedByte(1) // Str count
+				.putUnsignedByte(animation.length()) // Str length
+				.putString(animation)
+				.send(client);
+			
+			// Send default messages
+			new MessagePacket(MessagePacket.SYSTEM, hero.getName(), "Players online " + client.getGameServer().getAmountOfPlayers())
+				.setMessageType(MessagePacket.MessageType.System)
+				.build().send(client);
+			
+			new GeneralData(GeneralData.SubType.COMPLETE_LOGIN, hero).build().send(hero);
+			new GeneralData(GeneralData.SubType.CompleteMapChange, hero).build().send(hero);
+			
+			hero.inventory.send();
 			break;
 		case PORTAL:
-			System.out.printf("GENERAL DATA: %s , %s ,%s", shorts[0], shorts[1], shorts[2]);
-			client.getPlayer().setLocation(new Location(Map.CentralPlain, 250, 180), null);
-			client.getPlayer().retrieveLocation().build().send(client);
-			break;
+			{ // Update Location
+				Location location = new Location(Map.CentralPlain, 250, 180);client.getPlayer().setLocation(location, null);
+				new GeneralData(SubType.LOCATION, hero)
+					.setDwParam(location.getMap().getMapID())
+					.setwParam1(location.getxCord())
+					.setwParam2(location.getyCord())
+					.build().send(client);
+				break;
+			}
+			
 		default:
 			System.out.println("Unimplemented " + subType.toString());
 			break;
@@ -186,15 +292,13 @@ public class GeneralData implements PacketHandler {
 	@Override
 	public PacketWriter build() {
 		return new PacketWriter(PacketType.GENERAL_DATA_PACKET, 0x18)
-		.putUnsignedInteger(timestamp)
-		.putUnsignedInteger(identity)
-		.setOffset(12)
-		.putUnsignedShort(shorts[0])
-		.setOffset(16)
-		.putUnsignedShort(shorts[1])
-		.putUnsignedShort(shorts[2])
-		.setOffset(22)
-		.putUnsignedShort(subType.type);
+			.putUnsignedInteger(timestamp) // 4
+			.putUnsignedInteger(identity) // 8
+			.putUnsignedInteger(dwParam) // 12
+			.putUnsignedShort(wParam1) // 16
+			.putUnsignedShort(wParam2) // 18
+			.putUnsignedShort(wParam3) // 20
+			.putUnsignedShort(subType.type); //22
 	}
 
 	/**
@@ -203,12 +307,37 @@ public class GeneralData implements PacketHandler {
 	 */
 	public static enum SubType {
 		UNIMPLEMENTED		(0x00), // 0
-		LOCATION 			(0x4A), // 74 
+		LOCATION 			(0x4A), // 74
+		HOTKEYS	(75),
+		CONFIRM_FRIENDS(76),
+		CONFIRM_PROFS(77),
+		CONFIRM_SPELLS(78),
 		CHANGE_DIRECTION 	(0x4F), // 79
+		CHANGE_ACTION(81),
 		PORTAL 				(0x55), // 85
+		LEVEL(92),
+		END_XP_LIST(93),
+		REVIVE(94),
+		CHANGE_PK_MODE		(0x60), // 96
+		CONFIRM_GUILD		(97),
+		BEGIN_MINE(99),
+		ENTITY_SPAWN(102),
+		CompleteMapChange(104),
+		TeamMateLoc(106),
+		CorrectCords(108),
+		Shop(111),
+		OpenShop(113),
 		GET_SURROUNDINGS	(0x72), //114
-		ENTITY_REMOVE		(0x84), // 132
-		JUMP				(0x85); //133
+		REMOTE_COMMANDS(116),
+		PickupCashEffect(121),
+		Dialog(126),
+		GuardJump(129),
+		COMPLETE_LOGIN		(130),
+		ENTITY_REMOVE		(132),
+		JUMP				(0x85), // 133
+		RemoveWeaponMesh(135),
+		RemoveWeaponMesh2(136),
+		PathFinding(162);
 		
 		private final int type;
 		

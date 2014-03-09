@@ -3,6 +3,7 @@ package net.co.java.server;
 import net.co.java.packets.MessagePacket;
 import net.co.java.packets.PacketHandler;
 import net.co.java.packets.PacketWriter;
+import net.co.java.packets.UpdatePacket;
 import net.co.java.server.Server.GameServer.Client;
 
 public class Command implements PacketHandler {
@@ -30,7 +31,12 @@ public class Command implements PacketHandler {
 			int st = ( args.length > 1 ) ? Integer.parseInt(args[1]) : 100;
 			client.getPlayer().setStamina(st);
 			client.getPlayer().sendStamina();
+		} else if ( command.equalsIgnoreCase("raise")) {
+			new UpdatePacket(client.getPlayer())
+				.setAttribute(UpdatePacket.Mode.RaiseFlag, 2l << Long.valueOf(args[1]))
+				.build().send(client);
 		}
+			
 	}
 
 }

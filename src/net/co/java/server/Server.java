@@ -352,10 +352,6 @@ public class Server {
 						// Send the character information packet
 						player.spawn();
 						player.characterInformation().send(this);
-						player.inventory.send();
-						player.sendProficiencies();
-						player.sendSkills();
-						player.sendStamina();
 					}
 					else
 					{
