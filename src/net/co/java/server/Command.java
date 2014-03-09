@@ -4,7 +4,6 @@ import net.co.java.packets.MessagePacket;
 import net.co.java.packets.PacketHandler;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
-import net.co.java.packets.UpdatePacket;
 import net.co.java.server.Server.GameServer.Client;
 
 public class Command implements PacketHandler {

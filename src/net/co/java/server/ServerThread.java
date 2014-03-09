@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import net.co.java.cipher.Cryptographer;
@@ -117,7 +118,7 @@ public abstract class ServerThread implements Runnable {
 	 * packet queue is full
 	 */
 	public boolean offer(byte[] data) {
-		return packets.offer(data);
+		return packets.offer(Arrays.copyOf(data, data.length));
 	}
 	
 	/**

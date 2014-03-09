@@ -10,7 +10,8 @@ public class Monster extends Entity {
 	public Monster(Location location, long identity, String name, int level, int mesh, int HP) {
 		super(identity, mesh, 0, name, location, HP);
 		this.level = level;
-		setLocation(location, null);
+		setLocation(location);
+		System.out.println("Constructed monster at " + location);
 	}
 
 	@Override
@@ -39,9 +40,9 @@ public class Monster extends Entity {
 		.putUnsignedShort(location.getxCord()) // 52
 		.putUnsignedShort(location.getyCord()) // 54
 		.putUnsignedShort(hairstyle) //56
-		.putUnsignedByte(4) // direction 58
-		.putUnsignedByte(0x01) // action 59
-		.putUnsignedByte(1) // reborn //60
+		.putUnsignedByte(0) // direction 58
+		.putUnsignedByte(0) // action 59
+		.putUnsignedByte(0) // reborn //60
 		.setOffset(62)
 		.putUnsignedByte(0) // level
 		.setOffset(80)

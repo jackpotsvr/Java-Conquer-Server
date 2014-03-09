@@ -294,7 +294,6 @@ public class Server {
 				System.out.println("Amount of players: " + AMOUNT_OF_PLAYERS);
 				if ( player != null ) {
 					player.getLocation().getMap().removeEntity(player);
-					player.removeEntity().sendToSurroundings(player);
 				}
 			}
 			
@@ -325,7 +324,7 @@ public class Server {
 			public Player getPlayer() {
 				return player;
 			}
-
+			
 			@Override
 			public void handle(IncomingPacket packet) throws AccessException {
 				switch(packet.getPacketType()) {
@@ -341,16 +340,14 @@ public class Server {
 					// Inform the client that the login was successful
 					if (promise.hasCharacter())
 					{		
+						// Create the Entity object for the player, bound to
+						// the current identity and client thread
 						player = model.loadPlayer(promise);
 						player.setClient(this);
 						new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "ANSWER_OK")
 								.setMessageType(MessageType.LoginInfo)
 								.build().send(this);
-						// Create the Entity object for the player, bound to
-						// the current identity and client thread
-						//player.setLocation(Map.CentralPlain.new Location(382, 341), null);
 						// Send the character information packet
-						player.spawn();
 						player.characterInformation().send(this);
 					}
 					else
@@ -361,8 +358,10 @@ public class Server {
 					}
 					break;
 				case ENTITY_MOVE_PACKET:
-					player.walk(packet.readUnsignedByte(8), packet);
-					packet.send(this);
+					for(Player p : player.getLocation().getMap().getPlayersInRange(player, true)) {
+						packet.send(p.getClient());
+					}
+					player.walk(packet.readUnsignedByte(8));
 					break;
 				case GENERAL_DATA_PACKET:
 					new GeneralData(packet).handle(this);
@@ -445,7 +444,6 @@ public class Server {
 		public void addEntity(Entity entity) {
 			if(!entities.contains(entity)) {
 				entities.add(entity);
-				entity.SpawnPacket().sendTo(getPlayersInRange(entity));
 			}
 		}
 		
@@ -455,8 +453,8 @@ public class Server {
 		 * @param entity
 		 */
 		public void removeEntity(Entity entity) {
-			if(entities.remove(entity))
-				entity.removeEntity().sendTo(getPlayersInRange(entity));
+			if(entities.remove(entity));
+				entity.removeEntity().sendTo(getPlayersInRange(entity, false));
 		}
 		
 		/**
@@ -465,6 +463,7 @@ public class Server {
 		public List<Entity> getEntities() {
 			return entities;
 		}
+
 		
 		/**
 		 * @param me
@@ -474,7 +473,7 @@ public class Server {
 			List<Entity> result = new ArrayList<Entity>();
 			
 			for ( Entity e : entities ) {
-				if ( e.equals(me) )
+				if ( e == me || e.equals(me) )
 					continue;
 				else if (e.getLocation().inView(me.getLocation()))
 					result.add(e);
@@ -487,14 +486,15 @@ public class Server {
 		 * @param me
 		 * @return all players within the default range excluding me
 		 */
-		public List<Player> getPlayersInRange(Entity me) {
+		public List<Player> getPlayersInRange(Entity me, boolean includeme) {
 			List<Player> result = new ArrayList<Player>();
 			
 			for ( Entity e : entities ) {
-				if ( e.equals(me) || !(e instanceof Player) )
-					continue;
-				else if (e.getLocation().inView(me.getLocation()))
-					result.add((Player) e);
+				if( e instanceof Player) {
+					if(e != me || includeme ) {
+						result.add((Player) e);
+					}
+				}
 			}
 			
 			return result;

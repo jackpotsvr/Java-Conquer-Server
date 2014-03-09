@@ -202,7 +202,7 @@ public class PostgreSQL extends AbstractModel {
 				player.setGold(rs.getInt("character_gold"));
 				player.setCps(rs.getInt("character_cps"));
 				//player.setSpouse(rs.getString(15));
-				player.setLocation(new Location(Map.CentralPlain, rs.getInt("character_x"), rs.getInt("character_y")), null);
+				player.setLocation(new Location(Map.CentralPlain, rs.getInt("character_x"), rs.getInt("character_y")));
 				player.setHairstyle(rs.getInt("character_hair"));
 				player.setRebornCount(rs.getInt("character_reborn"));
 				player.setHP(rs.getInt("character_curhp"));

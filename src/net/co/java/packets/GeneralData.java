@@ -1,7 +1,6 @@
 package net.co.java.packets;
 
 import net.co.java.entity.Entity;
-import net.co.java.entity.Entity.Flag;
 import net.co.java.entity.Location;
 import net.co.java.entity.Player;
 import net.co.java.server.Server.Map;
@@ -154,12 +153,15 @@ public class GeneralData implements PacketHandler {
 		Player hero = client.getPlayer();
 		switch(subType){
 		case GET_SURROUNDINGS:
-			for (Entity e : hero.getSurroundings())
-				e.SpawnPacket().send(client);
+			hero.spawn();
 			break;
 		case JUMP:
-			hero.jump((int) (dwParam & 0xFFFF), (int) (dwParam >> 16), wParam3, ip);
 			ip.send(client);
+			hero.jump((int) (dwParam & 0xFFFF), (int) (dwParam >> 16), wParam3);
+			for( Entity e : hero.getSurroundings() )
+				if ( e instanceof Player )
+					ip.send(((Player) e).getClient());
+			// Forward the packet to neighbours
 			break;
 		case LOCATION:
 			{ // Update location
@@ -192,9 +194,6 @@ public class GeneralData implements PacketHandler {
 				.send(client);
 			}
 			
-			hero.setFlag(Flag.SHIELD);
-			
-			// hero.sendStamina();
 			new UpdatePacket(hero)
 				.setAttribute(UpdatePacket.Mode.RaiseFlag, hero.getFlags())
 				.setAttribute(UpdatePacket.Mode.Stamina, (long) hero.getStamina())
@@ -272,14 +271,14 @@ public class GeneralData implements PacketHandler {
 				.setMessageType(MessagePacket.MessageType.System)
 				.build().send(client);
 			
-			new GeneralData(GeneralData.SubType.COMPLETE_LOGIN, hero).build().send(hero);
-			new GeneralData(GeneralData.SubType.CompleteMapChange, hero).build().send(hero);
-			
 			hero.inventory.send();
+
+			new GeneralData(GeneralData.SubType.COMPLETE_LOGIN, hero).build().send(hero);
+			
 			break;
 		case PORTAL:
 			{ // Update Location
-				Location location = new Location(Map.CentralPlain, 250, 180);client.getPlayer().setLocation(location, null);
+				Location location = new Location(Map.CentralPlain, 250, 180);client.getPlayer().setLocation(location);
 				new GeneralData(SubType.LOCATION, hero)
 					.setDwParam(location.getMap().getMapID())
 					.setwParam1(location.getxCord())

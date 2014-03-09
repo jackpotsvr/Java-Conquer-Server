@@ -2,7 +2,6 @@ package net.co.java.packets;
 
 import java.util.List;
 
-import net.co.java.entity.Entity;
 import net.co.java.entity.Player;
 import net.co.java.server.ServerThread;
 
@@ -11,6 +10,12 @@ public class PacketWriter {
 	private int offset = 0;
 	private final byte[] data;
 	private final PacketType packetType;
+	
+	public PacketWriter(IncomingPacket packet) {
+		this.packetType = packet.getPacketType();
+		this.data = packet.data;
+		this.offset = 4;
+	}
 
 	public PacketWriter(PacketType packetType, int size) {
 		this.packetType = packetType;
@@ -156,11 +161,6 @@ public class PacketWriter {
 	 */
 	public void send(ServerThread client) {
 		client.offer(data);
-	}
-	
-	public void sendToSurroundings(Entity me) {
-		for ( Player player : me.getSurroundingPlayers() )
-			player.getClient().offer(data);
 	}
 	
 	public void sendTo(List<Player> players) {

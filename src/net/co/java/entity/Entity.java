@@ -1,10 +1,10 @@
 package net.co.java.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.co.java.packets.GeneralData;
-import net.co.java.packets.IncomingPacket;
 import net.co.java.packets.PacketWriter;
 import net.co.java.packets.GeneralData.SubType;
 
@@ -54,65 +54,83 @@ public abstract class Entity implements Spawnable, Serializable {
 	public void spawn() {
 		if(location != null) {
 			location.getMap().addEntity(this);
+			updateView(location.getMap().getEntitiesInRange(this));
+		}
+	}
+	
+	protected List<Entity> view = new ArrayList<Entity>(); 
+	
+	/**
+	 * Add an Entity to this Entities view. If the Entity is
+	 * not in the current view of the other entity, send spawn packets
+	 * to each other.
+	 * @param e
+	 */
+	public void addToView(Entity e) {
+		if(!view.contains(e) && e != this) {
+			view.add(e);
+			e.addToView(this);
+			if(this instanceof Player)
+				e.SpawnPacket().send((Player) this);
 		}
 	}
 	
 	/**
-	 * 
+	 * Remove an Entity from this Entities view. If the Entity
+	 * is not in the current view of the other entity, send entity
+	 * remove packets to each other.
+	 * @param e
+	 */
+	public void removeFromView(Entity e) {
+		if(view.remove(e)) {
+			e.removeFromView(this);
+			if(this instanceof Player)
+				e.removeEntity().send((Player) this);
+		}
+	}
+	
+	/**
+	 * Update an entities view, remove entities that were in the
+	 * previous view, but not in the current, and spawn entities
+	 * that only appear in the current view.
+	 * @param entities
+	 */
+	public void updateView(List<Entity> entities) {
+		for(int i = 0, l = view.size(); i < l; i++ ) {
+			Entity entity = view.get(i);
+			if(!entities.remove(entity)) {
+				removeFromView(entity);
+				i--; l--;
+			}
+		}
+		for(Entity entity : entities) {
+			addToView(entity);
+		}
+	}
+	
+	/**
+	 * @return Get the current surrounding entities
+	 */
+	public List<Entity> getSurroundings() {
+		return new ArrayList<Entity>(view);
+	}
+	
+	/**
+	 * Set the location for this entity
 	 * @param location
 	 */
-	public void setLocation(Location location, IncomingPacket ip) {
-		Location oldLocation = this.location;
-		this.location = location;
-		System.out.println(name + " moving to " + this.location.toString());
-		if (oldLocation == null ) {
-			// Initial spawn, send spawn packet to surroundings 
-			this.location.getMap().addEntity(this);
-			this.SpawnPacket().sendToSurroundings(this);
-			return;
-		}
-		if (oldLocation.getMap() != location.getMap()) {
-			// Switched map (portal/scroll)
-			oldLocation.getMap().removeEntity(this);
+	public void setLocation(Location location) {
+		if(this.location != null) {
+			if(this.location.getMap() != location.getMap()) {
+				this.location.getMap().removeEntity(this);
+				location.getMap().addEntity(this);
+			}
+		} else {
 			location.getMap().addEntity(this);
 		}
-		// Prepare the packets
-		PacketWriter spawnPacket = this.SpawnPacket();
-		PacketWriter removePacket = this.removeEntity();
-		// Send the packets to the surroundings
-		for (Entity entity : location.getMap().getEntities()) {
-			if ( entity == this ) continue;
-			boolean isInView = entity.getLocation().inView(location);
-			boolean isInOldView = entity.getLocation().inView(oldLocation);
-			if ( this instanceof Player ) {
-				// Remove entities that are not in view anymore
-				if ( !isInView && isInOldView) {
-					entity.removeEntity().send((Player) this);
-				} else if ( isInView && !isInOldView ) {
-					// Spawn new entities
-					entity.SpawnPacket().send((Player) this);
-				}
-			}
-			// If the entity is not a player, we're done here
-			if (!(entity instanceof Player) || entity == this)
-				continue;
-			Player player = (Player) entity;
-			if(isInView) {
-				if(isInOldView && ip != null) {
-					// When the player is in the new view
-					// and was in the previous view as well,
-					// forward the incoming Jump or Entity
-					// move packet.
-					ip.send(player.getClient());
-				} else {
-					// Send a spawn packet
-					spawnPacket.send(player);
-				}
-			} else if (isInOldView) {
-				// Remove the entity from the screen
-				removePacket.send(player);
-			}
-		}
+		
+		this.location = location;
+		updateView(location.getMap().getEntitiesInRange(this));
 	}
 	
 	/**
@@ -125,19 +143,20 @@ public abstract class Entity implements Spawnable, Serializable {
 	 * an entity remove packet. New surroundings should receive
 	 * an entity spawn packet. The intersection of surroundings
 	 * should receive the delegated entity move packet.
+	 * 
+	 * @param direction
 	 */	
-	public void walk(int direction, IncomingPacket entityMove) {
-		setLocation(this.location.inDirection(direction), entityMove);
+	public void walk(int direction) {
+		setLocation(this.location.inDirection(direction));
 	}
 	
 	/**
-	 * 
 	 * @param x
 	 * @param y
-	 * @param jump
+	 * @param direction
 	 */
-	public void jump(int x, int y, int direction, IncomingPacket jump) {
-		setLocation(new Location(this.location.map, x, y, direction), jump);
+	public void jump(int x, int y, int direction) {
+		setLocation(new Location(this.location.map, x, y, direction));
 	}
 
 	public abstract PacketWriter SpawnPacket();
@@ -176,14 +195,6 @@ public abstract class Entity implements Spawnable, Serializable {
 
 	public PacketWriter removeEntity() {
 		return new GeneralData(SubType.ENTITY_REMOVE, this).build();
-	}
-	
-	public List<Entity> getSurroundings() {
-		return location.getMap().getEntitiesInRange(this);
-	}
-	
-	public List<Player> getSurroundingPlayers() {
-		return location.getMap().getPlayersInRange(this);
 	}
 	
 	public int getMesh() {

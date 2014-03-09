@@ -1,8 +1,6 @@
 package net.co.java.packets;
 
 import net.co.java.cipher.Cryptographer;
-import net.co.java.entity.Entity;
-import net.co.java.entity.Player;
 import net.co.java.packets.PacketType.UnimplementedPacketTypeException;
 import net.co.java.server.ServerThread;
 
@@ -124,11 +122,6 @@ public class IncomingPacket {
 	
 	public void send(ServerThread client) {
 		client.offer(data);
-	}
-	
-	public void sendToSurroundings(Player me) {
-		for ( Entity e : me.getSurroundingPlayers() )
-			this.send(((Player) e).getClient());
 	}
 	
 }
