@@ -2,6 +2,7 @@ package net.co.java.server;
 
 import net.co.java.packets.MessagePacket;
 import net.co.java.packets.PacketHandler;
+import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
 import net.co.java.packets.UpdatePacket;
 import net.co.java.server.Server.GameServer.Client;
@@ -32,11 +33,17 @@ public class Command implements PacketHandler {
 			client.getPlayer().setStamina(st);
 			client.getPlayer().sendStamina();
 		} else if ( command.equalsIgnoreCase("raise")) {
-			new UpdatePacket(client.getPlayer())
-				.setAttribute(UpdatePacket.Mode.RaiseFlag, 2l << Long.valueOf(args[1]))
-				.build().send(client);
-		}
 			
+		}	else if (command.equals("stigg")) {
+			String animation = "attackup35";
+			new PacketWriter(PacketType.STRING_PACKET, 11 + animation.length())
+				.putUnsignedInteger(client.getPlayer().getIdentity())
+				.putUnsignedByte(10) // Type
+				.putUnsignedByte(1) // Str count
+				.putUnsignedByte(animation.length()) // Str length
+				.putString(animation)
+				.send(client);
+		}
 	}
 
 }

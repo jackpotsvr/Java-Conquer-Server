@@ -362,6 +362,7 @@ public class Server {
 					break;
 				case ENTITY_MOVE_PACKET:
 					player.walk(packet.readUnsignedByte(8), packet);
+					packet.send(this);
 					break;
 				case GENERAL_DATA_PACKET:
 					new GeneralData(packet).handle(this);

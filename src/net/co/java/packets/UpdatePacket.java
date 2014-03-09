@@ -49,16 +49,16 @@ public class UpdatePacket implements PacketWrapper {
 		.putUnsignedInteger(StatusCount);
 		
 		for( Entry<Mode, Long> kv : attributes.entrySet() ) {
-			pw.putUnsignedByte(kv.getKey().mode)
-			.incrementOffset(3)
-			.putUnsignedInteger(kv.getValue().longValue()).incrementOffset(4);
+			pw.putUnsignedInteger(kv.getKey().mode)
+			.putUnsignedInteger(kv.getValue().longValue())
+			.putUnsignedInteger(2);
 		}
 		
 		return pw;
 	}
 	
 	public static enum Mode {
-		HP(0), MaxHP(1), Mana(2), Money(4), Experience(5), PKPoints(6), Job(7), Stamina(
+		HP(0), MaxHP(1), Mana(2), MaxMana(3), Money(4), Experience(5), PKPoints(6), Job(7), Stamina(
 				9), StatPoints(11), Model(12), Level(13), Spirit(14), Vitality(
 				15), Strength(16), Agility(17), GuildDonation(20), KOSeconds(22), RaiseFlag(
 				26), Hairstyle(27), XPCircle(28), LocationPoint(255);

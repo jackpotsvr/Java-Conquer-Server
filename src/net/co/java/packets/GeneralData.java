@@ -1,6 +1,7 @@
 package net.co.java.packets;
 
 import net.co.java.entity.Entity;
+import net.co.java.entity.Entity.Flag;
 import net.co.java.entity.Location;
 import net.co.java.entity.Player;
 import net.co.java.server.Server.Map;
@@ -157,7 +158,8 @@ public class GeneralData implements PacketHandler {
 				e.SpawnPacket().send(client);
 			break;
 		case JUMP:
-			client.getPlayer().jump((int) (dwParam & 0xFFFF), (int) (dwParam >> 16), ip);
+			hero.jump((int) (dwParam & 0xFFFF), (int) (dwParam >> 16), wParam3, ip);
+			ip.send(client);
 			break;
 		case LOCATION:
 			{ // Update location
@@ -190,13 +192,16 @@ public class GeneralData implements PacketHandler {
 				.send(client);
 			}
 			
+			hero.setFlag(Flag.SHIELD);
+			
 			// hero.sendStamina();
 			new UpdatePacket(hero)
-				.setAttribute(UpdatePacket.Mode.RaiseFlag, 0x00l)
+				.setAttribute(UpdatePacket.Mode.RaiseFlag, hero.getFlags())
 				.setAttribute(UpdatePacket.Mode.Stamina, (long) hero.getStamina())
 				.setAttribute(UpdatePacket.Mode.HP, (long) hero.getHP())
 				.setAttribute(UpdatePacket.Mode.Mana, (long) hero.getMana())
 				.setAttribute(UpdatePacket.Mode.MaxHP, (long) hero.getMaxHP())
+				.setAttribute(UpdatePacket.Mode.MaxMana, (long) hero.getMaxMana())
 				.setAttribute(UpdatePacket.Mode.XPCircle, 60l)
 				.setAttribute(UpdatePacket.Mode.Level, (long) hero.getLevel())
 				.setAttribute(UpdatePacket.Mode.LocationPoint, 0l)
@@ -315,20 +320,29 @@ public class GeneralData implements PacketHandler {
 		CHANGE_DIRECTION 	(0x4F), // 79
 		CHANGE_ACTION(81),
 		PORTAL 				(0x55), // 85
+		TELEPORT(86),
 		LEVEL(92),
 		END_XP_LIST(93),
 		REVIVE(94),
+		DELETE_CHARACTER(95),
 		CHANGE_PK_MODE		(0x60), // 96
 		CONFIRM_GUILD		(97),
 		BEGIN_MINE(99),
+		TEAMLEADERLOCATION(101),
 		ENTITY_SPAWN(102),
+		BEGIN_XP(103),
 		CompleteMapChange(104),
 		TeamMateLoc(106),
 		CorrectCords(108),
+		UNLEARN_SPELL(109),
+		UNLEARN_PROF(110),
 		Shop(111),
 		OpenShop(113),
 		GET_SURROUNDINGS	(0x72), //114
 		REMOTE_COMMANDS(116),
+		END_TRANSFORM(118),
+		END_FLY(120),
+		PLAYSOUND(124),
 		PickupCashEffect(121),
 		Dialog(126),
 		GuardJump(129),

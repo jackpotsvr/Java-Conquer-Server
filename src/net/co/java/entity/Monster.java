@@ -24,7 +24,7 @@ public class Monster extends Entity {
 		return new PacketWriter(PacketType.ENTITY_SPAWN_PACKET, 82 + name.length())
 		.putUnsignedInteger(identity)
 		.putUnsignedInteger(mesh)
-		.setOffset(12).putUnsignedInteger(2)  // StatusFlag = 2 for monsters
+		.setOffset(12).putUnsignedInteger(flags)
 		.setOffset(20).putUnsignedShort(0) // Guild ID
 		.setOffset(23)
 		.putUnsignedByte(0) // Guild rank
