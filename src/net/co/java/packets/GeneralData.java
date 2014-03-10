@@ -42,14 +42,6 @@ public class GeneralData implements PacketHandler {
 	}
 	
 	/**
-	 * LENG  TYPE  TIME      ENTITY    X     Y                       TYPE
-	 * 1800  F203  58818E1F  40420F00  7E01  5B01  7E01  5501  0000  8500
-	 * 1800  F203  1D23931F  40420F00  8301  5B01  7E01  5B01  0000  8500
-	 * 1800  F203  3628931F  40420F00  8401  5F01  8301  5B01  0000  8500
-	 * 1800  F203  ED2C931F  40420F00  8801  6001  8401  5F01  0000  8500
-	 */
-
-	/**
 	 * Construct a GeneralData packet with given data
 	 * @param subType
 	 * @param entity
@@ -156,12 +148,7 @@ public class GeneralData implements PacketHandler {
 			hero.spawn();
 			break;
 		case JUMP:
-			ip.send(client);
-			hero.jump((int) (dwParam & 0xFFFF), (int) (dwParam >> 16), wParam3);
-			for( Entity e : hero.getSurroundings() )
-				if ( e instanceof Player )
-					ip.send(((Player) e).getClient());
-			// Forward the packet to neighbours
+			hero.jump((int) (dwParam & 0xFFFF), (int) (dwParam >> 16), wParam3, ip);
 			break;
 		case LOCATION:
 			{ // Update location
@@ -278,7 +265,8 @@ public class GeneralData implements PacketHandler {
 			break;
 		case PORTAL:
 			{ // Update Location
-				Location location = new Location(Map.CentralPlain, 250, 180);client.getPlayer().setLocation(location);
+				Location location = new Location(Map.CentralPlain, 250, 180);
+				client.getPlayer().setLocation(location);
 				new GeneralData(SubType.LOCATION, hero)
 					.setDwParam(location.getMap().getMapID())
 					.setwParam1(location.getxCord())
@@ -286,7 +274,9 @@ public class GeneralData implements PacketHandler {
 					.build().send(client);
 				break;
 			}
+		case CHANGE_DIRECTION:
 			
+			break;
 		default:
 			System.out.println("Unimplemented " + subType.toString());
 			break;

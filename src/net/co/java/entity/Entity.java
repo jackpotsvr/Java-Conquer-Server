@@ -2,14 +2,18 @@ package net.co.java.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import net.co.java.packets.GeneralData;
+import net.co.java.packets.IncomingPacket;
+import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
 import net.co.java.packets.GeneralData.SubType;
 
 /**
  * Abstract class for entities (eg. Monsters and Players)
+ * 
  * @author Thomas Gmelig Meyling
  * @author Jan-Willem Gmelig Meyling
  *
@@ -26,9 +30,9 @@ public abstract class Entity implements Spawnable, Serializable {
 	protected volatile int HP;
 	protected volatile int mana;
 	protected volatile int level;
-	
-	protected long flags = 0;
-	
+	protected volatile long flags = 0;
+	public final transient View view = new View();
+
 	/**
 	 * Construct a new entity
 	 * @param identity
@@ -48,89 +52,16 @@ public abstract class Entity implements Spawnable, Serializable {
 	}
 	
 	/**
-	 * This method is called to setup the initial spawn. It adds the Entity
-	 * to a new Map and sends the Spawn packet to the surrounding Players.
-	 */
-	public void spawn() {
-		if(location != null) {
-			location.getMap().addEntity(this);
-			updateView(location.getMap().getEntitiesInRange(this));
-		}
-	}
-	
-	protected List<Entity> view = new ArrayList<Entity>(); 
-	
-	/**
-	 * Add an Entity to this Entities view. If the Entity is
-	 * not in the current view of the other entity, send spawn packets
-	 * to each other.
-	 * @param e
-	 */
-	public void addToView(Entity e) {
-		if(!view.contains(e) && e != this) {
-			view.add(e);
-			e.addToView(this);
-			if(this instanceof Player)
-				e.SpawnPacket().send((Player) this);
-		}
-	}
-	
-	/**
-	 * Remove an Entity from this Entities view. If the Entity
-	 * is not in the current view of the other entity, send entity
-	 * remove packets to each other.
-	 * @param e
-	 */
-	public void removeFromView(Entity e) {
-		if(view.remove(e)) {
-			e.removeFromView(this);
-			if(this instanceof Player)
-				e.removeEntity().send((Player) this);
-		}
-	}
-	
-	/**
-	 * Update an entities view, remove entities that were in the
-	 * previous view, but not in the current, and spawn entities
-	 * that only appear in the current view.
-	 * @param entities
-	 */
-	public void updateView(List<Entity> entities) {
-		for(int i = 0, l = view.size(); i < l; i++ ) {
-			Entity entity = view.get(i);
-			if(!entities.remove(entity)) {
-				removeFromView(entity);
-				i--; l--;
-			}
-		}
-		for(Entity entity : entities) {
-			addToView(entity);
-		}
-	}
-	
-	/**
-	 * @return Get the current surrounding entities
-	 */
-	public List<Entity> getSurroundings() {
-		return new ArrayList<Entity>(view);
-	}
-	
-	/**
 	 * Set the location for this entity
 	 * @param location
 	 */
 	public void setLocation(Location location) {
-		if(this.location != null) {
-			if(this.location.getMap() != location.getMap()) {
+		if(this.location != null && this.location.getMap() != location.getMap()) {
 				this.location.getMap().removeEntity(this);
-				location.getMap().addEntity(this);
-			}
-		} else {
-			location.getMap().addEntity(this);
 		}
-		
+		location.getMap().addEntity(this);
 		this.location = location;
-		updateView(location.getMap().getEntitiesInRange(this));
+		this.view.update(location.getMap().getEntitiesInRange(this));
 	}
 	
 	/**
@@ -145,8 +76,21 @@ public abstract class Entity implements Spawnable, Serializable {
 	 * should receive the delegated entity move packet.
 	 * 
 	 * @param direction
+	 * @param walkPacket
 	 */	
-	public void walk(int direction) {
+	public void walk(int direction, IncomingPacket walkPacket) {
+		PacketWriter pw = walkPacket != null ? new PacketWriter(walkPacket) : 
+			new PacketWriter(PacketType.ENTITY_MOVE_PACKET, 12)
+				.putUnsignedInteger(identity)
+				.putUnsignedByte(direction)
+				.putUnsignedByte(1);
+		// Send walk packet to me and surroundings
+		for(Entity e : view)
+			if(e instanceof Player)
+				pw.send((Player) e);
+		if(Entity.this instanceof Player)
+			pw.send((Player) Entity.this);
+		// Change location and send spawn / entity remove packets
 		setLocation(this.location.inDirection(direction));
 	}
 	
@@ -154,12 +98,50 @@ public abstract class Entity implements Spawnable, Serializable {
 	 * @param x
 	 * @param y
 	 * @param direction
+	 * @param jumpPacket
 	 */
-	public void jump(int x, int y, int direction) {
+	public void jump(int x, int y, int direction, IncomingPacket jumpPacket) {
+		PacketWriter pw = jumpPacket != null ? new PacketWriter(jumpPacket) : 
+			new GeneralData(GeneralData.SubType.JUMP, this).setDwParam(y << 16 | x).build();
+		// Send jump packet to me and surroundings
+		for(Entity e : view)
+			if(e instanceof Player)
+				pw.send((Player) e);
+		if(Entity.this instanceof Player)
+			pw.send((Player) Entity.this);
+		// Change location and send spawn / entity remove packets
 		setLocation(new Location(this.location.map, x, y, direction));
+			
+	}
+
+	/**
+	 * This method is called to setup the initial spawn. It adds the Entity
+	 * to a new Map and sends the Spawn packet to the surrounding Players.
+	 */
+	public void spawn() {
+		if(location != null)
+			setLocation(location);
+	}
+
+	/**
+	 * Remove the entity
+	 */
+	public void remove() {
+		if(location != null) {
+			location.getMap().removeEntity(this);
+			PacketWriter remove = this.removeEntity();
+			for ( Entity e : view) {
+				if(e instanceof Player)
+					remove.send((Player) e);
+			}
+		}
 	}
 
 	public abstract PacketWriter SpawnPacket();
+
+	public PacketWriter removeEntity() {
+		return new GeneralData(SubType.ENTITY_REMOVE, this).build();
+	}
 
 	/**
 	 * Set a flag for this Entity
@@ -193,10 +175,6 @@ public abstract class Entity implements Spawnable, Serializable {
 		return flags;
 	}
 
-	public PacketWriter removeEntity() {
-		return new GeneralData(SubType.ENTITY_REMOVE, this).build();
-	}
-	
 	public int getMesh() {
 		return mesh;
 	}
@@ -280,8 +258,76 @@ public abstract class Entity implements Spawnable, Serializable {
 	}
 
 	/**
-	 * Types for Flags
+	 * The View class is a collection that contains all Entities within the
+	 * view range of this Entity
+	 * 
 	 * @author Jan-Willem Gmelig Meyling
+	 * @author Thomas Gmelig Meyling
+	 */
+	public class View implements Iterable<Entity> {
+	
+		protected List<Entity> data = new ArrayList<Entity>();
+	
+		/**
+		 * Add an Entity to this Entities view. If the Entity is
+		 * not in the current view of the other entity, send spawn packets
+		 * to each other.
+		 * @param e
+		 */
+		public synchronized void add(Entity e) {
+			if(!data.contains(e) && e != Entity.this) {
+				data.add(e);
+				e.view.add(Entity.this);
+				if(Entity.this instanceof Player)
+					e.SpawnPacket().send((Player) Entity.this);
+			}
+		}
+	
+		/**
+		 * Remove an Entity from this Entities view. If the Entity
+		 * is not in the current view of the other entity, send entity
+		 * remove packets to each other.
+		 * @param e
+		 */
+		public synchronized void remove(Entity e) {
+			if(data.remove(e)) {
+				e.view.remove(Entity.this);
+				if(Entity.this instanceof Player)
+					e.removeEntity().send((Player) Entity.this);
+			}
+		}
+	
+		/**
+		 * Update an entities view, remove entities that were in the
+		 * previous view, but not in the current, and spawn entities
+		 * that only appear in the current view.
+		 * @param entities
+		 */
+		public synchronized void update(List<Entity> entities) {
+			for(int i = 0, l = data.size(); i < l; i++ ) {
+				Entity entity = data.get(i);
+				if(!entities.remove(entity)) {
+					remove(entity);
+					i--; l--;
+				}
+			}
+			for(Entity entity : entities) {
+				add(entity);
+			}
+		}
+
+		@Override
+		public synchronized Iterator<Entity> iterator() {
+			return new ArrayList<Entity>(data).iterator();
+		}
+		
+	}
+
+	/**
+	 * Types for Flags
+	 * 
+	 * @author Jan-Willem Gmelig Meyling
+	 * @author Thomas Gmelig Meyling
 	 *
 	 */
 	public static enum Flag {

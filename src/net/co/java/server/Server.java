@@ -292,9 +292,7 @@ public class Server {
 			protected void disconnected() {
 				AMOUNT_OF_PLAYERS--;
 				System.out.println("Amount of players: " + AMOUNT_OF_PLAYERS);
-				if ( player != null ) {
-					player.getLocation().getMap().removeEntity(player);
-				}
+				player.remove();
 			}
 			
 			/**
@@ -358,10 +356,7 @@ public class Server {
 					}
 					break;
 				case ENTITY_MOVE_PACKET:
-					for(Player p : player.getLocation().getMap().getPlayersInRange(player, true)) {
-						packet.send(p.getClient());
-					}
-					player.walk(packet.readUnsignedByte(8));
+					player.walk(packet.readUnsignedByte(8), packet);
 					break;
 				case GENERAL_DATA_PACKET:
 					new GeneralData(packet).handle(this);
@@ -453,8 +448,7 @@ public class Server {
 		 * @param entity
 		 */
 		public void removeEntity(Entity entity) {
-			if(entities.remove(entity));
-				entity.removeEntity().sendTo(getPlayersInRange(entity, false));
+			entities.remove(entity);
 		}
 		
 		/**

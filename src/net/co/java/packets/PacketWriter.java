@@ -11,12 +11,21 @@ public class PacketWriter {
 	private final byte[] data;
 	private final PacketType packetType;
 	
+	/**
+	 * Create a new PacketWriter
+	 * @param packet
+	 */
 	public PacketWriter(IncomingPacket packet) {
 		this.packetType = packet.getPacketType();
 		this.data = packet.data;
 		this.offset = 4;
 	}
 
+	/**
+	 * Create a new PacketWriter
+	 * @param packetType
+	 * @param size
+	 */
 	public PacketWriter(PacketType packetType, int size) {
 		this.packetType = packetType;
 		this.data = new byte[size];
