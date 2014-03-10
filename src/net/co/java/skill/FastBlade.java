@@ -62,6 +62,7 @@ class FastBlade extends MagicSkill {
 			int range = range(prof.level);			
 			TargetBuilder tb = new TargetBuilder(hero).inCircle(range)
 					.inLinePart(ip.getX(), ip.getY());
+			System.out.println(tb.toString());
 			
 			PacketWriter pw = new PacketWriter(PacketType.SKILL_ANIMATION_PACKET, 20 + tb.size() * 8)
 			.putUnsignedInteger(ip.getIdentity())

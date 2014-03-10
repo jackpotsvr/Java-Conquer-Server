@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -456,42 +455,6 @@ public class Server {
 		 */
 		public List<Entity> getEntities() {
 			return entities;
-		}
-
-		
-		/**
-		 * @param me
-		 * @return all entities within the default range excluding me
-		 */
-		public List<Entity> getEntitiesInRange(Entity me) {
-			List<Entity> result = new ArrayList<Entity>();
-			
-			for ( Entity e : entities ) {
-				if ( e == me || e.equals(me) )
-					continue;
-				else if (e.getLocation().inView(me.getLocation()))
-					result.add(e);
-			}
-			
-			return result;
-		}
-		
-		/**
-		 * @param me
-		 * @return all players within the default range excluding me
-		 */
-		public List<Player> getPlayersInRange(Entity me, boolean includeme) {
-			List<Player> result = new ArrayList<Player>();
-			
-			for ( Entity e : entities ) {
-				if( e instanceof Player) {
-					if(e != me || includeme ) {
-						result.add((Player) e);
-					}
-				}
-			}
-			
-			return result;
 		}
 		
 	}

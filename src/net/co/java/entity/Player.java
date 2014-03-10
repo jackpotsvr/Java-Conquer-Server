@@ -232,6 +232,7 @@ public class Player extends Entity {
 		return hp;
 	}
 	
+	@Override
 	public int getMaxMana() {
 		int mana = spirit * 5;
 		if(profession >= 100) {
