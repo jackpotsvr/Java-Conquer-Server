@@ -165,6 +165,7 @@ public class Server {
 					pw.putUnsignedInteger(GAME_PORT);
 					pw.send(this);
 				} else {
+					this.close();
 					// TODO Send a response to the client
 				}
 			}
@@ -408,7 +409,14 @@ public class Server {
 	 * @author Thomas Gmelig Meyling
 	 */
 	public enum Map {
-		CentralPlain(1002);
+		
+		/* http://www.elitepvpers.com/forum/co2-programming/177758-request-map-id-complete-list.html */
+		Desert(1000),
+		CentralPlain(1002),
+		PhoenixCastle(1011),
+		BirdIsland(1015),
+		ApeMoutain(1020);
+		
 		
 		private final Integer id;
 		

@@ -131,8 +131,7 @@ public class PostgreSQL extends AbstractModel {
 		
 			conn.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new AccessException(e);
 		}		
 		return null;
 
@@ -350,7 +349,19 @@ public class PostgreSQL extends AbstractModel {
 
 	@Override
 	protected void fetchSkill(Player hero) throws AccessException {
-		hero.setSkill(Skill.FAST_BLADE, 4, 0);
+		try {
+			Connection conn = getConnection();
+			PreparedStatement stmt = conn.prepareStatement("SELECT skill_id, skill_level, skill_exp FROM skills WHERE character_name = ?"); 
+			stmt.setString(1, hero.getName());
+			ResultSet rs = stmt.executeQuery();	
+			
+			while(rs.next())
+			{
+				hero.setSkill(Skill.valueOf(rs.getInt("skill_id")), rs.getInt("skill_level"), rs.getLong("skill_exp"));
+			}
+		} catch (SQLException e) {
+			throw new AccessException(e);
+		}
 	}
 
 	@Override

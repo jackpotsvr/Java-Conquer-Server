@@ -1,8 +1,12 @@
 package net.co.java.packets;
 
+import net.co.java.entity.Location;
+import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.model.AccessException;
+import net.co.java.packets.GeneralData.SubType;
 import net.co.java.server.Server.GameServer.Client;
+import net.co.java.server.Server.Map;
 
 /**
  * Item usage packet
@@ -103,8 +107,38 @@ public class ItemUsage implements PacketHandler {
 			break;
 		case EquipItem:
 			try {
-				client.getPlayer().inventory.equip((int) parameter, (EquipmentInstance) client.getModel().getItemInstance(identity));
-			} catch (AccessException  | ClassCastException e) {} /* ClassCastException is for when people send item equip packets for no equipment items*/
+				ItemInstance item = client.getModel().getItemInstance(identity);
+				if(item instanceof EquipmentInstance)
+					client.getPlayer().inventory.equip((int) parameter, (EquipmentInstance) client.getModel().getItemInstance(identity));
+				
+				if(parameter == 0) // parameter 0 is for no equips, for instance usage of TwinCity gates and Windscrolls
+				{
+					switch (client.getModel().getItemInstance(identity).itemPrototype.identifier.intValue()) // should get item_sid from identity before switch.
+					{
+						case 1060020: // // tc gate 1002, 439, 383
+							client.getPlayer().setLocation(new Location(Map.CentralPlain, 439, 383)); 
+							sendLocation(client); // need to send more data.
+							break;
+						case 1060021: //desert
+							client.getPlayer().setLocation(new Location(Map.Desert, 491, 647)); // 491, 
+							sendLocation(client); // might have to change this method soon.
+							break;
+						case 1060022: // ape
+							client.getPlayer().setLocation(new Location(Map.ApeMoutain, 567, 563));
+							sendLocation(client); // might have to change this method soon.
+							break;
+						case 1060023: // castle
+							client.getPlayer().setLocation(new Location(Map.PhoenixCastle, 190, 262));
+							sendLocation(client); // might have to change this method soon.
+							break;
+						case 1060024: //bi
+							client.getPlayer().setLocation(new Location(Map.BirdIsland, 716, 572));
+							sendLocation(client); // might have to change this method soon.
+							break;
+					
+					}
+				}
+			} catch (AccessException e) {} /* ClassCastException is for when people send item equip packets for no equipment items*/
 			break;
 		case UnEquipItem:
 			client.getPlayer().inventory.unequip((int) parameter);
@@ -164,5 +198,18 @@ public class ItemUsage implements PacketHandler {
 			return null;
 		}
 	}   
+	
+	/**
+	 * Perhaps we have to move this later on ;) 
+	 * @param c
+	 */
+	void sendLocation(Client c)
+	{
+		new GeneralData(SubType.LOCATION, c.getPlayer())
+		.setDwParam(c.getPlayer().getLocation().getMap().getMapID())
+		.setwParam1(c.getPlayer().getLocation().getxCord())
+		.setwParam2(c.getPlayer().getLocation().getyCord())
+		.build().send(c);
+	}
 
 }

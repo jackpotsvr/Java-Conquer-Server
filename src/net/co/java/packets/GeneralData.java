@@ -244,7 +244,7 @@ public class GeneralData implements PacketHandler {
 			 * letter1  - letter7 for King rank etc.
 			 * coronet3 & coronet4 for unknown animations
 			 */
-			String animation = "coronet3";
+			String animation = "letter7";
 			new PacketWriter(PacketType.STRING_PACKET, 11 + animation.length())
 				.putUnsignedInteger(hero.getIdentity())
 				.putUnsignedByte(10) // Type
