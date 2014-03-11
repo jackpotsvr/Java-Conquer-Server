@@ -103,7 +103,7 @@ public class PostgreSQL extends AbstractModel {
 			stmt.setLong(1, item_sid);
 			ResultSet rs = stmt.executeQuery();
 			
-			if (rs.next())
+			while (rs.next())
 			{
 				// TODO This does not work with ItemInstances that require ItemPrototypes yet
 				return new EquipmentPrototype
@@ -140,7 +140,45 @@ public class PostgreSQL extends AbstractModel {
 
 	@Override
 	protected ItemInstance fetchItemInstance(long id) throws AccessException {
-		// TODO Auto-generated method stub
+	
+		try {
+			Connection conn = getConnection();
+			PreparedStatement stmt = conn.prepareStatement("SELECT item_isequip, c.item_sid, item_dura, item_firstsocket, item_secondsocket, "
+														+ "item_plus, item_bless, item_enchant "
+														+ "FROM item_possession a "
+														+ "JOIN unique_items b ON (a.item_id = b.item_id) "
+														+ "JOIN items c ON (b.item_sid = c.item_sid) " 
+														+ "WHERE b.item_id = ?;");
+			stmt.setLong(1, id);
+			
+			ResultSet rs = stmt.executeQuery(); 
+			
+			while(rs.next())
+			{
+				if(rs.getBoolean("item_isequip"))
+				{
+					EquipmentPrototype proto = this.getEquipmentPrototype(rs.getLong("item_sid"));
+					
+					EquipmentInstance equip = new EquipmentInstance(id, proto)
+					.setFirstSocket(EquipmentInstance.Socket.valueOf(rs.getInt("item_firstsocket")))
+					.setSecondSocket(EquipmentInstance.Socket.valueOf(rs.getInt("item_secondsocket")))
+					.setDura(rs.getInt("item_dura"))
+					.setBless(rs.getInt("item_bless"))
+					.setPlus(rs.getInt("item_plus"))
+					.setEnchant(rs.getInt("item_enchant"));
+					
+					return (ItemInstance) equip;
+				}
+				else
+				{
+					ItemPrototype proto = this.getItemPrototype(rs.getLong("item_sid"));		
+					ItemInstance item = new ItemInstance(id, proto);
+					return item; 
+				}
+			}
+		} catch (SQLException e) { 
+			throw new AccessException(e); 
+		}
 		return null;
 	}
 
@@ -154,11 +192,10 @@ public class PostgreSQL extends AbstractModel {
 		try {
 			Connection conn = getConnection();
 			PreparedStatement stmt = conn.prepareStatement("SELECT character_name FROM characters WHERE account_username = ?");
+			
+			
 			stmt.setString(1, accountName);
 			ResultSet rs = stmt.executeQuery();
-			
-			
-			
 			
 			if(rs.next()) {
 				characterName = rs.getString(1);
@@ -224,11 +261,10 @@ public class PostgreSQL extends AbstractModel {
 	protected void fetchInventory(Player hero) throws AccessException {
 		try {
 			Connection conn = getConnection();
-			PreparedStatement stmt = conn.prepareStatement("SELECT a.item_id, item_sid, item_dura, item_firstsocket, item_secondsocket, "
-					+ "item_plus, item_bless, item_enchant "
-					+ "FROM item_possession a "
-					+ "JOIN unique_items b ON (a.item_id = b.item_id) "
-					+ "WHERE (character_name = ?) AND (item_slot = 0);");
+			PreparedStatement stmt = conn.prepareStatement("SELECT a.item_id, b.item_sid, item_isequip "
+					+ "FROM item_possession a  JOIN unique_items b ON (a.item_id = b.item_id) "
+											+ "JOIN items c ON (b.item_sid = c.item_sid) "
+					+ "WHERE (a.character_name = ?) AND (a.item_slot = 0);");
 			stmt.setString(1, hero.getName());
 			
 			ResultSet rsItems = stmt.executeQuery(); 
@@ -236,22 +272,26 @@ public class PostgreSQL extends AbstractModel {
 			while (rsItems.next())
 			{
 				long item_sid = rsItems.getLong("item_sid"); 
+				long item_id = rsItems.getLong("item_id");
 				/*
 				 * TODO This does not work with ItemInstances that require ItemPrototypes yet
 				 * TODO This function should delegate to .getItemInstance(id) / .fetchItemIstance(id) to avoid duplicate code
 				 */
-				EquipmentPrototype proto = this.getEquipmentPrototype(item_sid);
 				
-				EquipmentInstance item = new EquipmentInstance(rsItems.getLong("item_id"), proto)
-					.setFirstSocket(EquipmentInstance.Socket.valueOf(rsItems.getInt("item_firstsocket")))
-					.setSecondSocket(EquipmentInstance.Socket.valueOf(rsItems.getInt("item_secondsocket")))
-					.setDura(rsItems.getInt("item_dura"))
-					.setBless(rsItems.getInt("item_bless"))
-					.setPlus(rsItems.getInt("item_plus"))
-					.setEnchant(rsItems.getInt("item_enchant"));
+				if(rsItems.getBoolean("item_isequip"))
+				{
+					EquipmentInstance equip = (EquipmentInstance) fetchItemInstance(item_id);
+					itemInstances.put(rsItems.getLong("item_id"), equip);
+					hero.inventory.addItem(equip);
+				}
+				else
+				{
+					ItemInstance item = fetchItemInstance(item_id);
+					itemInstances.put(rsItems.getLong("item_id"), item);
+					hero.inventory.addItem(item);
+				}
 				
-				itemInstances.put(rsItems.getLong("item_id"), item);
-				hero.inventory.addItem(item);
+				
 			}
 		
 			
@@ -323,7 +363,7 @@ public class PostgreSQL extends AbstractModel {
 			
 			while(rs.next())
 			{
-				hero.setProficiency(WeaponType.valueOf(rs.getInt(1)), rs.getInt(2), rs.getLong(3));
+				hero.setProficiency(WeaponType.valueOf(rs.getInt("proficiency_weapon")), rs.getInt("proficiency_level"), rs.getLong("proficiency_exp"));
 				//hero.setProficiency(t, level, exp);
 			}
 		} catch (SQLException e) {

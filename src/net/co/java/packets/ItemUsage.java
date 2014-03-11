@@ -104,7 +104,7 @@ public class ItemUsage implements PacketHandler {
 		case EquipItem:
 			try {
 				client.getPlayer().inventory.equip((int) parameter, (EquipmentInstance) client.getModel().getItemInstance(identity));
-			} catch (AccessException e) {}
+			} catch (AccessException  | ClassCastException e) {} /* ClassCastException is for when people send item equip packets for no equipment items*/
 			break;
 		case UnEquipItem:
 			client.getPlayer().inventory.unequip((int) parameter);
