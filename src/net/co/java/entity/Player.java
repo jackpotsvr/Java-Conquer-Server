@@ -261,6 +261,10 @@ public class Player extends Entity {
 		if ( level > 0 || exp > 0 )
 			proficiencies.put(t, new WeaponProficiency(this, t, level, exp));
 	}
+	
+	public HashMap<WeaponType, WeaponProficiency> getProficiencies() {
+		return proficiencies;
+	}
 
 	public void setSkill(Skill s, int level, long exp) {
 		if ( level > 0 || exp > 0 )

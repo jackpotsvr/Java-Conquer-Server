@@ -1,5 +1,8 @@
 package net.co.java.server;
 
+import net.co.java.item.ItemInstance.EquipmentInstance;
+import net.co.java.item.ItemPrototype.EquipmentPrototype;
+import net.co.java.model.AccessException;
 import net.co.java.packets.MessagePacket;
 import net.co.java.packets.PacketHandler;
 import net.co.java.packets.PacketType;
@@ -42,6 +45,8 @@ public class Command implements PacketHandler {
 				.putUnsignedByte(animation.length()) // Str length
 				.putString(animation)
 				.send(client);
+		} else if (command.equals("item")){
+			/* to do make function to add items */
 		}
 	}
 

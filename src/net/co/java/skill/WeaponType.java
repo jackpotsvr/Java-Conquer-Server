@@ -1,5 +1,8 @@
 package net.co.java.skill;
 
+import net.co.java.packets.PacketType;
+import net.co.java.packets.PacketType.UnimplementedPacketTypeException;
+
 public enum WeaponType {
 	BLADE(410),
     SWORD(420),
@@ -23,5 +26,13 @@ public enum WeaponType {
 	
 	private WeaponType(int ProfID) {
 		this.ProfID = ProfID;
+	}
+	
+	public static WeaponType valueOf(int id)  {
+		for ( WeaponType wt : WeaponType.values() ) {
+			if ( wt.ProfID == id )
+				return wt;
+		}
+		return null; 
 	}
 }

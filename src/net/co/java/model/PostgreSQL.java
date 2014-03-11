@@ -22,6 +22,7 @@ import net.co.java.item.ItemPrototype;
 import net.co.java.packets.Character_Creation_Packet;
 import net.co.java.server.Server.Map;
 import net.co.java.skill.Skill;
+import net.co.java.skill.WeaponProficiency;
 import net.co.java.skill.WeaponType;
 
 /**
@@ -314,8 +315,41 @@ public class PostgreSQL extends AbstractModel {
 
 	@Override
 	protected void fetchProficiency(Player hero) throws AccessException {
-		hero.setProficiency(WeaponType.BLADE, 20, 65000);
-		hero.setProficiency(WeaponType.SWORD, 12, 65000);
+		try {
+			Connection conn = getConnection();
+			PreparedStatement stmt = conn.prepareStatement("SELECT proficiency_weapon, proficiency_level, proficiency_exp FROM proficiency WHERE character_name = ?"); 
+			stmt.setString(1, hero.getName());
+			ResultSet rs = stmt.executeQuery();	
+			
+			while(rs.next())
+			{
+				hero.setProficiency(WeaponType.valueOf(rs.getInt(1)), rs.getInt(2), rs.getLong(3));
+				//hero.setProficiency(t, level, exp);
+			}
+		} catch (SQLException e) {
+			throw new AccessException(e);
+		}
+	}
+	
+	protected void setProficiency(Player hero, WeaponProficiency wp) throws AccessException 
+	{
+
+		try{
+			Connection conn = getConnection();
+			PreparedStatement stmt = conn.prepareStatement("INSERT INTO proficiency (character_name, proficiency_weapon, proficiency_level, proficiency_exp) VALUES "
+										+ "(?, ?, ?, ?)"); 
+			
+			stmt.setString(1, hero.getName());
+			stmt.setInt(2, wp.getWeaponType().ProfID);
+			stmt.setInt(3, wp.getLevel());
+			stmt.setLong(4, wp.getExperience());
+			
+			conn.close();
+			stmt.close();
+		} catch (SQLException e) { 
+			throw new AccessException(e);
+		}
+	
 	}
 
 	@Override
