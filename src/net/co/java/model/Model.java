@@ -2,9 +2,11 @@ package net.co.java.model;
 
 import net.co.java.entity.Player;
 import net.co.java.item.ItemInstance;
+import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemPrototype;
 import net.co.java.item.ItemPrototype.EquipmentPrototype;
 import net.co.java.packets.Character_Creation_Packet;
+import net.co.java.skill.WeaponProficiency;
 
 /**
  * Administrators of this private server should be able to use a database of their own preference,
@@ -80,5 +82,21 @@ public interface Model {
 	 * @return an ItemInstance
 	 */
 	EquipmentPrototype getEquipmentPrototype(long staticID) throws AccessException;
+
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 * @throws AccessException
+	 */
+	EquipmentInstance getEquipmentInstance(long id) throws AccessException;
+
+	/**
+	 * 
+	 * @param hero
+	 * @param wp
+	 * @throws AccessException
+	 */
+	void setProficiency(Player hero, WeaponProficiency wp) throws AccessException;
 	
 }

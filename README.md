@@ -43,6 +43,7 @@ places:
 * [ConquerWiki.com](http://conquerwiki.com/wiki/Main_Page) - A site containing all Packet Structures
 * [spirited-fang](https://spirited-fang.wikispaces.com/) - A site which may be useful for enumerations
 * [ElitePVPers.com](http://www.elitepvpers.com/forum/co2-pserver-discussions-questions/) - A forum with a lot of useful posts
+* [Epvp form thread with some useful notes](http://www.elitepvpers.com/forum/co2-exploits-hacks-tools/38471-conquer-packets-2.html)
 
 Running the server
 -----

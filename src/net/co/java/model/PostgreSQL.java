@@ -158,21 +158,18 @@ public class PostgreSQL extends AbstractModel {
 				{
 					EquipmentPrototype proto = this.getEquipmentPrototype(rs.getLong("item_sid"));
 					
-					EquipmentInstance equip = new EquipmentInstance(id, proto)
-					.setFirstSocket(EquipmentInstance.Socket.valueOf(rs.getInt("item_firstsocket")))
-					.setSecondSocket(EquipmentInstance.Socket.valueOf(rs.getInt("item_secondsocket")))
-					.setDura(rs.getInt("item_dura"))
-					.setBless(rs.getInt("item_bless"))
-					.setPlus(rs.getInt("item_plus"))
-					.setEnchant(rs.getInt("item_enchant"));
-					
-					return (ItemInstance) equip;
+					return new EquipmentInstance(id, proto)
+						.setFirstSocket(EquipmentInstance.Socket.valueOf(rs.getInt("item_firstsocket")))
+						.setSecondSocket(EquipmentInstance.Socket.valueOf(rs.getInt("item_secondsocket")))
+						.setDura(rs.getInt("item_dura"))
+						.setBless(rs.getInt("item_bless"))
+						.setPlus(rs.getInt("item_plus"))
+						.setEnchant(rs.getInt("item_enchant"));
 				}
 				else
 				{
 					ItemPrototype proto = this.getItemPrototype(rs.getLong("item_sid"));		
-					ItemInstance item = new ItemInstance(id, proto);
-					return item; 
+					return new ItemInstance(id, proto); 
 				}
 			}
 		} catch (SQLException e) { 
@@ -270,33 +267,14 @@ public class PostgreSQL extends AbstractModel {
 				
 			while (rsItems.next())
 			{
-				long item_sid = rsItems.getLong("item_sid"); 
 				long item_id = rsItems.getLong("item_id");
-				/*
-				 * TODO This does not work with ItemInstances that require ItemPrototypes yet
-				 * TODO This function should delegate to .getItemInstance(id) / .fetchItemIstance(id) to avoid duplicate code
-				 */
-				
-				if(rsItems.getBoolean("item_isequip"))
-				{
-					EquipmentInstance equip = (EquipmentInstance) fetchItemInstance(item_id);
-					itemInstances.put(rsItems.getLong("item_id"), equip);
-					hero.inventory.addItem(equip);
-				}
-				else
-				{
-					ItemInstance item = fetchItemInstance(item_id);
-					itemInstances.put(rsItems.getLong("item_id"), item);
-					hero.inventory.addItem(item);
-				}
-				
-				
+				ItemInstance item = getItemInstance(item_id);
+				hero.inventory.addItem(item);
 			}
-		
 			
-			conn.close();
-			stmt.close();
 			rsItems.close();
+			stmt.close();
+			conn.close();
 			
 		} catch (SQLException e) {
 			throw new AccessException(e);
@@ -319,22 +297,9 @@ public class PostgreSQL extends AbstractModel {
 			
 			while (rsItems.next())
 			{
-				long item_sid = rsItems.getLong("item_sid");
+				long item_id = rsItems.getLong("item_id");
 				int slot = rsItems.getInt("item_slot");
-				/*
-				 * TODO This does not work with ItemInstances that require ItemPrototypes yet
-				 * TODO This function should delegate to .getItemInstance(id) / .fetchItemIstance(id) to avoid duplicate code
-				 */
-				EquipmentPrototype proto = this.getEquipmentPrototype(item_sid);
-				EquipmentInstance equip = new EquipmentInstance(rsItems.getLong("item_id"), proto)
-					.setFirstSocket(EquipmentInstance.Socket.valueOf(rsItems.getInt("item_firstsocket")))
-					.setSecondSocket(EquipmentInstance.Socket.valueOf(rsItems.getInt("item_secondsocket")))
-					.setDura(rsItems.getInt("item_dura"))
-					.setBless(rsItems.getInt("item_bless"))
-					.setPlus(rsItems.getInt("item_plus"))
-					.setEnchant(rsItems.getInt("item_enchant"));
-				
-				itemInstances.put(rsItems.getLong("item_id"), equip);
+				EquipmentInstance equip = getEquipmentInstance(item_id);
 				hero.inventory.equip(slot, equip);
 			}
 			
@@ -382,7 +347,8 @@ public class PostgreSQL extends AbstractModel {
 		}
 	}
 	
-	protected void setProficiency(Player hero, WeaponProficiency wp) throws AccessException 
+	@Override
+	public void setProficiency(Player hero, WeaponProficiency wp) throws AccessException 
 	{
 
 		try{

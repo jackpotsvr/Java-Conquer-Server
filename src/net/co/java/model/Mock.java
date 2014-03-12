@@ -16,6 +16,7 @@ import net.co.java.item.ItemPrototype;
 import net.co.java.packets.Character_Creation_Packet;
 import net.co.java.server.Server.Map;
 import net.co.java.skill.Skill;
+import net.co.java.skill.WeaponProficiency;
 import net.co.java.skill.WeaponType;
 
 /**
@@ -236,6 +237,13 @@ public class Mock extends AbstractModel {
 				: new ItemPrototype(id, name, maxDura, worth, CPWorth);
 		itemPrototypes.put(id, item);
 		return item;
+	}
+
+	@Override
+	public void setProficiency(Player hero, WeaponProficiency wp)
+			throws AccessException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

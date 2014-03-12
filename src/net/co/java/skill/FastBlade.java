@@ -76,7 +76,7 @@ class FastBlade extends MagicSkill {
 			for( Entity e : tb )
 				pw.putUnsignedInteger(e.getIdentity()).putUnsignedInteger(1);
 			
-			pw.send(client);
+			pw.sendTo(hero.view.players(true));
 			hero.setStamina(stamina - 20);
 			hero.sendStamina();
 		}

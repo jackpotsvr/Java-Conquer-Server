@@ -8,6 +8,7 @@ import org.simpleframework.xml.Root;
 
 import net.co.java.entity.Player;
 import net.co.java.item.ItemInstance;
+import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemPrototype;
 import net.co.java.item.ItemPrototype.EquipmentPrototype;
 
@@ -63,6 +64,11 @@ public abstract class AbstractModel implements Model {
 		if ( it == null )
 			it = fetchItemInstance(id);
 		return it;
+	}
+	
+	@Override
+	public EquipmentInstance getEquipmentInstance(long id) throws AccessException {
+		return (EquipmentInstance) getItemInstance(id);
 	}
 
 	@Override

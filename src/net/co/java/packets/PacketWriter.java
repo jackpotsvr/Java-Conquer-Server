@@ -176,5 +176,10 @@ public class PacketWriter {
 		for ( Player player : players )
 			player.getClient().offer(data);
 	}
+	
+	public void sendTo(Player[] players) {
+		for ( Player player : players )
+			player.getClient().offer(data);
+	}
 
 }
