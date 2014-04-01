@@ -77,6 +77,7 @@ public class GeneralData implements PacketHandler {
 
 	/**
 	 * @param dwParam the dwParam to set
+	 * @return this GeneralData instance (builder pattern)
 	 */
 	public GeneralData setDwParam(long dwParam) {
 		this.dwParam = dwParam;
@@ -92,6 +93,7 @@ public class GeneralData implements PacketHandler {
 
 	/**
 	 * @param wParam1 the wParam1 to set
+	 * @return this GeneralData instance (builder pattern)
 	 */
 	public GeneralData setwParam1(int wParam1) {
 		this.wParam1 = wParam1;
@@ -107,6 +109,7 @@ public class GeneralData implements PacketHandler {
 
 	/**
 	 * @param wParam2 the wParam2 to set
+	 * @return this GeneralData instance (builder pattern)
 	 */
 	public GeneralData setwParam2(int wParam2) {
 		this.wParam2 = wParam2;
@@ -122,7 +125,7 @@ public class GeneralData implements PacketHandler {
 
 	/**
 	 * @param wParam3 the wParam3 to set
-	 * @return 
+	 * @return this GeneralData instance (builder pattern)
 	 */
 	public GeneralData setwParam3(int wParam3) {
 		this.wParam3 = wParam3;
@@ -254,9 +257,9 @@ public class GeneralData implements PacketHandler {
 				.send(client);
 			
 			// Send default messages
-			//new MessagePacket(MessagePacket.SYSTEM, hero.getName(), "Players online " + client.getGameServer().getAmountOfPlayers())
-			//	.setMessageType(MessagePacket.MessageType.System)
-			//	.build().send(client);
+			new MessagePacket(MessagePacket.SYSTEM, hero.getName(), "Players online " + client.getGameServer().getAmountOfPlayers())
+				.setMessageType(MessagePacket.MessageType.System)
+				.build().send(client);
 			
 			hero.inventory.send();
 

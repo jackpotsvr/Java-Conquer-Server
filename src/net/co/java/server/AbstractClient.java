@@ -120,15 +120,15 @@ public abstract class AbstractClient {
 	 * buffer here.
 	 * @param buffer the buffer to send to the {@code Client}
 	 */
-	public void write(ByteBuffer _buffer) {
+	public void write(ByteBuffer buffer) {
 		// Clone the ByteBuffer, because encryption should not affect other clients
-		ByteBuffer buffer = ByteBuffer.wrap(Arrays.copyOf(_buffer.array(), _buffer.capacity()));
+		ByteBuffer cryptBuffer = ByteBuffer.wrap(Arrays.copyOf(buffer.array(), buffer.capacity()));
 		// A variable to check if this thread should write to the sockets output
 		boolean threadShouldWrite = false;
 		// Synchronise on the queue for thread safety
 		synchronized(queue) {
 			// Enqueue the buffer to be sent to the client
-			queue.add(buffer);
+			queue.add(cryptBuffer);
 			// If another thread is not already writing, start writing to this client
 			if(!writing) {
 				writing = true;

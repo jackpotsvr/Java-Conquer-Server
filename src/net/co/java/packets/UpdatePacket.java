@@ -33,7 +33,7 @@ public class UpdatePacket implements PacketWrapper {
 	 * Set an attribute for this UpdatePacket
 	 * @param mode
 	 * @param value
-	 * @return
+	 * @return this UpdatePacket instance (builder pattern)
 	 */
 	public UpdatePacket setAttribute(Mode mode, Long value) {
 		attributes.put(mode, value);

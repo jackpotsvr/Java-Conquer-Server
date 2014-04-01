@@ -86,7 +86,7 @@ public interface Model {
 	/**
 	 * 
 	 * @param id
-	 * @return
+	 * @return the EquipmentInstance for the given item identifier
 	 * @throws AccessException
 	 */
 	EquipmentInstance getEquipmentInstance(long id) throws AccessException;

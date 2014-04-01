@@ -113,10 +113,17 @@ public class GameServerClient extends AbstractClient {
 	}
 
 	/**
-	 * @return the Model for this client
+	 * @return the Model for this {@code Client}
 	 */
 	public Model getModel() {
 		return model;
+	}
+
+	/**
+	 * @return the GameServer for this {@code Client}
+	 */
+	public GameServer getGameServer() {
+		return gameServer;
 	}
 
 }
