@@ -1,7 +1,7 @@
 package net.co.java.skill;
 
 import net.co.java.packets.InteractPacket;
-import net.co.java.server.Server.GameServer.Client;
+import net.co.java.server.GameServerClient;
 
 public abstract class Skill {
 	
@@ -105,7 +105,7 @@ public abstract class Skill {
 		 */
 		public abstract int distance(int level);
 		
-		public abstract void handle(Client client, InteractPacket ip);
+		public abstract void handle(GameServerClient player, InteractPacket ip);
 		
 	}
 	

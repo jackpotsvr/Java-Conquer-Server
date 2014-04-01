@@ -1,8 +1,10 @@
 package net.co.java.packets;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 
 import net.co.java.entity.Player;
+import net.co.java.server.AbstractClient;
 import net.co.java.server.ServerThread;
 
 public class PacketWriter {
@@ -161,7 +163,7 @@ public class PacketWriter {
 	}
 	
 	public void send(Player player) {
-		player.getClient().offer(data);
+		send(player.getClient());
 	}
 	
 	/**
@@ -174,12 +176,17 @@ public class PacketWriter {
 	
 	public void sendTo(List<Player> players) {
 		for ( Player player : players )
-			player.getClient().offer(data);
+			send(player);
 	}
 	
 	public void sendTo(Player[] players) {
 		for ( Player player : players )
-			player.getClient().offer(data);
+			send(player);
+	}
+
+	public void send(AbstractClient client) {
+		// TODO implement PW with ByteBuffer instead
+		client.write(ByteBuffer.wrap(data));
 	}
 
 }

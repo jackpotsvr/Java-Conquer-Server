@@ -20,7 +20,7 @@ import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemPrototype.EquipmentPrototype;
 import net.co.java.item.ItemPrototype;
 import net.co.java.packets.Character_Creation_Packet;
-import net.co.java.server.Server.Map;
+import net.co.java.server.Map;
 import net.co.java.skill.Skill;
 import net.co.java.skill.WeaponProficiency;
 import net.co.java.skill.WeaponType;

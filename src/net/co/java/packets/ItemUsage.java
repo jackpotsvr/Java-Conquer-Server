@@ -5,8 +5,8 @@ import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.model.AccessException;
 import net.co.java.packets.GeneralData.SubType;
-import net.co.java.server.Server.GameServer.Client;
-import net.co.java.server.Server.Map;
+import net.co.java.server.GameServerClient;
+import net.co.java.server.Map;
 
 /**
  * Item usage packet
@@ -100,7 +100,7 @@ public class ItemUsage implements PacketHandler {
 	}
 
 	@Override
-	public void handle(Client client) {
+	public void handle(GameServerClient client) {
 		switch(mode){
 		case Ping:
 			new ItemUsage(client.getIdentity(), 0, mode, timestamp).build().send(client);
@@ -203,7 +203,7 @@ public class ItemUsage implements PacketHandler {
 	 * Perhaps we have to move this later on ;) 
 	 * @param c
 	 */
-	void sendLocation(Client c)
+	void sendLocation(GameServerClient c)
 	{
 		new GeneralData(SubType.LOCATION, c.getPlayer())
 		.setDwParam(c.getPlayer().getLocation().getMap().getMapID())

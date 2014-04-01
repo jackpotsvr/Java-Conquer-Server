@@ -1,5 +1,7 @@
 package net.co.java.cipher;
 
+import java.nio.ByteBuffer;
+
 public final class Cryptographer
 {
 
@@ -38,7 +40,19 @@ public final class Cryptographer
         return (int) (Value << (32 - num) | ((Value & 0xFFFFFFFFL) >> num));
     }
     
-	public void encrypt(byte[] buffer)
+    public void encrypt(ByteBuffer b)
+    {
+    	byte[] buffer = b.array();
+    	for (int i = 0, length = buffer.length; i < length; i++)
+		{
+			buffer[i] ^= 0xAB;
+			buffer[i] = (byte) (((buffer[i] & 0xFF) >> 4) | ((buffer[i] & 0xFF) << 4));
+			buffer[i] ^= key2[(outCounter%65536) >> 8] ^ key1[(outCounter%65536) & 0xFF];
+			outCounter++;
+		}
+    }
+    
+	public synchronized void encrypt(byte[] buffer)
 	{
 		for (int i = 0; i < buffer.length; i++)
 		{
@@ -48,8 +62,8 @@ public final class Cryptographer
 			outCounter++;
 		}
 	}
-
-	public void decrypt(byte[] buffer)
+	
+	public synchronized void decrypt(byte[] buffer)
 	{
 		for (int i = 0; i < buffer.length; i++)
 		{
@@ -69,7 +83,7 @@ public final class Cryptographer
 		}
 	}
 
-	public void setKeys(long inKey1, long inKey2)
+	public synchronized void setKeys(long inKey1, long inKey2)
 	{
 		long DWordKey = ((inKey1 + inKey2) ^ 0x4321) ^ inKey1;
 		long IMul = DWordKey * DWordKey;

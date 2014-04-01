@@ -11,7 +11,7 @@ import net.co.java.packets.ItemUsage;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
 import net.co.java.packets.UpdatePacket;
-import net.co.java.server.Server.GameServer.Client;
+import net.co.java.server.AbstractClient;
 import net.co.java.skill.Skill;
 import net.co.java.skill.SkillProficiency;
 import net.co.java.skill.WeaponProficiency;
@@ -21,7 +21,7 @@ public class Player extends Entity {
 	
 	private static final long serialVersionUID = 8357201473468302184L;
 
-	private Client client;
+	private AbstractClient client;
 	
 	private int gold = 0, cps = 0,
 			experience = 0, pkPoints = 0, profession = 15, rebornCount = 0, stamina = 100, action = 0,
@@ -40,7 +40,7 @@ public class Player extends Entity {
 		super(identity, 223, 315, name, location, HP);
 	}
 	
-	public void setClient(Client client) {
+	public void setClient(AbstractClient client) {
 		this.client = client;
 	}
 
@@ -253,7 +253,7 @@ public class Player extends Entity {
 	 * @return the {@code Client} instance for this {@code User},
 	 * or null if the player is not online
 	 */
-	public Client getClient() {
+	public AbstractClient getClient() {
 		return client;
 	}
 	

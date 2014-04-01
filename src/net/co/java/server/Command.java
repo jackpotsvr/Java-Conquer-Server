@@ -1,13 +1,11 @@
 package net.co.java.server;
 
-import net.co.java.item.ItemInstance.EquipmentInstance;
-import net.co.java.item.ItemPrototype.EquipmentPrototype;
-import net.co.java.model.AccessException;
+import java.io.IOException;
+
 import net.co.java.packets.MessagePacket;
 import net.co.java.packets.PacketHandler;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
-import net.co.java.server.Server.GameServer.Client;
 
 public class Command implements PacketHandler {
 
@@ -24,10 +22,15 @@ public class Command implements PacketHandler {
 	}
 
 	@Override
-	public void handle(Client client) {
+	public void handle(GameServerClient client) {
 		String command = args[0];
 		if(command.equalsIgnoreCase("exit"))
-			client.close();
+			try {
+				client.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		else if(command.equalsIgnoreCase("stop")) {
 			// client.getGameServer().
 		} else if(command.equalsIgnoreCase("stamina")) {

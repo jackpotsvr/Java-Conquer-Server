@@ -1,6 +1,6 @@
 package net.co.java.packets;
 
-import net.co.java.server.Server.GameServer.Client;
+import net.co.java.server.GameServerClient;
 import net.co.java.skill.Skill;
 import net.co.java.skill.Skill.MagicSkill;
 
@@ -116,7 +116,7 @@ public class InteractPacket implements PacketHandler {
 	}
 
 	@Override
-	public void handle(Client player) {
+	public void handle(GameServerClient player) {
 		switch(mode){
 		case AcceptMarriage:
 			break;

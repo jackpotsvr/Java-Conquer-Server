@@ -1,6 +1,6 @@
 package net.co.java.entity;
 
-import net.co.java.server.Server.Map;
+import net.co.java.server.Map;
 
 /**
  * The Location class contains the information for a location

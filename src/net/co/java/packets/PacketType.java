@@ -166,7 +166,7 @@ public  enum PacketType {
 		throw new UnimplementedPacketTypeException(id);
 	}
 	
-	public static class UnimplementedPacketTypeException extends Exception {
+	public static class UnimplementedPacketTypeException extends RuntimeException {
 		
 		private static final long serialVersionUID = 1L;
 

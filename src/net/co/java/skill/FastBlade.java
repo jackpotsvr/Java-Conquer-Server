@@ -5,7 +5,7 @@ import net.co.java.entity.Player;
 import net.co.java.packets.InteractPacket;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
-import net.co.java.server.Server.GameServer.Client;
+import net.co.java.server.GameServerClient;
 import net.co.java.skill.Skill.MagicSkill;
 
 class FastBlade extends MagicSkill {
@@ -51,7 +51,7 @@ class FastBlade extends MagicSkill {
 	}
 	
 	@Override
-	public void handle(Client client, InteractPacket ip) {
+	public void handle(GameServerClient client, InteractPacket ip) {
 		Player hero = client.getPlayer();
 		int stamina = hero.getStamina();
 		

@@ -26,7 +26,7 @@ public class IncomingPacket {
 		this.length = readUnsignedShort(0);
 		this.packetType = PacketType.valueOf(readUnsignedShort(2));
 	}
-	
+
 	/**
 	 * Returns unsigned byte at specified offset (1 byte)
 	 * @param offset
@@ -86,7 +86,12 @@ public class IncomingPacket {
 	 * @return decrypted password
 	 */
 	public String readPassword() {
-		return Cryptographer.decryptPassword(data, 20);
+		/*
+		 * We had to replace the null termination for Strings because they did
+		 * not work well with database models: ERROR: invalid byte sequence for
+		 * encoding "UTF8": 0x00 FIX
+		 */
+		return Cryptographer.decryptPassword(data, 20).replaceAll("[\u0000]", "");
 	}
 	
 	/**

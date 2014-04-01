@@ -3,8 +3,8 @@ package net.co.java.packets;
 import net.co.java.entity.Entity;
 import net.co.java.entity.Location;
 import net.co.java.entity.Player;
-import net.co.java.server.Server.Map;
-import net.co.java.server.Server.GameServer.Client;
+import net.co.java.server.GameServerClient;
+import net.co.java.server.Map;
 
 /**
  * The General Data packet performs a variety of tasks for the client, these vary from
@@ -141,7 +141,7 @@ public class GeneralData implements PacketHandler {
 	}
 
 	@Override
-	public void handle(Client client) {
+	public void handle(GameServerClient client) {
 		Player hero = client.getPlayer();
 		switch(subType){
 		case GET_SURROUNDINGS:
@@ -254,9 +254,9 @@ public class GeneralData implements PacketHandler {
 				.send(client);
 			
 			// Send default messages
-			new MessagePacket(MessagePacket.SYSTEM, hero.getName(), "Players online " + client.getGameServer().getAmountOfPlayers())
-				.setMessageType(MessagePacket.MessageType.System)
-				.build().send(client);
+			//new MessagePacket(MessagePacket.SYSTEM, hero.getName(), "Players online " + client.getGameServer().getAmountOfPlayers())
+			//	.setMessageType(MessagePacket.MessageType.System)
+			//	.build().send(client);
 			
 			hero.inventory.send();
 
