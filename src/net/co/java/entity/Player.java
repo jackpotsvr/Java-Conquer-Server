@@ -325,7 +325,7 @@ public class Player extends Entity {
 		public boolean removeItem(ItemInstance item) {
 			for ( int i = 0; i < position; i++ ) {
 				if (items[i] == item ) {
-					for ( int j = i + 1; i < position; i++ ) {
+					for ( int j = i + 1; j < position; j++ ) {
 						items[j-1] = items[j];
 					}
 					position--;
