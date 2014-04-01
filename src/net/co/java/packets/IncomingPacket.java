@@ -1,8 +1,10 @@
 package net.co.java.packets;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 import net.co.java.cipher.Cryptographer;
 import net.co.java.packets.PacketType.UnimplementedPacketTypeException;
-import net.co.java.server.ServerThread;
 
 /**
  * A wrapper providing methods to read unsigned values from the
@@ -12,19 +14,17 @@ import net.co.java.server.ServerThread;
  */
 public class IncomingPacket {
 	
-	final byte[] data;
-	private final int length;
+	final ByteBuffer buffer;
 	private final PacketType packetType;
 	
 	/**
-	 * Construct a new {@code IncommingPacket} based on a byte-array
-	 * @param data
-	 * @throws UnimplementedPacketTypeException 
+	 * Construct a new {@code IncommingPacket} based on a {@code ByteBuffer}
+	 * @param buffer
+	 * @throws UnimplementedPacketTypeException
 	 */
-	public IncomingPacket(byte[] data) throws UnimplementedPacketTypeException {
-		this.data = data;
-		this.length = readUnsignedShort(0);
-		this.packetType = PacketType.valueOf(readUnsignedShort(2));
+	public IncomingPacket(ByteBuffer buffer) throws UnimplementedPacketTypeException {
+		this.buffer = buffer.order(ByteOrder.LITTLE_ENDIAN);
+		this.packetType = PacketType.valueOf(this.readUnsignedShort(2));
 	}
 
 	/**
@@ -33,7 +33,7 @@ public class IncomingPacket {
 	 * @return {short}  as the range of ubyte is 0 to 2^8-1
 	 */
 	public short readUnsignedByte(int offset) {
-		return (short) (data[offset] & 0xFF);
+		return ((short) (buffer.get(offset) & (short) 0xff));
 	}
 	
 	/**
@@ -41,7 +41,7 @@ public class IncomingPacket {
 	 * @return byte at position
 	 */
 	public byte getByte(int position) {
-		return data[position];
+		return buffer.get(position);
 	}
 	
 	/**
@@ -50,7 +50,7 @@ public class IncomingPacket {
 	 * @return {int} as the range of ushort is 0 to 2^16-1
 	 */
 	public int readUnsignedShort(int offset) {
-		return (int) ((data[offset+1] & 0xFF) << 8 | (data[offset] & 0xFF));
+		return (buffer.getShort(offset) & 0xffff);
 	}
 	
 	/**
@@ -59,10 +59,7 @@ public class IncomingPacket {
 	 * @return long as the range of uint is 0 to 2^32-1
 	 */
 	public long readUnsignedInt(int offset) {
-		return (	(long) data[offset] & 0xFF)
-				| (((long) data[offset + 1] & 0xFF) << 8)
-				| (((long) data[offset + 2] & 0xFF) << 16)
-				| (((long) data[offset + 3] & 0xFF) << 24);
+		return ((long) buffer.getInt(offset) & 0xffffffffL);
 	}
 
 	/**
@@ -73,7 +70,7 @@ public class IncomingPacket {
 	 */
 	public String readString(int offset, int length) {
         byte[] output = new byte[length];
-        System.arraycopy(data, offset, output, 0, length);
+        System.arraycopy(buffer.array(), offset, output, 0, length);
 		/*
 		 * We had to replace the null termination for Strings because they did
 		 * not work well with database models: ERROR: invalid byte sequence for
@@ -91,14 +88,14 @@ public class IncomingPacket {
 		 * not work well with database models: ERROR: invalid byte sequence for
 		 * encoding "UTF8": 0x00 FIX
 		 */
-		return Cryptographer.decryptPassword(data, 20).replaceAll("[\u0000]", "");
+		return Cryptographer.decryptPassword(buffer.array(), 20).replaceAll("[\u0000]", "");
 	}
 	
 	/**
 	 * @return the length for this packet, based on the data
 	 */
 	public int getLength() {
-		return length;
+		return buffer.limit();
 	}
 	
 	/**
@@ -110,7 +107,7 @@ public class IncomingPacket {
 	
 	@Override
 	public String toString() {
-		return packetType.toString() + " : " + bytesToHex(data) + " (" + data.length + ")";
+		return packetType.toString() + " : " + bytesToHex(buffer.array()) + " (" + getLength() + ")";
 	}
 	
 	private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
@@ -123,10 +120,6 @@ public class IncomingPacket {
 	        hexChars[j * 2 + 1] = hexArray[v & 0x0F];
 	    }
 	    return new String(hexChars);
-	}
-	
-	public void send(ServerThread client) {
-		client.offer(data);
 	}
 	
 }

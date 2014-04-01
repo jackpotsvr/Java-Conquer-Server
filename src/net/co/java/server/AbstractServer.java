@@ -99,7 +99,7 @@ public abstract class AbstractServer implements Closeable, Executor {
 				// Request a new accept
 				listener.accept(null, this);
 				// Handle the incoming connection
-				AbstractServer.this.createClient(result);
+				AbstractServer.this.createClient(result).start();
 			}
 
 			@Override

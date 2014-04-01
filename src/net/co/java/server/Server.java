@@ -188,13 +188,16 @@ public class Server implements Closeable {
 		}
 
 		protected void connect(GameServerClient client) {
-			System.out.println("GAME : Client connected: " + client.toString() + " (" + AMOUNT_OF_PLAYERS.incrementAndGet() + ")");
+			System.out.println("GAME : Client connected: " + client.toString());
+			System.out.println("Current amount of players: " + AMOUNT_OF_PLAYERS.incrementAndGet());
 		}
 
 		protected void disconnect(GameServerClient client) {
-			System.out.println("GAME : Client disconnected: " + client.toString() + " (" + AMOUNT_OF_PLAYERS.decrementAndGet() + ")");
+			// Remove the player from the map after a disconnect
 			Player p = client.getPlayer();
 			if ( p != null ) p.remove();
+			System.out.println("GAME : Client disconnected: " + client.toString());
+			System.out.println("Current amount of players: " + AMOUNT_OF_PLAYERS.decrementAndGet());
 		}
 		
 		/**

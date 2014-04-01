@@ -40,10 +40,10 @@ public final class Cryptographer
         return (int) (Value << (32 - num) | ((Value & 0xFFFFFFFFL) >> num));
     }
     
-    public void encrypt(ByteBuffer b)
+    public synchronized void encrypt(ByteBuffer b)
     {
     	byte[] buffer = b.array();
-    	for (int i = 0, length = buffer.length; i < length; i++)
+    	for (int i = 0, length = b.limit(); i < length; i++)
 		{
 			buffer[i] ^= 0xAB;
 			buffer[i] = (byte) (((buffer[i] & 0xFF) >> 4) | ((buffer[i] & 0xFF) << 4));
@@ -66,6 +66,26 @@ public final class Cryptographer
 	public synchronized void decrypt(byte[] buffer)
 	{
 		for (int i = 0; i < buffer.length; i++)
+		{
+			buffer[i] ^= 0xAB;
+			buffer[i] = (byte) (((buffer[i] & 0xFF) >> 4) | ((buffer[i] & 0xFF) << 4));
+			
+			if(usingAlternate)
+			{
+				buffer[i] ^= key4[inCounter >> 8] ^ key3[inCounter & 0xFF];
+			}
+			else
+			{
+				buffer[i] ^= key2[inCounter >> 8] ^ key1[inCounter & 0xFF];
+			}
+			
+			inCounter++;
+		}
+	}
+
+	public synchronized void decrypt(ByteBuffer attachment) {
+		byte[] buffer = attachment.array();
+		for (int i = 0, length = attachment.limit(); i < length; i++)
 		{
 			buffer[i] ^= 0xAB;
 			buffer[i] = (byte) (((buffer[i] & 0xFF) >> 4) | ((buffer[i] & 0xFF) << 4));

@@ -1,7 +1,6 @@
 package net.co.java.server;
 
 import java.io.IOException;
-import java.net.StandardSocketOptions;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.nio.channels.CompletionHandler;
@@ -41,13 +40,34 @@ public abstract class AbstractClient {
 	AbstractClient(AsynchronousSocketChannel channel) {
 		super();
 		this.channel = channel;
-		try {
-			this.channel.setOption(StandardSocketOptions.TCP_NODELAY, true);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		this.cipher = new Cryptographer();
-		this.run();
+		/*
+		 * TODO This option was part of the ChatServer example by Oracle, but
+		 * should be used with caution: "The socket option should only be
+		 * enabled in cases where it is known that the coalescing impacts
+		 * performance". We need to figure out whether it is required to set
+		 * this option to true.
+		 * 
+		 * try {
+		 * 	this.channel.setOption(StandardSocketOptions.TCP_NODELAY, true);
+		 * } catch (IOException e) {
+		 *	e.printStackTrace();
+		 * }
+		 * 
+		 */
+	}
+	
+	private boolean started = false;
+	
+	/**
+	 * Start this AbstractClient, call the connected method and start listening
+	 * for incoming packets
+	 */
+	public void start() {
+		if(!started) {
+			connected();
+			run();
+		}
 	}
 	
 	/**
@@ -82,13 +102,12 @@ public abstract class AbstractClient {
 						AbstractClient.this.disconnected();
 						return;
 					};
-					// Copy the packet
-					byte[] data = Arrays.copyOfRange(attachment.array(), 0, result);
 					// Decrypt packet
-					cipher.decrypt(data); 
+					attachment.limit(result);
+					cipher.decrypt(attachment);
 					try {
 						// Handle the packet
-						AbstractClient.this.handle(new IncomingPacket(data));
+						AbstractClient.this.handle(new IncomingPacket(attachment));
 						// Ask for the next packet
 						AbstractClient.this.run();
 					} catch (IOException exc) {
@@ -122,7 +141,7 @@ public abstract class AbstractClient {
 	 */
 	public void write(ByteBuffer buffer) {
 		// Clone the ByteBuffer, because encryption should not affect other clients
-		ByteBuffer cryptBuffer = ByteBuffer.wrap(Arrays.copyOf(buffer.array(), buffer.capacity()));
+		ByteBuffer cryptBuffer = ByteBuffer.wrap(Arrays.copyOf(buffer.array(), buffer.limit()));
 		// A variable to check if this thread should write to the sockets output
 		boolean threadShouldWrite = false;
 		// Synchronise on the queue for thread safety

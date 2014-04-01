@@ -1,16 +1,16 @@
 package net.co.java.packets;
 
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.List;
 
 import net.co.java.entity.Player;
 import net.co.java.server.AbstractClient;
-import net.co.java.server.ServerThread;
 
 public class PacketWriter {
 
-	private int offset = 0;
-	private final byte[] data;
+	private final ByteBuffer buffer;
 	private final PacketType packetType;
 	
 	/**
@@ -19,8 +19,8 @@ public class PacketWriter {
 	 */
 	public PacketWriter(IncomingPacket packet) {
 		this.packetType = packet.getPacketType();
-		this.data = packet.data;
-		this.offset = 4;
+		this.buffer = packet.buffer;
+		this.buffer.position(4);
 	}
 
 	/**
@@ -30,7 +30,7 @@ public class PacketWriter {
 	 */
 	public PacketWriter(PacketType packetType, int size) {
 		this.packetType = packetType;
-		this.data = new byte[size];
+		this.buffer = ByteBuffer.allocate(size).order(ByteOrder.LITTLE_ENDIAN);
 		this.putUnsignedShort(size);
 		this.putUnsignedShort(this.packetType.getType());
 	}
@@ -41,7 +41,7 @@ public class PacketWriter {
 	 * @return this PacketWriter
 	 */
 	public PacketWriter setOffset(int offset) {
-		this.offset = offset;
+		this.buffer.position(offset);
 		return this;
 	}
 	
@@ -51,8 +51,18 @@ public class PacketWriter {
 	 * @return this PacketWriter
 	 */
 	public PacketWriter incrementOffset(int amount) {
-		this.offset += amount;
-		return this;
+		return this.setOffset(this.buffer.position() + amount);
+	}
+
+	/**
+	 * Method used to put a bool into the packet.
+	 * 
+	 * @param b
+	 *            boolean value to put.
+	 * @return this PacketWriter
+	 */
+	public PacketWriter putBoolean(boolean b) {
+		return this.putUnsignedByte(b ? 1 : 0);
 	}
 
 	/**
@@ -64,7 +74,7 @@ public class PacketWriter {
 	 * @return this PacketWriter
 	 */
 	public PacketWriter putUnsignedByte(short ubyte) {
-		data[offset++] = (byte) (ubyte & 0xFF);
+		buffer.put((byte) (ubyte & 0xff));
 		return this;
 	}
 
@@ -77,7 +87,7 @@ public class PacketWriter {
 	 * @return this PacketWriter
 	 */
 	public PacketWriter putUnsignedByte(int ubyte) {
-		data[offset++] = (byte) (ubyte & 0xFF);
+		buffer.put((byte) (ubyte & 0xff));
 		return this;
 	}
 
@@ -90,8 +100,7 @@ public class PacketWriter {
 	 * @return this PacketWriter
 	 */
 	public PacketWriter putUnsignedShort(int ushort) {
-		data[offset++] = (byte) (ushort & 0xFF);
-		data[offset++] = (byte) ((ushort >> 8) & 0xFF);
+		buffer.putShort((short) (ushort & 0xffff));
 		return this;
 	}
 
@@ -104,10 +113,20 @@ public class PacketWriter {
 	 * @return this PacketWriter
 	 */
 	public PacketWriter putUnsignedInteger(long uint) {
-		data[offset++] = (byte) (uint & 0xFF);
-		data[offset++] = (byte) ((uint >> 8) & 0xFF);
-		data[offset++] = (byte) ((uint >> 16) & 0xFF);
-		data[offset++] = (byte) ((uint >> 24) & 0xFF);
+		buffer.putInt((int) (uint & 0xffffffffL));
+		return this;
+	}
+	
+	/**
+	 * Pushes an unsigned long to the packet. Since unsigned longs can grow
+	 * up to 2^64-1, and Java integers can only grow up to 2^64-1 we supply the
+	 * long as BigInteger
+	 * 
+	 * @param ulong value to be put
+	 * @return this PacketWriter
+	 */
+	public PacketWriter putUnsignedLong(BigInteger ulong) {
+		buffer.putLong(ulong.longValue());
 		return this;
 	}
 
@@ -118,11 +137,7 @@ public class PacketWriter {
 	 * @return this PacketWriter
 	 */
 	public PacketWriter putString(String str) {
-		byte[] bytes = str.getBytes();
-
-		for (byte b : bytes)
-			data[offset++] = b;
-
+		buffer.put(str.getBytes());
 		return this;
 	}
 
@@ -134,24 +149,12 @@ public class PacketWriter {
 	 * @return this PacketWriter
 	 */
 	public PacketWriter putString(String str, int length) {
-		byte[] bytes = str.getBytes();
-
-		for (byte b : bytes)
-			data[offset++] = b;
-
-		offset += length - str.length();
-		return this;
-	}
-
-	/**
-	 * Method used to put a bool into the packet.
-	 * 
-	 * @param b
-	 *            boolean value to put.
-	 * @return this PacketWriter
-	 */
-	public PacketWriter putBoolean(boolean b) {
-		putUnsignedByte(b ? 1 : 0);
+		if(str.length() <= length) {
+			this.putString(str);
+			if(str.length() < length) {
+				this.incrementOffset(length - str.length());
+			}
+		}
 		return this;
 	}
 
@@ -159,34 +162,41 @@ public class PacketWriter {
 	 * @return the length for this packet
 	 */
 	public int getLength() {
-		return data.length;
+		return buffer.capacity();
 	}
 	
+	/**
+	 * Send the packet in this PacketWriter to a Player
+	 * @param player
+	 */
 	public void send(Player player) {
 		send(player.getClient());
 	}
 	
 	/**
-	 * Send the response to the Client
-	 * @param client
+	 * Send the packet in this PacketWriter to a List of Players
+	 * @param players
 	 */
-	public void send(ServerThread client) {
-		client.offer(data);
-	}
-	
 	public void sendTo(List<Player> players) {
 		for ( Player player : players )
 			send(player);
 	}
 	
+	/**
+	 * Send the packet in this PacketWriter to an array of Players
+	 * @param players
+	 */
 	public void sendTo(Player[] players) {
 		for ( Player player : players )
 			send(player);
 	}
 
+	/**
+	 * Send the packet in this PacketWriter to a Client
+	 * @param client
+	 */
 	public void send(AbstractClient client) {
-		// TODO implement PW with ByteBuffer instead
-		client.write(ByteBuffer.wrap(data));
+		client.write(buffer);
 	}
 
 }
