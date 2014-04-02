@@ -127,7 +127,7 @@ public class Server implements Closeable {
 					String accountName	= incomingPacket.readString(4,16);
 					String password	= incomingPacket.readPassword();
 					String serverName	= incomingPacket.readString(36, 16);
-					
+					System.out.println(password);
 					if (model.isAuthorised(serverName, accountName, password)) {
 						PacketWriter pw = new PacketWriter(PacketType.AUTH_LOGIN_FORWARD, 0x20);
 						AuthorizationPromise promise = model.createAuthorizationPromise(accountName);

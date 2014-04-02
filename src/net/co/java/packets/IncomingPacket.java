@@ -88,7 +88,7 @@ public class IncomingPacket {
 		 * not work well with database models: ERROR: invalid byte sequence for
 		 * encoding "UTF8": 0x00 FIX
 		 */
-		return Cryptographer.decryptPassword(buffer.array(), 20).replaceAll("[\u0000]", "");
+		return Cryptographer.decryptPassword(this, 20).replaceAll("[\u0000]", "");
 	}
 	
 	/**
