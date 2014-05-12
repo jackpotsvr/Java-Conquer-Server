@@ -257,7 +257,7 @@ public abstract class Entity implements Spawnable, Serializable {
 	 */
 	public class View {
 
-		private final static int GROW_AMOUNT = 10;
+		private final static int GROW_AMOUNT = 20; // TODO SET GROW AMOUNT BACK TO 10 AND FIX ERROR IF MORE THAN GROW_AMOUNT ENTITIES GO OFF SCREEN IN ONE CHANGE.
 		private Entity[] entities = new Entity[GROW_AMOUNT];
 		private int index = 0;
 		private int playerCount = 0;
@@ -277,7 +277,7 @@ public abstract class Entity implements Spawnable, Serializable {
 		 * This method is used to shrink the array if possible
 		 */
 		private void freeCapacity() {
-			if(index<capacity-10) {
+			if(index<capacity-GROW_AMOUNT) {
 				capacity -= GROW_AMOUNT;
 				entities = Arrays.copyOf(entities, capacity);
 			}

@@ -145,7 +145,17 @@ public  enum PacketType {
 	/** 
 	 * Used to spawn an npc to the client.
 	 */ 
-	NPC_SPAWN_PACKET(0x7EE);
+	NPC_SPAWN_PACKET(0x7EE),
+	
+	/** 
+	 * Used when Dialog NPCs are clicked.
+	 */
+	NPC_INITIAL_PACKET(0x7EF),
+	
+	/**
+	 * Used to chat with npcs
+	 */
+	NPC_DIALOG_PACKET(0x7F0);
 	
 	private final int type;
 	

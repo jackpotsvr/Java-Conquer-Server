@@ -15,7 +15,6 @@ public class NPC_Spawn_Packet implements PacketWrapper
 	
 	@Override
 	public PacketWriter build() {
-		System.out.println(packetLength);
 		PacketWriter pw = new PacketWriter(PacketType.NPC_SPAWN_PACKET, packetLength)
 		.putUnsignedInteger(npc.getIdentity())
 		.putUnsignedShort(npc.getLocation().getxCord())
@@ -27,7 +26,6 @@ public class NPC_Spawn_Packet implements PacketWrapper
 		.putUnsignedByte(1) // str count
 		.putUnsignedByte(npc.getName().length())
 		.putString(npc.getName());
-	
 		return pw;
 	}
 	

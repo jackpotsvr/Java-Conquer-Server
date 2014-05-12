@@ -15,6 +15,7 @@ import net.co.java.packets.InteractPacket;
 import net.co.java.packets.ItemUsage;
 import net.co.java.packets.MessagePacket;
 import net.co.java.packets.MessagePacket.MessageType;
+import net.co.java.packets.NPC_Initial_Packet;
 import net.co.java.packets.NPC_Spawn_Packet;
 import net.co.java.server.Server.GameServer;
 
@@ -98,6 +99,9 @@ public class GameServerClient extends AbstractClient {
 		case INTERACT_PACKET:
 			new InteractPacket(incomingPacket).handle(this);
 			break;
+		case NPC_INITIAL_PACKET:
+			new NPC_Initial_Packet(incomingPacket).handle(this);
+			break; 
 		default: 	
 			System.out.println("Unimplemented " + incomingPacket.getPacketType().toString());
 			break;
