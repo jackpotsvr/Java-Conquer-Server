@@ -146,5 +146,6 @@ public abstract class AbstractModel implements Model {
 	 * @throws AccessException
 	 */
 	protected abstract ItemInstance fetchItemInstance(long id) throws AccessException;
-
+	
+	protected abstract void fetchNPCs() throws AccessException; 
 }

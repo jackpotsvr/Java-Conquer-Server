@@ -14,6 +14,7 @@ import org.simpleframework.xml.Attribute;
 
 import net.co.java.entity.Location;
 import net.co.java.entity.Monster;
+import net.co.java.entity.NPC;
 import net.co.java.entity.Player;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
@@ -42,7 +43,7 @@ public class PostgreSQL extends AbstractModel {
 	 * @param username
 	 * @param password
 	 * @throws FileNotFoundException
-	 */
+	 */ 
 	public PostgreSQL(@Attribute(name="host") String host,
 					  @Attribute(name="username") String username,
 					  @Attribute(name="password") String password) throws FileNotFoundException {
@@ -50,12 +51,14 @@ public class PostgreSQL extends AbstractModel {
 		this.USERNAME = username;
 		this.PASSWORD = password;
 		createSomeStuff();
+		fetchNPCs();
 	}
 	
 	private void createSomeStuff() throws FileNotFoundException{
 		System.out.println("Creating the magical world of Conquer Online");
 		// TODO We spawn a BullMessenger in Twin City for testing purposes here
 		new Monster(new Location(Map.CentralPlain, 378, 343), 564564, "BullMessenger",  112, 117, 55000).spawn();
+		//new Monster(new Location(Map.CentralPlain, 378, 344), 564565, "BullMessenger",  112, 117, 55000).spawn();
 	}
 	
 	/**
@@ -139,7 +142,6 @@ public class PostgreSQL extends AbstractModel {
 
 	@Override
 	protected ItemInstance fetchItemInstance(long id) throws AccessException {
-	
 		try {
 			Connection conn = getConnection();
 			PreparedStatement stmt = conn.prepareStatement("SELECT item_isequip, c.item_sid, item_dura, item_firstsocket, item_secondsocket, "
@@ -176,6 +178,34 @@ public class PostgreSQL extends AbstractModel {
 			throw new AccessException(e); 
 		}
 		return null;
+	}	
+
+	@Override
+	protected void fetchNPCs() throws AccessException {
+		try {
+			Connection conn = getConnection();
+			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM npcs WHERE npc_map = 1002;");
+			ResultSet rs = stmt.executeQuery(); 		
+			
+			while (rs.next())
+			{
+				new NPC
+				(
+						rs.getLong("npc_uid"),
+						rs.getString("npc_name"),
+						new Location(Map.valueOf(rs.getShort("npc_map")), rs.getShort("npc_x"), rs.getShort("npc_y")),
+						rs.getInt("npc_type"),
+						rs.getInt("npc_flags"), //  TODO wrong name in db
+						rs.getInt("npc_interaction"),
+						rs.getInt("npc_direction")
+				).spawn();				
+			}			
+			
+			rs.close();
+			conn.close();
+		} catch (SQLException e) { 
+			throw new AccessException(e); 
+		}	
 	}
 
 	@Override
@@ -236,7 +266,7 @@ public class PostgreSQL extends AbstractModel {
 				player.setGold(rs.getInt("character_gold"));
 				player.setCps(rs.getInt("character_cps"));
 				//player.setSpouse(rs.getString(15));
-				player.setLocation(new Location(Map.CentralPlain, rs.getInt("character_x"), rs.getInt("character_y")));
+				player.setLocation(new Location(Map.CentralPlain, rs.getInt("character_x"), rs.getInt("character_y"))); //TODO load map
 				player.setHairstyle(rs.getInt("character_hair"));
 				player.setRebornCount(rs.getInt("character_reborn"));
 				player.setHP(rs.getInt("character_curhp"));

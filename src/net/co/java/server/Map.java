@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.co.java.entity.Entity;
+import net.co.java.entity.NPC;
+import net.co.java.packets.PacketType;
 
 /**
  * The Map enum contains all Maps for the current Server
@@ -66,10 +68,18 @@ public enum Map {
 	}
 	
 	/**
-	 * @return all entities in this map
+	 * @return all entities in this map.
 	 */
 	public List<Entity> getEntities() {
 		return entities;
 	}
 	
+	public static Map valueOf(int id)
+	{
+		for ( Map mp : Map.values() ) {
+			if ( mp.id == id )
+				return mp;
+		}
+		return null;
+	}
 }

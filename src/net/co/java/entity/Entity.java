@@ -318,10 +318,14 @@ public abstract class Entity implements Spawnable, Serializable {
 				// Insert the entity at current insert index
 				entities[index++] = e;
 				// Add this entity to the other entities view as well
-				e.view.add(Entity.this);
+				e.view.add(Entity.this);				
 				// Send a spawn packet for the entity
+				
+				//System.out.println("The entity is: " + e);
+				//if(Entity.this instanceof Player && e instanceof NPC)
+				//	((NPC)e).SpawnPacket().send(((Player) Entity.this).getClient());
 				if(Entity.this instanceof Player && e != Entity.this)
-					e.SpawnPacket().send((Player) Entity.this);
+					e.SpawnPacket().send((Player) Entity.this);		
 				if(e instanceof Player)
 					playerCount++;
 			}
@@ -382,8 +386,10 @@ public abstract class Entity implements Spawnable, Serializable {
 			}
 			// Add new entities
 			for(Entity e : allEntitites)
+			{
 				if(e.getLocation().inView(location))
 					add(e);
+			}
 		}
 
 		/**

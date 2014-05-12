@@ -246,4 +246,10 @@ public class Mock extends AbstractModel {
 		
 	}
 
+	@Override
+	protected void fetchNPCs() throws AccessException {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

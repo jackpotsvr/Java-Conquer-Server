@@ -1,4 +1,4 @@
-package net.co.java.packets;
+ package net.co.java.packets;
 
 /**
  * Enumeration for the Packet types
@@ -139,8 +139,13 @@ public  enum PacketType {
 	PROFICIENCY(0x401),
 	
 	
-	MAP_STATUS(0x456);//,
+	MAP_STATUS(0x456),//,
 	//PORTAL_PACKET (0x24);
+	
+	/** 
+	 * Used to spawn an npc to the client.
+	 */ 
+	NPC_SPAWN_PACKET(0x7EE);
 	
 	private final int type;
 	
