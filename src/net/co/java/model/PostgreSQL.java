@@ -71,13 +71,11 @@ public class PostgreSQL extends AbstractModel {
 
 	@Override
 	public boolean isAuthorised(String server, String username, String password) throws AccessException {
-		try {
-			Connection conn = getConnection();
-			PreparedStatement stmt = conn.prepareStatement("SELECT password, salt FROM account WHERE account_username = ?");
+		try(Connection conn = getConnection();
+			PreparedStatement stmt = conn.prepareStatement("SELECT password, salt FROM account WHERE account_username = ?")) {
+			
 			stmt.setString(1, username);
 			ResultSet rs = stmt.executeQuery();
-			
-			conn.close();
 			
 			if(rs.next()) 
 			{
@@ -96,13 +94,13 @@ public class PostgreSQL extends AbstractModel {
 	
 	@Override
 	protected ItemPrototype fetchItemPrototype(long item_sid) throws AccessException {
-		try {
-			Connection conn = getConnection();
+		try(Connection conn = getConnection();
 			PreparedStatement stmt = conn.prepareStatement("SELECT item_name, item_maxdura, item_worth, item_cpsworth, item_classreq, "
 					+ "item_profreq, item_lvlreq, item_sexreq, item_strreq, item_agireq, item_minatk, item_maxatk, item_defence, item_mdef, "
 					+ "item_mattack, item_dodge, item_agility "
 					+ "FROM items "
-					+ "WHERE item_sid = ?");
+					+ "WHERE item_sid = ?");) {
+			
 			stmt.setLong(1, item_sid);
 			ResultSet rs = stmt.executeQuery();
 			
@@ -131,27 +129,26 @@ public class PostgreSQL extends AbstractModel {
 						rs.getInt("item_agility")
 					);
 			}
-		
-			conn.close();
+			
 		} catch (SQLException e) {
 			throw new AccessException(e);
-		}		
+		}
+		
 		return null;
 
 	}
 
 	@Override
 	protected ItemInstance fetchItemInstance(long id) throws AccessException {
-		try {
-			Connection conn = getConnection();
+		try(Connection conn = getConnection();
 			PreparedStatement stmt = conn.prepareStatement("SELECT item_isequip, c.item_sid, item_dura, item_firstsocket, item_secondsocket, "
-														+ "item_plus, item_bless, item_enchant "
-														+ "FROM item_possession a "
-														+ "JOIN unique_items b ON (a.item_id = b.item_id) "
-														+ "JOIN items c ON (b.item_sid = c.item_sid) " 
-														+ "WHERE b.item_id = ?;");
-			stmt.setLong(1, id);
+					+ "item_plus, item_bless, item_enchant "
+					+ "FROM item_possession a "
+					+ "JOIN unique_items b ON (a.item_id = b.item_id) "
+					+ "JOIN items c ON (b.item_sid = c.item_sid) " 
+					+ "WHERE b.item_id = ?;")){
 			
+			stmt.setLong(1, id);
 			ResultSet rs = stmt.executeQuery(); 
 			
 			while(rs.next())
@@ -174,18 +171,20 @@ public class PostgreSQL extends AbstractModel {
 					return new ItemInstance(id, proto); 
 				}
 			}
+			
 		} catch (SQLException e) { 
 			throw new AccessException(e); 
 		}
+		
 		return null;
 	}	
 
 	@Override
 	protected void fetchNPCs() throws AccessException {
-		try {
-			Connection conn = getConnection();
-			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM npcs WHERE npc_map = 1002;");
-			ResultSet rs = stmt.executeQuery(); 		
+		try(Connection conn = getConnection();
+			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM npcs WHERE npc_map = 1002;")) {
+			
+			ResultSet rs = stmt.executeQuery();	
 			
 			while (rs.next())
 			{
@@ -202,7 +201,7 @@ public class PostgreSQL extends AbstractModel {
 			}			
 			
 			rs.close();
-			conn.close();
+			
 		} catch (SQLException e) { 
 			throw new AccessException(e); 
 		}	
@@ -215,10 +214,8 @@ public class PostgreSQL extends AbstractModel {
 
 		String characterName;
 
-		try {
-			Connection conn = getConnection();
-			PreparedStatement stmt = conn.prepareStatement("SELECT character_name FROM characters WHERE account_username = ?");
-			
+		try(Connection conn = getConnection();
+			PreparedStatement stmt = conn.prepareStatement("SELECT character_name FROM characters WHERE account_username = ?");){
 			
 			stmt.setString(1, accountName);
 			ResultSet rs = stmt.executeQuery();
@@ -229,10 +226,7 @@ public class PostgreSQL extends AbstractModel {
 				characterName = null;
 			}
 			
-			conn.close();
 			rs.close();
-			stmt.close();
-			
 		} catch (SQLException e) {
 				throw new AccessException(e);
 		}
@@ -247,9 +241,9 @@ public class PostgreSQL extends AbstractModel {
 			throws AccessException {
 		Player player = new Player(promise.getIdentity(), promise.getCharacterName(), null, 500);
 		
-		try {
-			Connection conn = getConnection();
-			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM characters WHERE character_name = ? AND account_username = ?");
+		try(Connection conn = getConnection();
+			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM characters WHERE character_name = ? AND account_username = ?")) {
+			
 			stmt.setString(1, promise.getCharacterName());
 			stmt.setString(2, promise.getAccountName());
 			ResultSet rs = stmt.executeQuery();	
@@ -273,11 +267,9 @@ public class PostgreSQL extends AbstractModel {
 				player.setMana(rs.getInt("character_curmp"));		
 			}
 			
-			conn.close();
-			stmt.close();
 			rs.close();
-
 			return player;
+			
 		} catch (SQLException e) {
 			throw new AccessException(e);
 		}
@@ -285,14 +277,13 @@ public class PostgreSQL extends AbstractModel {
 
 	@Override
 	protected void fetchInventory(Player hero) throws AccessException {
-		try {
-			Connection conn = getConnection();
+		try (Connection conn = getConnection();
 			PreparedStatement stmt = conn.prepareStatement("SELECT a.item_id, b.item_sid, item_isequip "
-					+ "FROM item_possession a  JOIN unique_items b ON (a.item_id = b.item_id) "
-											+ "JOIN items c ON (b.item_sid = c.item_sid) "
-					+ "WHERE (a.character_name = ?) AND (a.item_slot = 0);");
-			stmt.setString(1, hero.getName());
+						+ "FROM item_possession a  JOIN unique_items b ON (a.item_id = b.item_id) "
+												+ "JOIN items c ON (b.item_sid = c.item_sid) "
+						+ "WHERE (a.character_name = ?) AND (a.item_slot = 0);");){
 			
+			stmt.setString(1, hero.getName());
 			ResultSet rsItems = stmt.executeQuery(); 
 				
 			while (rsItems.next())
@@ -313,16 +304,14 @@ public class PostgreSQL extends AbstractModel {
 
 	@Override
 	protected void fetchEquipment(Player hero) throws AccessException {
-		try {
-			Connection conn = getConnection();
+		try (Connection conn = getConnection();
 			PreparedStatement stmt = conn.prepareStatement("SELECT item_slot, a.item_id, item_sid, item_dura, item_firstsocket, item_secondsocket, "
-					+ "item_plus, item_bless, item_enchant "
-					+ "FROM item_possession a "
-					+ "JOIN unique_items b ON (a.item_id = b.item_id) "
-					+ "WHERE (character_name = ?) AND (item_slot != 0);");
+						+ "item_plus, item_bless, item_enchant "
+						+ "FROM item_possession a "
+						+ "JOIN unique_items b ON (a.item_id = b.item_id) "
+						+ "WHERE (character_name = ?) AND (item_slot != 0);")){
 			
 			stmt.setString(1, hero.getName());
-			
 			ResultSet rsItems = stmt.executeQuery(); 
 			
 			while (rsItems.next())
@@ -344,9 +333,9 @@ public class PostgreSQL extends AbstractModel {
 
 	@Override
 	protected void fetchSkill(Player hero) throws AccessException {
-		try {
-			Connection conn = getConnection();
-			PreparedStatement stmt = conn.prepareStatement("SELECT skill_id, skill_level, skill_exp FROM skills WHERE character_name = ?"); 
+		try(Connection conn = getConnection();
+			PreparedStatement stmt = conn.prepareStatement("SELECT skill_id, skill_level, skill_exp FROM skills WHERE character_name = ?")) {
+			
 			stmt.setString(1, hero.getName());
 			ResultSet rs = stmt.executeQuery();	
 			
@@ -354,6 +343,7 @@ public class PostgreSQL extends AbstractModel {
 			{
 				hero.setSkill(Skill.valueOf(rs.getInt("skill_id")), rs.getInt("skill_level"), rs.getLong("skill_exp"));
 			}
+			
 		} catch (SQLException e) {
 			throw new AccessException(e);
 		}
@@ -361,9 +351,9 @@ public class PostgreSQL extends AbstractModel {
 
 	@Override
 	protected void fetchProficiency(Player hero) throws AccessException {
-		try {
-			Connection conn = getConnection();
-			PreparedStatement stmt = conn.prepareStatement("SELECT proficiency_weapon, proficiency_level, proficiency_exp FROM proficiency WHERE character_name = ?"); 
+		try(Connection conn = getConnection();
+			PreparedStatement stmt = conn.prepareStatement("SELECT proficiency_weapon, proficiency_level, proficiency_exp FROM proficiency WHERE character_name = ?"); ) {
+			
 			stmt.setString(1, hero.getName());
 			ResultSet rs = stmt.executeQuery();	
 			
@@ -381,10 +371,9 @@ public class PostgreSQL extends AbstractModel {
 	public void setProficiency(Player hero, WeaponProficiency wp) throws AccessException 
 	{
 
-		try{
-			Connection conn = getConnection();
+		try(Connection conn = getConnection();
 			PreparedStatement stmt = conn.prepareStatement("INSERT INTO proficiency (character_name, proficiency_weapon, proficiency_level, proficiency_exp) VALUES "
-										+ "(?, ?, ?, ?)"); 
+						+ "(?, ?, ?, ?)")){
 			
 			stmt.setString(1, hero.getName());
 			stmt.setInt(2, wp.getWeaponType().ProfID);
@@ -393,6 +382,7 @@ public class PostgreSQL extends AbstractModel {
 			
 			conn.close();
 			stmt.close();
+			
 		} catch (SQLException e) { 
 			throw new AccessException(e);
 		}
@@ -402,55 +392,55 @@ public class PostgreSQL extends AbstractModel {
 	@Override
 	public boolean createCharacter(Character_Creation_Packet ip) throws AccessException {
 		
-		try {
-			Connection conn = getConnection();
-			
-			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM characters WHERE character_name = ?"); 
+		try (Connection conn = getConnection();
+			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM characters WHERE character_name = ?")){
+			 
 			stmt.setString(1, ip.getCharacterName());
 			ResultSet rs = stmt.executeQuery();	
 			
 			if(!rs.next()) /* If query resulted in no results, character name has not been taking yet.  */
 			{	
 				rs.close();
-				stmt = conn.prepareStatement("INSERT INTO characters "
+				finalizeAccountCreation(ip, conn);
+				return true;
+			}
+		} catch (SQLException e) {
+			throw new AccessException(e);
+		}
+		return false;
+	}
+	
+	private void finalizeAccountCreation(Character_Creation_Packet ip, Connection conn) throws SQLException {
+		try(PreparedStatement stmt = conn.prepareStatement("INSERT INTO characters "
 						+ "(account_username, character_name, character_level, character_experience, character_strength, character_agility, "
 						+ "character_vitality, character_spirit, character_attributepoints, character_profession, character_mesh, character_gold, character_cps, "
 						+ "character_map, character_x, character_y, character_hair, character_reborn, character_curhp, character_curmp)"
-						+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-				
-				stmt.setString(1, ip.getAccountName());
-				stmt.setString(2, ip.getCharacterName());
-				stmt.setInt(3, 1); // level 1
-				stmt.setInt(4, 0);
-				stmt.setInt(5, 1); // str
-				stmt.setInt(6, 1); // agi
-				stmt.setInt(7, 1); // vit
-				stmt.setInt(8, 1); // spi
-				stmt.setInt(9, 0); // rem attributes
-				stmt.setInt(10, ip.getProffession());
-				stmt.setInt(11, (38000 + ip.getBody())); // mesh (standard avatar = 38) 
-				stmt.setInt(12, 0); // gold
-				stmt.setInt(13, 0); //cps
-				stmt.setInt(14, 1002); // tc
-				stmt.setInt(15, 439); // x
-				stmt.setInt(16, 383); // y
-				stmt.setInt(17, 315); // hair
-				stmt.setInt(18, 0); // rb count
-				stmt.setInt(19, 100);
-				stmt.setInt(20, 0);
-				
-				stmt.execute();
-				conn.close(); 
-				stmt.close();
-				
-				return true;
-			} else {
-				return false;
-			}
+						+ " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 			
-					
-		} catch (SQLException e) {
-			throw new AccessException(e);
+			stmt.setString(1, ip.getAccountName());
+			stmt.setString(2, ip.getCharacterName());
+			stmt.setInt(3, 1); // level 1
+			stmt.setInt(4, 0);
+			stmt.setInt(5, 1); // str
+			stmt.setInt(6, 1); // agi
+			stmt.setInt(7, 1); // vit
+			stmt.setInt(8, 1); // spi
+			stmt.setInt(9, 0); // rem attributes
+			stmt.setInt(10, ip.getProffession());
+			stmt.setInt(11, (38000 + ip.getBody())); // mesh (standard avatar = 38) 
+			stmt.setInt(12, 0); // gold
+			stmt.setInt(13, 0); //cps
+			stmt.setInt(14, 1002); // tc
+			stmt.setInt(15, 439); // x
+			stmt.setInt(16, 383); // y
+			stmt.setInt(17, 315); // hair
+			stmt.setInt(18, 0); // rb count
+			stmt.setInt(19, 100);
+			stmt.setInt(20, 0);
+			
+			stmt.execute();
+		} catch (SQLException e){
+			throw e;
 		}
 	}
 	

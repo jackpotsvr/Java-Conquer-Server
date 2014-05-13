@@ -56,5 +56,10 @@ public class Monster extends Entity {
 		// TODO Auto-generated method stub
 		return getMana();
 	}
+
+	@Override
+	public void notify(PacketWriter writer) {
+		// Maybe hook this to the AI, or just fetch it from memory anyway
+	}
 	
 }

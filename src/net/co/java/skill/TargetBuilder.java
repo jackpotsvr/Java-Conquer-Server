@@ -2,6 +2,7 @@ package net.co.java.skill;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import net.co.java.entity.Entity;
 import net.co.java.entity.Location;
@@ -26,7 +27,10 @@ public class TargetBuilder implements Iterator<Entity>, Iterable<Entity> {
 	public TargetBuilder(Player hero) {
 		A = hero.getLocation();
 //		target = null; // TODO Get target
-		temp = hero.view.entities(false);
+		List<Entity> entities = hero.view.getEntities();
+		entities.remove(hero);
+		temp = new Entity[entities.size()];
+		temp = entities.toArray(temp); 
 		capacity = temp.length;
 		size = temp.length;
 	}

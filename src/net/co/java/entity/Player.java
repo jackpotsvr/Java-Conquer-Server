@@ -538,5 +538,10 @@ public class Player extends Entity {
 	public void sendStamina() {
 		new UpdatePacket(client.getPlayer()).setAttribute(UpdatePacket.Mode.Stamina, (long) getStamina()).build().send(client);
 	}
+
+	@Override
+	public void notify(PacketWriter writer) {
+		writer.send(client);
+	}
 	
 }
