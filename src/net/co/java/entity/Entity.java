@@ -230,6 +230,7 @@ public abstract class Entity implements Spawnable, Serializable {
 	
 	public abstract int getMaxHP();
 	public abstract int getMaxMana();
+	public abstract void notify(PacketWriter writer);
 
 	@Override
 	public Location getLocation() {
