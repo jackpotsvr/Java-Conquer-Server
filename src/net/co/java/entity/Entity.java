@@ -1,8 +1,6 @@
 package net.co.java.entity;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
 
 import net.co.java.entity.view.View;
 import net.co.java.entity.view.ViewImpl;

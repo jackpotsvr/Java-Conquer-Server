@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import net.co.java.entity.Entity;
-import net.co.java.entity.NPC;
-import net.co.java.packets.PacketType;
 
 /**
  * The Map enum contains all Maps for the current Server

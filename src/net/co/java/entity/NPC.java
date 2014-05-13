@@ -1,7 +1,6 @@
 package net.co.java.entity;
 
 import net.co.java.packets.NPC_Spawn_Packet;
-import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
 
 public class NPC extends Entity implements Spawnable {
