@@ -2,7 +2,6 @@ package net.co.java.entity.view;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -14,7 +13,7 @@ import net.co.java.entity.Player;
  * A basic implementation for {@code View}
  * @author Jan-Willem Gmelig Meyling
  */
-public class ViewImpl implements View, MovementListener {
+public class ViewImpl implements View {
 	
 	private final Entity me;
 	private final Set<Entity> entities;
@@ -81,20 +80,14 @@ public class ViewImpl implements View, MovementListener {
 	}
 
 	@Override
-	public Iterator<Entity> entities() {
-		return getEntities().iterator();
-	}
-
-	@Override
-	public Iterator<Player> players() {
-		return getPlayers().iterator();
-	}
-
-	@Override
-	public void movedTo(Entity entitiy, Location location) {
+	public void update(Location location) {
 		List<Entity> allEntities = location.getMap().getEntities();
-		synchronized(entities) {
-			
+		for(Entity e : allEntities) {
+			if(e.inView(me)) {
+				add(e);
+			} else {
+				remove(e);
+			}
 		}
 	}
 
