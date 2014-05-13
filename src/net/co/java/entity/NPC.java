@@ -1,7 +1,6 @@
 package net.co.java.entity;
 
 import net.co.java.packets.NPC_Spawn_Packet;
-import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
 
 public class NPC extends Entity implements Spawnable {
@@ -77,5 +76,10 @@ public class NPC extends Entity implements Spawnable {
 	public int getMaxMana() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public void notify(PacketWriter writer) {
+		// Do nothing
 	}
 }

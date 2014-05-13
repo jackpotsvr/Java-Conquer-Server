@@ -1,9 +1,9 @@
 package net.co.java.entity;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
 
+import net.co.java.entity.view.View;
+import net.co.java.entity.view.ViewImpl;
 import net.co.java.packets.GeneralData;
 import net.co.java.packets.IncomingPacket;
 import net.co.java.packets.PacketType;
@@ -30,7 +30,7 @@ public abstract class Entity implements Spawnable, Serializable {
 	protected volatile int mana;
 	protected volatile int level;
 	protected volatile long flags = 0;
-	public final transient View view = new View();
+	public final transient View view;
 
 	/**
 	 * Construct a new entity
@@ -48,6 +48,7 @@ public abstract class Entity implements Spawnable, Serializable {
 		this.hairstyle = hairstyle;
 		this.name = name;
 		this.HP = HP;
+		this.view = new ViewImpl(this);
 	}
 	
 	/**
@@ -60,7 +61,7 @@ public abstract class Entity implements Spawnable, Serializable {
 		}
 		location.getMap().addEntity(this);
 		this.location = location;
-		this.view.update();
+		this.view.update(location);
 	}
 	
 	/**
@@ -84,7 +85,7 @@ public abstract class Entity implements Spawnable, Serializable {
 				.putUnsignedByte(direction)
 				.putUnsignedByte(1);
 		// Send walk packet to me and surroundings
-		for(Player player : view.players(true))
+		for(Player player : view.getPlayers())
 			pw.send(player);
 		// Change location and send spawn / entity remove packets
 		setLocation(this.location.inDirection(direction));
@@ -100,7 +101,7 @@ public abstract class Entity implements Spawnable, Serializable {
 		PacketWriter pw = jumpPacket != null ? new PacketWriter(jumpPacket) : 
 			new GeneralData(GeneralData.SubType.JUMP, this).setDwParam(y << 16 | x).build();
 		// Send jump packet to me and surroundings
-		for(Player player : view.players(true))
+		for(Player player : view.getPlayers())
 			pw.send(player);
 		// Change location and send spawn / entity remove packets
 		setLocation(new Location(this.location.map, x, y, direction));
@@ -123,8 +124,9 @@ public abstract class Entity implements Spawnable, Serializable {
 		if(location != null) {
 			location.getMap().removeEntity(this);
 			PacketWriter remove = this.removeEntity();
-			for(Player player : view.players(false))
-				remove.send(player);
+			for(Player player : view.getPlayers())
+				if(player!=this)
+					remove.send(player);
 		}
 	}
 
@@ -230,6 +232,7 @@ public abstract class Entity implements Spawnable, Serializable {
 	
 	public abstract int getMaxHP();
 	public abstract int getMaxMana();
+	public abstract void notify(PacketWriter writer);
 
 	@Override
 	public Location getLocation() {
@@ -246,181 +249,6 @@ public abstract class Entity implements Spawnable, Serializable {
 		return "Entity [identity=" + identity + ", name=" + name + ", mesh="
 				+ mesh + ", hairstyle=" + hairstyle + ", location=" + location
 				+ ", HP=" + HP + ", mana=" + mana + ", level=" + level + "]";
-	}
-
-	/**
-	 * The View class is a collection that contains all Entities within the
-	 * view range of this Entity
-	 * 
-	 * @author Jan-Willem Gmelig Meyling
-	 * @author Thomas Gmelig Meyling
-	 */
-	public class View {
-
-		private final static int GROW_AMOUNT = 20; // TODO SET GROW AMOUNT BACK TO 10 AND FIX ERROR IF MORE THAN GROW_AMOUNT ENTITIES GO OFF SCREEN IN ONE CHANGE.
-		private Entity[] entities = new Entity[GROW_AMOUNT];
-		private int index = 0;
-		private int playerCount = 0;
-		private int capacity = GROW_AMOUNT;
-		
-		/**
-		 * This method is used to grow the array when necessary
-		 */
-		private void ensureCapacity() {
-			if(index>=capacity) {
-				capacity += GROW_AMOUNT;
-				entities = Arrays.copyOf(entities, capacity);
-			}
-		}
-		
-		/**
-		 * This method is used to shrink the array if possible
-		 */
-		private void freeCapacity() {
-			if(index<capacity-GROW_AMOUNT) {
-				capacity -= GROW_AMOUNT;
-				entities = Arrays.copyOf(entities, capacity);
-			}
-		}
-		
-		/**
-		 * Check if the View contains a specific Entity
-		 * @param e
-		 * @return true if the Entity is in View
-		 */
-		public synchronized boolean contains(Entity e) {
-			for(int i = 0; i < index; i++ ) {
-				if(entities[i] == e ) {
-					return true;
-				}
-			}
-			return false;
-		}
-		
-		/**
-		 * @return the amount of Entities in this View
-		 */
-		public synchronized int size() {
-			return index;
-		}
-	
-		/**
-		 * Add an Entity to this Entities view. If the Entity is
-		 * not in the current view of the other entity, send spawn packets
-		 * to each other.
-		 * @param e
-		 */
-		public synchronized void add(Entity e) {
-			// The View is a set, so it should not already contain the Entity
-			if(!contains(e)) {
-				// Grow the array if necessary
-				ensureCapacity();
-				// Insert the entity at current insert index
-				entities[index++] = e;
-				// Add this entity to the other entities view as well
-				e.view.add(Entity.this);				
-				// Send a spawn packet for the entity
-				
-				//System.out.println("The entity is: " + e);
-				//if(Entity.this instanceof Player && e instanceof NPC)
-				//	((NPC)e).SpawnPacket().send(((Player) Entity.this).getClient());
-				if(Entity.this instanceof Player && e != Entity.this)
-					e.SpawnPacket().send((Player) Entity.this);		
-				if(e instanceof Player)
-					playerCount++;
-			}
-		}
-	
-		/**
-		 * Remove an Entity from this Entities view. If the Entity
-		 * is not in the current view of the other entity, send entity
-		 * remove packets to each other.
-		 * @param e
-		 */
-		public synchronized void remove(Entity e) {
-			for(int i = 0; i < index; i++ ) {
-				if(entities[i] == e ) {
-					remove(i);
-					break;
-				}
-			}
-		}
-		
-		/**
-		 * Remove Entity from the View at given index
-		 * @param i
-		 */
-		private void remove(int i) {
-			Entity e = entities[i];
-			// Shrink other elements to the left
-			for(int j = i; j < index; j++ ) {
-				entities[j] = entities[j+1];
-			}
-			// Decrease size/ insert index
-			index--;
-			// Shrink array
-			freeCapacity();
-			// Remove this entity from the other entities view as well
-			e.view.remove(Entity.this);
-			// Send Entity remove packet to the player
-			if(Entity.this instanceof Player)
-				e.removeEntity().send((Player) Entity.this);
-			if(e instanceof Player)
-				playerCount--;
-		}
-	
-		/**
-		 * Update an entities view, remove entities that were in the
-		 * previous view, but not in the current, and spawn entities
-		 * that only appear in the current view.
-		 */
-		public synchronized void update() {
-			List<Entity> allEntitites = Entity.this.location.getMap().getEntities();
-			// Remove entities that only exist in the old view
-			for(int i = 0; i < index; i++ ) {
-				Entity e = entities[i];
-				if(!e.getLocation().inView(location)) {
-					remove(i);
-					i--;
-				}
-			}
-			// Add new entities
-			for(Entity e : allEntitites)
-			{
-				if(e.getLocation().inView(location))
-					add(e);
-			}
-		}
-
-		/**
-		 * @param includingMe
-		 * @return An array containing all entities in this view
-		 */
-		public synchronized Entity[] entities(boolean includingMe) {
-			int size = index;
-			if(!includingMe) size -= 1; 
-			Entity[] result = new Entity[size];
-			for(int i = 0, j = 0; i < index; i++ )
-				if(includingMe || entities[i] != Entity.this)
-					result[j++] = entities[i];
-			return result;
-		}
-		
-		/**
-		 * @param includingMe
-		 * @return an array containing all players in this view
-		 */
-		public synchronized Player[] players(boolean includingMe) {
-			int size = playerCount;
-			if(!includingMe) size -= 1; 
-			Player[] result = new Player[size];
-			for(int i = 0, j = 0; i < index; i++ )
-				if(includingMe || entities[i] != Entity.this)
-					if(entities[i] instanceof Player)
-						result[j++] = (Player) entities[i];
-			return result;
-		}
-		
 	}
 
 	/**
