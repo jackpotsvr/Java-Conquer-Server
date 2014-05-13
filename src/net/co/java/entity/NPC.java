@@ -8,15 +8,16 @@ public class NPC extends Entity implements Spawnable {
 	//private Location location;
 	//private String name; 
 	//private long uniqueID;
-	private int model;
+	private int type;
 	private int interaction; // TODO MAKE ENUMS?
-	private int flags; // TODO MAKE ENUMS?
+	private long flags; // TODO MAKE ENUMS?
 	private int direction;
 	
 	public NPC(long uniqueID, String name, Location location, int model, int interaction, int flags, int direction)
 	{
 		super(uniqueID, 0, 0, name, location, 0);
-		this.model = model;
+		this.type = (model - (model%10));
+		this.type += direction; 
 		this.interaction = interaction;
 		this.flags = flags;
 		this.direction = direction;
@@ -27,36 +28,42 @@ public class NPC extends Entity implements Spawnable {
 		return location.inView(spawnable.getLocation());
 	}
 	
-	public int getDirection() {
-		return direction;
+	/**
+	 * @return  Returns the type (without direction) 
+	 * If you want the type with direction use getTypeD() 
+	 */
+	public int getType() {
+		return (type - (type %10));
 	}
-
-	public void setDirection(int direction) {
-		this.direction = direction;
+	
+	/**
+	 * @return returns the type with direction included.
+	 */
+	public int getTypeD() {
+		return type; 
 	}
-
-	public int getModel() {
-		return model;
+	
+	public void setDirection(int direction){
+		type = getType() + direction; 
 	}
-
-	public void setModel(int model) {
-		this.model = model;
-	}
-
-	public int getNpc_interactions() {
+	
+	
+	
+	public int getInteraction() {
 		return interaction;
 	}
 
-	public void setNpc_interactions(int npc_interactions) {
-		this.interaction = npc_interactions;
+	public void setInteraction(int interaction) {
+		this.interaction = interaction;
 	}
 
-	public int getNpc_flags() {
+	@Override 
+	public long getFlags() {
 		return flags;
 	}
-
-	public void setNpc_flags(int npc_flags) {
-		this.flags = npc_flags;
+	
+	public void setFlags(long flags) {
+		this.flags = flags;
 	}
 
 	@Override
@@ -82,4 +89,5 @@ public class NPC extends Entity implements Spawnable {
 	public void notify(PacketWriter writer) {
 		// Do nothing
 	}
+
 }

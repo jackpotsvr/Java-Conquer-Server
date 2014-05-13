@@ -19,10 +19,10 @@ public class NPC_Spawn_Packet implements PacketWrapper
 		.putUnsignedInteger(npc.getIdentity())
 		.putUnsignedShort(npc.getLocation().getxCord())
 		.putUnsignedShort(npc.getLocation().getyCord())
-		.putUnsignedShort(npc.getModel())
-		.putUnsignedShort(npc.getNpc_interactions())
-		.putUnsignedByte(npc.getDirection())
-		.putUnsignedShort(npc.getNpc_flags())
+		.putUnsignedShort(npc.getTypeD())
+		.putUnsignedShort(npc.getInteraction())
+		//.putUnsignedByte(npc.getDirection())
+		.putUnsignedShort((int) npc.getFlags())
 		.putUnsignedByte(1) // str count
 		.putUnsignedByte(npc.getName().length())
 		.putString(npc.getName());

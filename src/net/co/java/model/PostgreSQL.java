@@ -182,7 +182,9 @@ public class PostgreSQL extends AbstractModel {
 	@Override
 	protected void fetchNPCs() throws AccessException {
 		try(Connection conn = getConnection();
-			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM npcs WHERE npc_map = 1002;")) {
+			PreparedStatement stmt = conn.prepareStatement("SELECT npc_uid, npc_name, npc_map, npc_x, npc_y, "
+					+ "npc_type, npc_flags, npc_interaction, npc_direction FROM npcs WHERE npc_map = 1002;")) /* don't load maps that aren't in enum yet.. */ 
+		{
 			
 			ResultSet rs = stmt.executeQuery();	
 			
@@ -204,7 +206,8 @@ public class PostgreSQL extends AbstractModel {
 			
 		} catch (SQLException e) { 
 			throw new AccessException(e); 
-		}	
+		} 
+	
 	}
 
 	@Override
@@ -239,7 +242,7 @@ public class PostgreSQL extends AbstractModel {
 	@Override
 	protected Player fetchPlayer(AuthorizationPromise promise)
 			throws AccessException {
-		Player player = new Player(promise.getIdentity(), promise.getCharacterName(), null, 500);
+		Player player = null;
 		
 		try(Connection conn = getConnection();
 			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM characters WHERE character_name = ? AND account_username = ?")) {
@@ -249,6 +252,9 @@ public class PostgreSQL extends AbstractModel {
 			ResultSet rs = stmt.executeQuery();	
 
 			if(rs.next()) {
+				player = new Player(promise.getIdentity(), promise.getCharacterName(), 
+						new Location(Map.valueOf(rs.getInt("character_map")), 
+						rs.getInt("character_x"), rs.getInt("character_y")), 500);
 				player.setLevel(rs.getInt("character_level"));
 				player.setExperience(rs.getInt("character_experience"));
 				player.setStrength(rs.getInt("character_strength"));
@@ -259,8 +265,6 @@ public class PostgreSQL extends AbstractModel {
 				player.setMesh(rs.getInt("character_mesh"));
 				player.setGold(rs.getInt("character_gold"));
 				player.setCps(rs.getInt("character_cps"));
-				//player.setSpouse(rs.getString(15));
-				player.setLocation(new Location(Map.CentralPlain, rs.getInt("character_x"), rs.getInt("character_y"))); //TODO load map
 				player.setHairstyle(rs.getInt("character_hair"));
 				player.setRebornCount(rs.getInt("character_reborn"));
 				player.setHP(rs.getInt("character_curhp"));
