@@ -78,4 +78,9 @@ public class NPC extends Entity implements Spawnable {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	@Override
+	public void notify(PacketWriter writer) {
+		// Do nothing
+	}
 }
