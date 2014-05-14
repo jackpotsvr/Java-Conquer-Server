@@ -1,9 +1,10 @@
 package net.co.java.entity;
 
-import net.co.java.packets.NPC_Spawn_Packet;
 import net.co.java.packets.PacketWriter;
 
 public class NPC extends Entity implements Spawnable {
+	
+	private static final long serialVersionUID = 7294339394890365570L;
 	
 	//private Location location;
 	//private String name; 
@@ -69,12 +70,6 @@ public class NPC extends Entity implements Spawnable {
 	public void setFlags(long flags) {
 		this.flags = flags;
 	}
-
-	@Override
-	public PacketWriter SpawnPacket() {
-		return new NPC_Spawn_Packet(this).build();
-	}
-
 
 	@Override
 	public int getMaxHP() {
