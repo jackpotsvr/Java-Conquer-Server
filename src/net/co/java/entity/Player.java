@@ -205,6 +205,14 @@ public class Player extends Entity {
 	public void setStamina(int stamina) {
 		this.stamina = stamina;
 	}
+	
+	public void setAction(int action) {
+		this.action = action;
+	}
+	
+	public int getAction() {
+		return action;
+	}
 
 	@Override
 	public int getMaxHP() {
@@ -444,7 +452,7 @@ public class Player extends Entity {
 		 * @param slot
 		 * @return the SID for the equipment in a given slot, or 0.
 		 */
-		long getEquipmentSID(int slot) {
+		public long getEquipmentSID(int slot) {
 			if(equipments[slot] != null)
 				return equipments[slot].itemPrototype.identifier;
 			return 0;
@@ -498,37 +506,6 @@ public class Player extends Entity {
 		.putString(this.name)
 		.putUnsignedByte(spouseName.length())
 		.putString(spouseName);
-	}
-
-	@Override
-	public PacketWriter SpawnPacket() {
-		return new PacketWriter(PacketType.ENTITY_SPAWN_PACKET, 82 + name.length())
-		.putUnsignedInteger(identity)
-		.putUnsignedInteger(mesh)
-		.setOffset(12).putUnsignedInteger(flags)
-		.setOffset(20).putUnsignedShort(0) // Guild ID
-		.setOffset(23)
-		.putUnsignedByte((short) guildRank.getRank()) // Guild rank
-		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.GARMENT)) // garment 24
-		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.HELM)) // helm 28
-		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.ARMOR)) // arm 32
-		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.RIGHT_HAND)) // rw 36
-		.putUnsignedInteger(inventory.getEquipmentSID(Inventory.LEFT_HAND)) // lw 40
-		.setOffset(48)
-		.putUnsignedShort(HP) // health 48
-		.putUnsignedShort(0) // mob lvl 50
-		.putUnsignedShort(location.getxCord()) // 52
-		.putUnsignedShort(location.getyCord()) // 54
-		.putUnsignedShort(hairstyle) //56
-		.putUnsignedByte(location.getDirection()) // direction 58
-		.putUnsignedByte(action ) // action 59
-		.putUnsignedByte(rebornCount) // reborn //60
-		.setOffset(62)
-		.putUnsignedByte(level) // level
-		.setOffset(80)
-		.putUnsignedByte(1)
-		.putUnsignedByte(name.length())
-		.putString(name);		
 	}
 
 	public void sendProficiencies() {

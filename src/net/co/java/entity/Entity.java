@@ -123,17 +123,11 @@ public abstract class Entity implements Spawnable, Serializable {
 	public void remove() {
 		if(location != null) {
 			location.getMap().removeEntity(this);
-			PacketWriter remove = this.removeEntity();
+			PacketWriter remove = new GeneralData(SubType.ENTITY_REMOVE, this).build();
 			for(Player player : view.getPlayers())
 				if(player!=this)
 					remove.send(player);
 		}
-	}
-
-	public abstract PacketWriter SpawnPacket();
-
-	public PacketWriter removeEntity() {
-		return new GeneralData(SubType.ENTITY_REMOVE, this).build();
 	}
 
 	/**

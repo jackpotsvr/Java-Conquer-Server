@@ -2,7 +2,6 @@ package net.co.java.packets;
 
 import net.co.java.entity.Entity;
 import net.co.java.entity.NPC;
-import net.co.java.packets.NPC_Dialog_Packet.NPC_Dialog_Type;
 import net.co.java.server.GameServerClient;
 
 public class NPC_Initial_Packet implements PacketHandler
@@ -36,7 +35,6 @@ public class NPC_Initial_Packet implements PacketHandler
 			NPC_Dialog_Packet dialog = new NPC_Dialog_Packet(npc);
 			
 			dialog.build();
-			//dialog.build().send(client);
 			
 			dialog.NPC_Say("Hey, do you want some free Dragonballz?").send(client); 
 			

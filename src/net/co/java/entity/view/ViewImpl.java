@@ -8,6 +8,9 @@ import java.util.Set;
 import net.co.java.entity.Entity;
 import net.co.java.entity.Location;
 import net.co.java.entity.Player;
+import net.co.java.packets.GeneralData;
+import net.co.java.packets.SpawnPacket;
+import net.co.java.packets.GeneralData.SubType;
 
 /**
  * A basic implementation for {@code View}
@@ -30,7 +33,7 @@ public class ViewImpl implements View {
 			added = entities.add(entity);
 		}
 		if(added) {
-			me.notify(entity.SpawnPacket());
+			me.notify(SpawnPacket.create(entity));
 			entity.view.add(me);
 		}
 	}
@@ -49,7 +52,7 @@ public class ViewImpl implements View {
 			removed = entities.remove(entity);
 		}
 		if(removed) {
-			me.notify(entity.removeEntity());
+			me.notify(new GeneralData(SubType.ENTITY_REMOVE, entity).build());
 			entity.view.remove(me);
 		}
 	}
