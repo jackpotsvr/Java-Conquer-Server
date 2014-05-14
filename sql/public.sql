@@ -1,17 +1,17 @@
 /*
 Navicat PGSQL Data Transfer
 
-Source Server         : post
-Source Server Version : 90302
+Source Server         : coserv
+Source Server Version : 90304
 Source Host           : localhost:5432
 Source Database       : coserver
 Source Schema         : public
 
 Target Server Type    : PGSQL
-Target Server Version : 90302
+Target Server Version : 90304
 File Encoding         : 65001
 
-Date: 2014-03-12 00:49:03
+Date: 2014-05-14 17:43:11
 */
 
 
@@ -72,7 +72,7 @@ WITH (OIDS=FALSE)
 -- ----------------------------
 INSERT INTO "public"."characters" VALUES ('ganndlas', 'Ganndlas', '130', '0', '176', '76', '300', '40', '3', '15', '381004', '500000', '5000', '0', null, '1002', '378', '343', '315', '0', '100', null);
 INSERT INTO "public"."characters" VALUES ('admin', 'Iamahero', '1', '0', '1', '1', '1', '1', '0', '15', '39004', '0', '0', null, null, '1002', '439', '383', '315', '0', '100', '0');
-INSERT INTO "public"."characters" VALUES ('jackpotsvr', 'Jackpotsvr', '130', '0', '176', '76', '300', '40', '3', '15', '381004', '500000', '5000', '0', 'Piranha', '1002', '229', '193', '315', '0', '100', null);
+INSERT INTO "public"."characters" VALUES ('jackpotsvr', 'Jackpotsvr', '130', '0', '176', '76', '300', '40', '3', '15', '381004', '500000', '5000', '0', 'Piranha', '1002', '439', '468', '315', '0', '100', null);
 
 -- ----------------------------
 -- Table structure for item_possession
@@ -11284,6 +11284,161 @@ INSERT INTO "public"."items" VALUES ('2100025', 'MiraculousGourd', '0', '1', '40
 INSERT INTO "public"."items" VALUES ('2100045', 'MagicalBottle', '0', '1', '1870', '0', '0', '15', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 't');
 
 -- ----------------------------
+-- Table structure for npcs
+-- ----------------------------
+DROP TABLE IF EXISTS "public"."npcs";
+CREATE TABLE "public"."npcs" (
+"npc_uid" int4 NOT NULL,
+"npc_type" int4 NOT NULL,
+"npc_name" varchar(30) COLLATE "default" NOT NULL,
+"npc_flags" int4 NOT NULL,
+"npc_interaction" int4 NOT NULL,
+"npc_x" int4 NOT NULL,
+"npc_y" int4 NOT NULL,
+"npc_map" int4 NOT NULL,
+"npc_direction" int4 NOT NULL
+)
+WITH (OIDS=FALSE)
+
+;
+
+-- ----------------------------
+-- Records of npcs
+-- ----------------------------
+INSERT INTO "public"."npcs" VALUES ('1', '10', 'Storekeeper', '1', '2', '415', '351', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('2', '5030', 'Tinter', '2', '2', '27', '16', '1008', '0');
+INSERT INTO "public"."npcs" VALUES ('3', '30', 'Pharmacist', '1', '2', '466', '327', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('4', '40', 'Armorer', '1', '2', '412', '366', '1002', '6');
+INSERT INTO "public"."npcs" VALUES ('5', '50', 'Blacksmith', '1', '2', '452', '330', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('6', '1650', 'ArcherGod', '2', '4', '33', '53', '1004', '0');
+INSERT INTO "public"."npcs" VALUES ('8', '80', 'TCWarehouseMan', '2', '2', '409', '351', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('9', '230', 'Pharmacist', '1', '0', '511', '630', '1000', '0');
+INSERT INTO "public"."npcs" VALUES ('10', '220', 'Blacksmith', '1', '0', '486', '621', '1000', '0');
+INSERT INTO "public"."npcs" VALUES ('11', '110', 'Armorer', '1', '0', '202', '242', '1011', '0');
+INSERT INTO "public"."npcs" VALUES ('12', '120', 'TaoistMoon', '2', '2', '56', '33', '1004', '0');
+INSERT INTO "public"."npcs" VALUES ('16', '160', 'WarriorGod', '2', '4', '33', '65', '1004', '0');
+INSERT INTO "public"."npcs" VALUES ('17', '60', 'TrojanStar', '2', '2', '44', '33', '1004', '0');
+INSERT INTO "public"."npcs" VALUES ('21', '1057', 'Boxer', '2', '2', '350', '335', '1002', '6');
+INSERT INTO "public"."npcs" VALUES ('44', '370', 'ArtisanOu', '2', '2', '756', '545', '1015', '0');
+INSERT INTO "public"."npcs" VALUES ('81', '80', 'PCWarehouse', '2', '0', '227', '245', '1011', '0');
+INSERT INTO "public"."npcs" VALUES ('82', '80', 'ACWarehouse', '2', '0', '576', '543', '1020', '0');
+INSERT INTO "public"."npcs" VALUES ('83', '80', 'DCWarehouse', '2', '0', '470', '630', '1000', '0');
+INSERT INTO "public"."npcs" VALUES ('84', '80', 'BIWarehouse', '2', '0', '715', '541', '1015', '0');
+INSERT INTO "public"."npcs" VALUES ('85', '80', 'MAWarehouse', '2', '0', '181', '179', '1036', '0');
+INSERT INTO "public"."npcs" VALUES ('100', '350', 'ArtisanCloud', '7', '2', '242', '238', '1011', '0');
+INSERT INTO "public"."npcs" VALUES ('102', '250', 'Beautician', '5', '2', '461', '332', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('103', '280', 'Conductress', '4', '2', '435', '440', '1002', '6');
+INSERT INTO "public"."npcs" VALUES ('104', '280', 'Conductress', '2', '0', '228', '255', '1011', '0');
+INSERT INTO "public"."npcs" VALUES ('105', '280', 'Conductress', '2', '0', '566', '621', '1020', '0');
+INSERT INTO "public"."npcs" VALUES ('106', '280', 'Conductress', '2', '0', '477', '630', '1000', '6');
+INSERT INTO "public"."npcs" VALUES ('107', '280', 'Conductress', '2', '0', '788', '567', '1015', '0');
+INSERT INTO "public"."npcs" VALUES ('127', '120', 'RebirthMaster', '2', '2', '450', '395', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('128', '3008', 'Bob', '2', '0', '804', '461', '1011', '0');
+INSERT INTO "public"."npcs" VALUES ('129', '6018', 'Sally', '2', '0', '707', '545', '1015', '0');
+INSERT INTO "public"."npcs" VALUES ('130', '6026', 'Wanda', '2', '0', '77', '326', '1000', '0');
+INSERT INTO "public"."npcs" VALUES ('155', '150', 'GuildDirector', '2', '0', '400', '390', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('180', '6440', 'BoxerHuang', '2', '0', '222', '220', '1039', '0');
+INSERT INTO "public"."npcs" VALUES ('181', '6410', 'BoxerLi', '2', '0', '206', '255', '1011', '0');
+INSERT INTO "public"."npcs" VALUES ('183', '6400', 'BoxerZhang', '2', '0', '481', '630', '1000', '0');
+INSERT INTO "public"."npcs" VALUES ('184', '6430', 'BoxerZhao', '2', '0', '714', '561', '1015', '0');
+INSERT INTO "public"."npcs" VALUES ('186', '6420', 'BoxerWang', '2', '0', '552', '559', '1020', '0');
+INSERT INTO "public"."npcs" VALUES ('198', '290', 'GeneralPeace', '2', '0', '60', '463', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('211', '410', 'Mark.Controller', '2', '0', '216', '221', '1036', '0');
+INSERT INTO "public"."npcs" VALUES ('264', '130', 'TaoistStar', '2', '2', '60', '33', '1004', '0');
+INSERT INTO "public"."npcs" VALUES ('266', '20', 'Barber', '2', '2', '412', '376', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('278', '6680', 'WuxingOven', '2', '4', '179', '205', '1036', '0');
+INSERT INTO "public"."npcs" VALUES ('280', '1740', 'TCCaptain', '2', '0', '435', '438', '1002', '6');
+INSERT INTO "public"."npcs" VALUES ('281', '1750', 'PCCaptain', '2', '0', '227', '257', '1011', '0');
+INSERT INTO "public"."npcs" VALUES ('282', '1760', 'ACCaptain', '2', '0', '566', '620', '1020', '0');
+INSERT INTO "public"."npcs" VALUES ('283', '1770', 'DCCaptain', '2', '0', '476', '631', '1000', '0');
+INSERT INTO "public"."npcs" VALUES ('284', '1780', 'BICaptain', '2', '0', '791', '566', '1015', '0');
+INSERT INTO "public"."npcs" VALUES ('285', '1790', 'MCCaptain', '2', '0', '80', '318', '1000', '0');
+INSERT INTO "public"."npcs" VALUES ('300', '6050', 'Storekeeper', '1', '0', '168', '238', '1011', '0');
+INSERT INTO "public"."npcs" VALUES ('304', '240', 'Divorcer', '2', '0', '199', '200', '1036', '0');
+INSERT INTO "public"."npcs" VALUES ('390', '1600', 'LoveStone', '2', '0', '192', '193', '1036', '0');
+INSERT INTO "public"."npcs" VALUES ('423', '2700', 'Pedlar', '1', '2', '412', '361', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('500', '9250', 'LuckyBox', '2', '0', '47', '47', '700', '0');
+INSERT INTO "public"."npcs" VALUES ('501', '9260', 'LuckyBox', '2', '0', '51', '45', '700', '0');
+INSERT INTO "public"."npcs" VALUES ('502', '9270', 'LuckyBox', '2', '0', '47', '50', '700', '0');
+INSERT INTO "public"."npcs" VALUES ('503', '9280', 'LuckyBox', '2', '0', '51', '51', '700', '0');
+INSERT INTO "public"."npcs" VALUES ('504', '9290', 'LuckyBox', '2', '0', '49', '53', '700', '0');
+INSERT INTO "public"."npcs" VALUES ('505', '9300', 'LuckyBox', '2', '0', '52', '53', '700', '0');
+INSERT INTO "public"."npcs" VALUES ('573', '1170', 'Assistant', '2', '0', '46', '395', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('600', '1150', 'GuildController', '2', '0', '350', '337', '1002', '6');
+INSERT INTO "public"."npcs" VALUES ('601', '1130', 'GuildGateKeeper', '2', '0', '354', '346', '1038', '0');
+INSERT INTO "public"."npcs" VALUES ('610', '1450', 'GuildConductor1', '2', '0', '330', '343', '1038', '0');
+INSERT INTO "public"."npcs" VALUES ('611', '1460', 'GuildConductor2', '2', '0', '337', '336', '1038', '0');
+INSERT INTO "public"."npcs" VALUES ('612', '1470', 'GuildConductor3', '2', '0', '344', '329', '1038', '0');
+INSERT INTO "public"."npcs" VALUES ('613', '1480', 'GuildConductor4', '2', '0', '351', '322', '1038', '0');
+INSERT INTO "public"."npcs" VALUES ('700', '5010', 'MagicArtisan', '2', '0', '179', '208', '1036', '0');
+INSERT INTO "public"."npcs" VALUES ('777', '240', 'ArtisanWind', '6', '2', '419', '351', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('959', '1430', 'JewelerLau', '2', '2', '240', '256', '1036', '0');
+INSERT INTO "public"."npcs" VALUES ('999', '9500', 'WeaponMaster', '2', '2', '178', '192', '1036', '0');
+INSERT INTO "public"."npcs" VALUES ('1010', '140', 'Blacksmith', '2', '2', '211', '212', '1036', '0');
+INSERT INTO "public"."npcs" VALUES ('1250', '1160', 'JailWarden', '2', '2', '60', '60', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('1279', '1310', 'SolarSaint', '2', '0', '530', '481', '1020', '0');
+INSERT INTO "public"."npcs" VALUES ('1280', '1170', 'DisStage2', '2', '0', '60', '60', '1004', '0');
+INSERT INTO "public"."npcs" VALUES ('1281', '1170', 'DisStage3', '2', '0', '70', '70', '1004', '0');
+INSERT INTO "public"."npcs" VALUES ('1846', '9230', 'LadyLuck', '2', '0', '211', '190', '1036', '0');
+INSERT INTO "public"."npcs" VALUES ('4352', '9900', 'Armorer', '1', '0', '557', '559', '1020', '0');
+INSERT INTO "public"."npcs" VALUES ('4353', '9900', 'Armorer', '1', '0', '493', '612', '1000', '0');
+INSERT INTO "public"."npcs" VALUES ('4354', '9910', 'Armorer', '1', '0', '494', '609', '1000', '0');
+INSERT INTO "public"."npcs" VALUES ('4357', '9920', 'Storekeeper', '1', '0', '531', '512', '1020', '0');
+INSERT INTO "public"."npcs" VALUES ('4358', '10', 'Storekeeper', '1', '0', '467', '633', '1000', '0');
+INSERT INTO "public"."npcs" VALUES ('4359', '9930', 'Storekeeper', '1', '0', '467', '635', '1000', '0');
+INSERT INTO "public"."npcs" VALUES ('6700', '1137', 'Pole', '10', '0', '84', '99', '1038', '2');
+INSERT INTO "public"."npcs" VALUES ('6701', '240', 'LeftGate', '10', '0', '163', '211', '1038', '3');
+INSERT INTO "public"."npcs" VALUES ('6702', '270', 'RightGate', '10', '0', '223', '177', '1038', '3');
+INSERT INTO "public"."npcs" VALUES ('7001', '8350', 'Celestine', '2', '0', '283', '156', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('7500', '3330', 'CPAdmin', '2', '0', '178', '183', '1036', '0');
+INSERT INTO "public"."npcs" VALUES ('7666', '290', 'PKCity', '2', '2', '438', '377', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('7777', '1160', 'LeavePK', '2', '2', '162', '217', '1505', '0');
+INSERT INTO "public"."npcs" VALUES ('8410', '130', 'Quean', '2', '2', '428', '378', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('8487', '5000', 'CaptainFang', '2', '0', '422', '374', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('9812', '4290', 'MillionaireLee', '2', '0', '240', '245', '1036', '0');
+INSERT INTO "public"."npcs" VALUES ('10009', '2240', 'Stones', '2', '2', '212', '208', '1036', '0');
+INSERT INTO "public"."npcs" VALUES ('10013', '100', 'Blacksmith', '1', '0', '197', '226', '1011', '0');
+INSERT INTO "public"."npcs" VALUES ('10014', '90', 'Pharmacist', '1', '0', '189', '252', '1011', '0');
+INSERT INTO "public"."npcs" VALUES ('10025', '220', 'Blacksmith', '1', '0', '751', '544', '1015', '0');
+INSERT INTO "public"."npcs" VALUES ('10026', '230', 'Pharmacist', '1', '0', '765', '542', '1015', '0');
+INSERT INTO "public"."npcs" VALUES ('10029', '220', 'Blacksmith', '1', '0', '560', '508', '1020', '0');
+INSERT INTO "public"."npcs" VALUES ('10030', '30', 'Pharmacist', '1', '0', '550', '542', '1020', '0');
+INSERT INTO "public"."npcs" VALUES ('10291', '7300', 'Beginner', '2', '0', '60', '105', '1010', '0');
+INSERT INTO "public"."npcs" VALUES ('10292', '6430', 'Beginner', '2', '0', '79', '62', '1010', '0');
+INSERT INTO "public"."npcs" VALUES ('10293', '230', 'Beginner', '2', '0', '74', '52', '1010', '0');
+INSERT INTO "public"."npcs" VALUES ('10294', '220', 'Beginner', '2', '0', '71', '48', '1010', '0');
+INSERT INTO "public"."npcs" VALUES ('10295', '3846', 'Beginner', '2', '0', '68', '38', '1010', '0');
+INSERT INTO "public"."npcs" VALUES ('10296', '9120', 'Beginner', '2', '0', '86', '41', '1010', '0');
+INSERT INTO "public"."npcs" VALUES ('10297', '250', 'Beginner', '2', '0', '88', '30', '1010', '0');
+INSERT INTO "public"."npcs" VALUES ('30015', '5020', 'ShopBoy', '2', '2', '421', '351', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('80801', '1670', 'Merchant', '2', '2', '212', '185', '1036', '0');
+INSERT INTO "public"."npcs" VALUES ('104799', '2160', 'Alex', '2', '2', '428', '395', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('104800', '240', 'Sheriff', '2', '2', '509', '351', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('104801', '240', 'Sheriff', '2', '2', '28', '69', '6000', '0');
+INSERT INTO "public"."npcs" VALUES ('104802', '240', 'ArenaMaster', '2', '2', '459', '292', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('104803', '120', 'CelestialArtisan', '2', '2', '305', '145', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('104806', '240', 'LabNPC', '2', '2', '394', '234', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('104807', '240', 'Lab2NPC', '2', '2', '208', '318', '1351', '0');
+INSERT INTO "public"."npcs" VALUES ('104808', '240', 'Lab3NPC', '2', '2', '29', '225', '1352', '0');
+INSERT INTO "public"."npcs" VALUES ('104809', '240', 'Lab4NPC', '2', '2', '27', '263', '1353', '0');
+INSERT INTO "public"."npcs" VALUES ('104810', '240', 'Lab5NPC', '2', '2', '15', '296', '1354', '0');
+INSERT INTO "public"."npcs" VALUES ('104812', '240', 'DisCity2', '2', '2', '263', '194', '2021', '0');
+INSERT INTO "public"."npcs" VALUES ('104813', '120', 'CPTrader', '2', '2', '422', '361', '1002', '0');
+INSERT INTO "public"."npcs" VALUES ('104814', '240', 'SolarSaint', '2', '2', '532', '480', '1020', '0');
+INSERT INTO "public"."npcs" VALUES ('105005', '7037', 'SkyPass', '2', '2', '589', '377', '1040', '0');
+INSERT INTO "public"."npcs" VALUES ('105006', '7037', 'SkyPass', '2', '2', '536', '323', '1040', '0');
+INSERT INTO "public"."npcs" VALUES ('105007', '7037', 'SkyPass', '2', '2', '486', '274', '1040', '0');
+INSERT INTO "public"."npcs" VALUES ('105008', '7037', 'SkyPass', '2', '2', '430', '218', '1040', '0');
+INSERT INTO "public"."npcs" VALUES ('105009', '7037', 'SkyPass', '2', '2', '386', '174', '1040', '0');
+INSERT INTO "public"."npcs" VALUES ('105010', '7019', 'Skyguard', '2', '2', '371', '579', '1040', '0');
+INSERT INTO "public"."npcs" VALUES ('105011', '7019', 'Skyguard', '2', '2', '323', '531', '1040', '0');
+INSERT INTO "public"."npcs" VALUES ('105012', '7019', 'Skyguard', '2', '2', '275', '483', '1040', '0');
+INSERT INTO "public"."npcs" VALUES ('105013', '7019', 'Skyguard', '2', '2', '227', '435', '1040', '0');
+INSERT INTO "public"."npcs" VALUES ('105014', '7019', 'Skyguard', '2', '2', '179', '387', '1040', '0');
+INSERT INTO "public"."npcs" VALUES ('105015', '7107', 'GodCloud', '2', '2', '84', '186', '1040', '0');
+INSERT INTO "public"."npcs" VALUES ('105016', '7097', 'Daniel', '2', '2', '166', '155', '1012', '0');
+
+-- ----------------------------
 -- Table structure for proficiency
 -- ----------------------------
 DROP TABLE IF EXISTS "public"."proficiency";
@@ -11371,9 +11526,9 @@ ALTER TABLE "public"."account" ADD PRIMARY KEY ("account_username");
 -- ----------------------------
 -- Checks structure for table characters
 -- ----------------------------
-ALTER TABLE "public"."characters" ADD CHECK (character_cps < 1000000000);
-ALTER TABLE "public"."characters" ADD CHECK (character_cps < 1000000000);
 ALTER TABLE "public"."characters" ADD CHECK ((character_level >= 1) AND (character_level <= 130));
+ALTER TABLE "public"."characters" ADD CHECK (character_cps < 1000000000);
+ALTER TABLE "public"."characters" ADD CHECK (character_cps < 1000000000);
 ALTER TABLE "public"."characters" ADD CHECK (character_gold < 1000000000);
 
 -- ----------------------------
@@ -11385,6 +11540,11 @@ ALTER TABLE "public"."characters" ADD PRIMARY KEY ("character_name");
 -- Primary Key structure for table items
 -- ----------------------------
 ALTER TABLE "public"."items" ADD PRIMARY KEY ("item_sid");
+
+-- ----------------------------
+-- Primary Key structure for table npcs
+-- ----------------------------
+ALTER TABLE "public"."npcs" ADD PRIMARY KEY ("npc_uid", "npc_type", "npc_name", "npc_flags", "npc_interaction", "npc_x", "npc_y", "npc_map", "npc_direction");
 
 -- ----------------------------
 -- Checks structure for table proficiency

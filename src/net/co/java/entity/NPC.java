@@ -17,8 +17,7 @@ public class NPC extends Entity implements Spawnable {
 	public NPC(long uniqueID, String name, Location location, int model, int interaction, int flags, int direction)
 	{
 		super(uniqueID, 0, 0, name, location, 0);
-		this.type = (model - (model%10));
-		this.type += direction; 
+		setType(type, direction);
 		this.interaction = interaction;
 		this.flags = flags;
 		this.face = 30;
@@ -42,6 +41,10 @@ public class NPC extends Entity implements Spawnable {
 	 */
 	public int getTypeD() {
 		return type; 
+	}
+	
+	public void setType(int type, int direction){
+		type = (type - (type%10)) + direction;
 	}
 	
 	public void setDirection(int direction){
@@ -93,6 +96,22 @@ public class NPC extends Entity implements Spawnable {
 
 	public int getFace() {
 		return face;
+	}
+	
+	public static enum Flag {
+		NONE 			( 0x0000  ),
+		TASK			( 0x0001  ),
+		RECYCLE 		( 0x0002  ),
+		SCENE 			( 0x0004  ),
+		LINKMAP 		( 0x0008  ),
+		DIEACTION 		( 0x0010  ),
+		ENABLEDELETE	( 0x0020  ),
+		EVENT 			( 0x0040  ),
+		TABLE 			( 0x0080  );
+		
+		public final long value;
+		
+		private Flag(long value) { this.value = value; }
 	}
 
 }

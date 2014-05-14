@@ -253,7 +253,7 @@ public class Player extends Entity {
 	
 	/**
 	 * @return the {@code Client} instance for this {@code User},
-	 * or null if the player is not online
+	 * or null if the player is not online 
 	 */
 	public AbstractClient getClient() {
 		return client;
