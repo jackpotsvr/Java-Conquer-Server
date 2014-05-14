@@ -1,19 +1,11 @@
 package net.co.java.packets;
 
+import net.co.java.entity.NPC;
+
 public class NPC_Dialog_Packet implements PacketWrapper
 {
 	private int packetLength = 14; 
-	private int taskID;
-	private int face = 30; 
-	private int par1; 
-	private short par2;
-	private short mode;
-	private int textLength = 0; 
-	NPC_Dialog_Type type;
-	
-	public void setType(NPC_Dialog_Type type) {
-		this.type = type;
-	}
+	private NPC npc; 
 
 	public enum NPC_Dialog_Type
 	{
@@ -24,13 +16,9 @@ public class NPC_Dialog_Packet implements PacketWrapper
 		NPC_FINISH;
 	}
 	
-	public NPC_Dialog_Packet(short dialognr, NPC_Dialog_Type type)
+	public NPC_Dialog_Packet(NPC npc)
 	{
-		this.type = type;
-		taskID = 0;
-		par1 = 0;
-		par2 = dialognr; 
-		mode = 1;	
+		this.npc = npc;
 	}
 	/*
 	public NPC_Dialog_Packet(short dialognr,  NPC_Dialog_Type type)
@@ -53,7 +41,7 @@ public class NPC_Dialog_Packet implements PacketWrapper
 			.putUnsignedByte(1)
 			.putUnsignedByte(1)
 			.putUnsignedByte(text.length()) // length of all the strings together. 
-			.putString(String.format("%s", text));
+			.putString(text);
 	}
 	
 	/**
@@ -91,7 +79,7 @@ public class NPC_Dialog_Packet implements PacketWrapper
 		return new PacketWriter(PacketType.NPC_DIALOG_PACKET, packetLength)
 			.putUnsignedShort(10)
 			.putUnsignedShort(10)
-			.putUnsignedShort(face)
+			.putUnsignedShort(npc.getFace())
 			.putUnsignedByte(0xFF)
 			.putUnsignedByte(4);
 	}

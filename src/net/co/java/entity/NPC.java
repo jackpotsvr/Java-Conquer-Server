@@ -11,7 +11,8 @@ public class NPC extends Entity implements Spawnable {
 	private int type;
 	private int interaction; // TODO MAKE ENUMS?
 	private long flags; // TODO MAKE ENUMS?
-	private int direction;
+	private int face; 
+
 	
 	public NPC(long uniqueID, String name, Location location, int model, int interaction, int flags, int direction)
 	{
@@ -20,7 +21,7 @@ public class NPC extends Entity implements Spawnable {
 		this.type += direction; 
 		this.interaction = interaction;
 		this.flags = flags;
-		this.direction = direction;
+		this.face = 30;
 	}
 	
 	@Override
@@ -88,6 +89,10 @@ public class NPC extends Entity implements Spawnable {
 	@Override
 	public void notify(PacketWriter writer) {
 		// Do nothing
+	}
+
+	public int getFace() {
+		return face;
 	}
 
 }

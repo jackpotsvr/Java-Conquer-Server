@@ -100,6 +100,8 @@ public class GameServerClient extends AbstractClient {
 		case NPC_INITIAL_PACKET:
 			new NPC_Initial_Packet(incomingPacket).handle(this);
 			break; 
+		case NPC_DIALOG_PACKET:
+			player.getActiveDialog().build();
 		default: 	
 			System.out.println("Unimplemented " + incomingPacket.getPacketType().toString());
 			break;
