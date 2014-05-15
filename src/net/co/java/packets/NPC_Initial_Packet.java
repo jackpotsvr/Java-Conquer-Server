@@ -28,7 +28,7 @@ public class NPC_Initial_Packet implements PacketHandler
 		NPC npc = null; 
 		
 		new MessagePacket(MessagePacket.SYSTEM, client.getPlayer().getName(), "You tried to talk to the NPC with UID: " + npcUID)
-						.setMessageType(MessageType.TopLeft)
+						.setMessageType(MessageType.TOPLEFT)
 						.build().send(client);
 		
 		for(Entity e : 	client.getPlayer().getLocation().getMap().getEntities())

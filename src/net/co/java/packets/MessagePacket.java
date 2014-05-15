@@ -1,5 +1,8 @@
 package net.co.java.packets;
 
+import net.co.java.entity.Player;
+import net.co.java.server.GameServerClient;
+
 
 /**
  * This packet is used to send messages to other players and to instruct
@@ -9,13 +12,13 @@ package net.co.java.packets;
  * @author Jan-Willem Gmelig Meyling
  * @author Thomas Gmelig Meyling
  */
-public class MessagePacket implements PacketWrapper {
+public class MessagePacket implements PacketHandler {
 
 	public final static String SYSTEM = "SYSTEM";
 	public final static String ALL_USERS = "ALLUSERS";
 	
 	private long aRGB = 0xFFFFFFFFL;
-	private MessageType type = MessageType.Talk;
+	private MessageType type = MessageType.TALK;
 	private long chatID = 0L;
 	
 	private final String from;
@@ -165,13 +168,13 @@ public class MessagePacket implements PacketWrapper {
 	 * @author Thomas Gmelig Meyling
 	 */
 	public static enum MessageType {
-		Talk(2000), Whisper(2001), Action(2002), Team(2003), Guild(2004),
-		TopLeft(2005), Clan(2006), System(2007), Yell(2008), Friend(2009),
-		Center(2011), Ghost(2013), Service(2014), Tip(2015), World(2021),
-		Dialog(2100), LoginInfo(2101), VendorHawk(2104), Website(2105),
-		Clear(2108), RightCorner(2109), GuildBulletin(2111), TradeBoard(2201),
-		FriendBoard(2202), TeamBoard(2203), GuildBoard(2204), OthersBoard(2205),
-		Broadcast(2500);		
+		TALK(2000), WHISPER(2001), ACTION(2002), TEAM(2003), GUILD(2004),
+		TOPLEFT(2005), CLAN(2006), SYSTEM(2007), YELL(2008), FRIEND(2009),
+		CENTER(2011), GHOST(2013), SERVICE(2014), TIP(2015), WORLD(2021),
+		DIALOG(2100), LOGININFO(2101), VENDORHAWK(2104), WEBSITE(2105),
+		CLEAR(2108), RIGHTCORNER(2109), GUILDBULLETIN(2111), TRADEBOARD(2201),
+		FRIENDBOARD(2202), TEAMBOARD(2203), GUILDBOARD(2204), OTHERSBOARD(2205),
+		BROADCAST(2500);		
 		
 		final long type;
 		
@@ -194,6 +197,28 @@ public class MessagePacket implements PacketWrapper {
 					return mt;
 			throw new RuntimeException("Unimplemented MessageType for " + value);
 		}
+	}
+
+	@Override
+	public void handle(GameServerClient client) {
+		switch(type)
+		{
+			case TALK:
+			{
+				for(Player p : client.getPlayer().view.getPlayers())
+				{
+					if(client.getPlayer() == p)
+						continue; 
+					this.build().send(p.getClient());
+				}
+				break;
+			}
+			default:
+			{
+				break; // TODO
+			}
+		}
+		
 	}
 	
 }

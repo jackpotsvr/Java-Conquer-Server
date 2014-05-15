@@ -27,19 +27,20 @@ public class TrojanStar extends NPC_Dialog{
 			{
 				if(player.getProfession().value - (player.getProfession().value  % 10) == 10)
 				{
-					NPC_Say("Hello " + player.getName() + ". I am Trojan Trainer. What can I do for you?" ).send(client); 
+					NPC_Say("Wielding dual weapons, the Trojans always charge fearlessly into combat and they believe "
+							+ "courage is the secret of victory. So, what can I do for you?" ).send(client); 
 					
-					NPC_Link1(1, "I would like to promote myself.").send(client);
-					NPC_Link1(2, "I would like to learn a skill.").send(client);
-					NPC_Link1(DIALOG_QUIT, "Just passing by.").send(client);
+					NPC_Link1(1, "I want to get promoted.").send(client);
+					NPC_Link1(2, "Learn class and weapon skills.").send(client);
+					NPC_Link1(DIALOG_QUIT, "Okay, I see.").send(client);
 					
 					NPC_SetFace().send(client);
 					
 					NPC_Finish().send(client);
 				}
 				else {
-					NPC_Say("Hello " + player.getName() + ". I can only train Trojans." ).send(client); 
-					NPC_Link1(DIALOG_QUIT, "Sigh.").send(client);		
+					NPC_Say("Trojans do not share their secrets of battle with others. I shall not teach you." ).send(client); 
+					NPC_Link1(DIALOG_QUIT, "I see.").send(client);		
 					NPC_SetFace().send(client);
 					NPC_Finish().send(client);
 				}
@@ -55,21 +56,14 @@ public class TrojanStar extends NPC_Dialog{
 					
 					NPC_Link1(3, "Sure").send(client);
 					NPC_Link1(DIALOG_QUIT, "I do not want to be promoted.").send(client);
-					new GeneralData(SubType.CONFIRM_PROFS, client.getPlayer()).handle(client);
-					player.promote();
-
-					new UpdatePacket(client.getPlayer())
-						.setAttribute(UpdatePacket.Mode.Job, (long)client.getPlayer().getProfession().value)
-						.build().send(client);
-					
-					
+					new GeneralData(SubType.CONFIRM_PROFS, client.getPlayer()).handle(client);						
 				} else { 
 					NPC_Say("Sorry, I cannot promote you yet." ).send(client);
-					NPC_Link1(DIALOG_QUIT, "Sigh").send(client);
+					NPC_Link1(DIALOG_QUIT, "Sigh.").send(client);
 				}
 				NPC_SetFace().send(client);
 				NPC_Finish().send(client);
-				
+		
 				break;
 			}
 			case 2: 
@@ -83,6 +77,12 @@ public class TrojanStar extends NPC_Dialog{
 			}
 			case 3:
 			{
+				player.promote();
+
+				new UpdatePacket(client.getPlayer())
+					.setAttribute(UpdatePacket.Mode.Job, (long)client.getPlayer().getProfession().value)
+					.build().send(client);
+				
 				NPC_Say("Congratulations. You have been promoted to "
 						+ client.getPlayer().getProfession() 
 						+ "!").send(client); 

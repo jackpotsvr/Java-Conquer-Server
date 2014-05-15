@@ -238,7 +238,7 @@ public class GeneralData implements PacketHandler {
 			
 			
 			new MessagePacket(MessagePacket.SYSTEM, hero.getName(), "Guild bulletin!")
-				.setMessageType(MessagePacket.MessageType.GuildBulletin).build().send(client);;
+				.setMessageType(MessagePacket.MessageType.GUILDBULLETIN).build().send(client);;
 			new GeneralData(SubType.CONFIRM_GUILD, hero).build().send(client);
 			
 			// Send animations
@@ -257,7 +257,7 @@ public class GeneralData implements PacketHandler {
 			
 			// Send default messages
 			new MessagePacket(MessagePacket.SYSTEM, hero.getName(), "Players online " + client.getGameServer().getAmountOfPlayers())
-				.setMessageType(MessagePacket.MessageType.System)
+				.setMessageType(MessagePacket.MessageType.SYSTEM)
 				.build().send(client);
 			
 			hero.inventory.send();
@@ -276,9 +276,20 @@ public class GeneralData implements PacketHandler {
 					.build().send(client);
 				break;
 			}
+		/** just resend the packet, like change direction, though in future you might want to set something
+		 * for increased stamina regen.
+		 */
+		case CHANGE_ACTION: 
 		case CHANGE_DIRECTION:
-			
+		{
+			for(Player p : client.getPlayer().view.getPlayers())
+			{
+				if(client.getPlayer() == p)
+					continue; 
+				build().send(p.getClient());
+			}
 			break;
+		}
 		default:
 			System.out.println("Unimplemented " + subType.toString());
 			break;

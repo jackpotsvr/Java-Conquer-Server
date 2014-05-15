@@ -51,7 +51,7 @@ public class GameServerClient extends AbstractClient {
 				this.setPlayer(player);
 				player.setClient(this);
 				new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "ANSWER_OK")
-						.setMessageType(MessageType.LoginInfo)
+						.setMessageType(MessageType.LOGININFO)
 						.build().send(this);
 				// Send the character information packet
 				player.characterInformation().send(this);
@@ -59,7 +59,7 @@ public class GameServerClient extends AbstractClient {
 			else
 			{
 				new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "NEW_ROLE")
-					.setMessageType(MessageType.LoginInfo)
+					.setMessageType(MessageType.LOGININFO)
 					.build().send(this);
 			}
 			break;
@@ -77,21 +77,21 @@ public class GameServerClient extends AbstractClient {
 			if(mp.getMessage().startsWith("/")) {
 				new Command(mp).handle(this);
 			} else {
-				System.out.println(mp.getFrom() + " said " + mp.getMessage() + ".");
+				mp.handle(this);
 			}
 			break;
 		case CHARACTER_CREATION_PACKET:
 			if (model.createCharacter(new Character_Creation_Packet(incomingPacket)))
 			{
 				new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "ANSWER_OK")
-				.setMessageType(MessageType.LoginInfo)
+				.setMessageType(MessageType.LOGININFO)
 				.build().send(this);
 				this.close();
 			}
 			else
 			{
 				new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "Failed to create character. Character name already in use.")
-				.setMessageType(MessageType.Dialog)
+				.setMessageType(MessageType.DIALOG)
 				.build().send(this);
 			}
 			break;
