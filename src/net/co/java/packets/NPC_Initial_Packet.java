@@ -2,15 +2,18 @@ package net.co.java.packets;
 
 import net.co.java.entity.Entity;
 import net.co.java.entity.NPC;
+import net.co.java.npc.dialogs.TC_Conductress;
+import net.co.java.npc.dialogs.NPC_Dialog;
+import net.co.java.packets.MessagePacket.MessageType;
 import net.co.java.server.GameServerClient;
 
 public class NPC_Initial_Packet implements PacketHandler
 {
-	long npcUID; 
+	private int npcUID; 
 	
 	public NPC_Initial_Packet(IncomingPacket ip)
 	{
-		npcUID = ip.readUnsignedInt(4);
+		npcUID = (int) ip.readUnsignedInt(4);
 	}
 	
 	@Override
@@ -23,6 +26,10 @@ public class NPC_Initial_Packet implements PacketHandler
 	
 		NPC npc = null; 
 		
+		new MessagePacket(MessagePacket.SYSTEM, client.getPlayer().getName(), "You tried to talk to the NPC with UID: " + npcUID)
+						.setMessageType(MessageType.TopLeft)
+						.build().send(client);
+		
 		for(Entity e : 	client.getPlayer().getLocation().getMap().getEntities())
 		{
 			if(e.getIdentity() == npcUID)
@@ -32,19 +39,24 @@ public class NPC_Initial_Packet implements PacketHandler
 		}
 		if(npc != null)
 		{
-			NPC_Dialog_Packet dialog = new NPC_Dialog_Packet(npc);
-			
-			dialog.build();
-			
-			dialog.NPC_Say("Hey, do you want some free Dragonballz?").send(client); 
-			
-			dialog.NPC_Link1(1, "Yes, sure.").send(client);
 	
-			dialog.NPC_Link1(255, "Nah. Bye.").send(client);
+			NPC_Dialog dialog = null;
 			
-			dialog.NPC_SetFace().send(client);
+			switch(npcUID)
+			{
+				case 103: // tc conductress
+					dialog = new TC_Conductress(npc);
+					break;
+				default: 
+					System.out.println("This npc is yet to be implemented.");
+					break;
+			}
 			
-			dialog.NPC_Finish().send(client);
+			if(dialog != null)
+			{
+				client.getPlayer().setActiveDialog(dialog);
+				dialog.handle(client);
+			}
 		}
 	}
 

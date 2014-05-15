@@ -6,22 +6,20 @@ public class NPC extends Entity implements Spawnable {
 	
 	private static final long serialVersionUID = 7294339394890365570L;
 	
-	//private Location location;
-	//private String name; 
-	//private long uniqueID;
 	private int type;
-	private int interaction; // TODO MAKE ENUMS?
-	private long flags; // TODO MAKE ENUMS?
+	private NPC_Flag flag;
+	private Interaction interaction; 
 	private int face; 
+	
 
 	
-	public NPC(long uniqueID, String name, Location location, int model, int interaction, int flags, int direction)
+	public NPC(long uniqueID, String name, Location location, int type, Interaction interaction, NPC_Flag flag)
 	{
 		super(uniqueID, 0, 0, name, location, 0);
-		setType(type, direction);
+		setType(type, location.getDirection());
+		this.flag = flag; 
 		this.interaction = interaction;
-		this.flags = flags;
-		this.face = 30;
+		this.face = 1; // should be loaded from the db as well.. 
 	}
 	
 	@Override
@@ -45,36 +43,29 @@ public class NPC extends Entity implements Spawnable {
 	}
 	
 	public void setType(int type, int direction){
-		type = (type - (type%10)) + direction;
+		this.type = (type - (type%10)) + direction;
 	}
 	
 	public void setDirection(int direction){
-		type = getType() + direction; 
+		this.type = getType() + direction; 
 	}
 	
-	
-	
-	public int getInteraction() {
+	public Interaction getInteraction() {
 		return interaction;
 	}
 
-	public void setInteraction(int interaction) {
+	public void setInteraction(Interaction interaction) {
 		this.interaction = interaction;
-	}
-
-	@Override 
-	public long getFlags() {
-		return flags;
-	}
-	
-	public void setFlags(long flags) {
-		this.flags = flags;
-	}
+	} 
 
 	@Override
 	public int getMaxHP() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+	
+	public NPC_Flag getNPC_Flag(){
+		return flag; 
 	}
 
 
@@ -93,7 +84,7 @@ public class NPC extends Entity implements Spawnable {
 		return face;
 	}
 	
-	public static enum Flag {
+	public static enum NPC_Flag {
 		NONE 			( 0x0000  ),
 		TASK			( 0x0001  ),
 		RECYCLE 		( 0x0002  ),
@@ -104,9 +95,48 @@ public class NPC extends Entity implements Spawnable {
 		EVENT 			( 0x0040  ),
 		TABLE 			( 0x0080  );
 		
-		public final long value;
+		public final int value;
 		
-		private Flag(long value) { this.value = value; }
+		private NPC_Flag(int value) { this.value = value; }
+		
+		public static NPC_Flag valueOf(int value)
+		{
+			for ( NPC_Flag fl : NPC_Flag.values() ) {
+				if ( fl.value == value )
+					return fl;
+			}
+			return null;
+		}
 	}
-
+	
+	public static enum Interaction {
+		SHOP 			(1),
+		DIALOG 			(2),
+		WAREHOUSE 		(3),
+		SCENE 			(4),
+		AVATAR 			(5),
+		METEORUPGRADE 	(6),
+		GEMSOCKET		(7),
+		STATUARY 		(9),
+		POLE 			(10),
+		MARKETSHOP 		(14),
+		MARKETSTALL 	(16),
+		GAMBLE 			(19),
+		FURNITURE 		(26),
+		DIALOG2 		(29);
+		
+		public final int value;
+		
+		private Interaction(int value) { this.value = value; }
+		
+		public static Interaction valueOf(int value)
+		{
+			for ( Interaction in : Interaction.values() ) {
+				if ( in.value == value )
+					return in;
+			}
+			return null;
+		}
+	}
+	
 }

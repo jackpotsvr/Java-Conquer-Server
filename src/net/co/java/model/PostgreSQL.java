@@ -15,6 +15,7 @@ import org.simpleframework.xml.Attribute;
 import net.co.java.entity.Location;
 import net.co.java.entity.Monster;
 import net.co.java.entity.NPC;
+import net.co.java.entity.NPC.NPC_Flag;
 import net.co.java.entity.Player;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
@@ -25,6 +26,7 @@ import net.co.java.server.Map;
 import net.co.java.skill.Skill;
 import net.co.java.skill.WeaponProficiency;
 import net.co.java.skill.WeaponType;
+import net.co.java.entity.NPC.Interaction;
 
 /**
  * The PostgreSQL model is to use the Java Conquer Server with PostgreSQL databases
@@ -194,11 +196,11 @@ public class PostgreSQL extends AbstractModel {
 				(
 						rs.getLong("npc_uid"),
 						rs.getString("npc_name"),
-						new Location(Map.valueOf(rs.getShort("npc_map")), rs.getShort("npc_x"), rs.getShort("npc_y")),
+						new Location(Map.valueOf(rs.getShort("npc_map")), rs.getShort("npc_x"), rs.getShort("npc_y"), rs.getInt("npc_direction")),
 						rs.getInt("npc_type"),
-						rs.getInt("npc_flags"), //  TODO wrong name in db
-						rs.getInt("npc_interaction"),
-						rs.getInt("npc_direction")
+						Interaction.valueOf((rs.getInt("npc_interaction"))), 
+						NPC_Flag.valueOf(rs.getInt("npc_flags"))
+						
 				).spawn();				
 			}			
 			

@@ -24,8 +24,8 @@ public class SpawnPacket extends PacketWriter {
 			.putUnsignedShort(npc.getLocation().getxCord())
 			.putUnsignedShort(npc.getLocation().getyCord())
 			.putUnsignedShort(npc.getTypeD())
-			.putUnsignedShort(npc.getInteraction())
-			.putUnsignedShort((int) npc.getFlags())
+			.putUnsignedShort(npc.getInteraction().value)
+			.putUnsignedShort(npc.getNPC_Flag().value)
 			.putUnsignedByte(1)
 			.putUnsignedByte(npc.getName().length())
 			.putString(npc.getName());

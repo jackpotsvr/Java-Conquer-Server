@@ -7,6 +7,7 @@ import net.co.java.entity.Player;
 import net.co.java.model.AccessException;
 import net.co.java.model.AuthorizationPromise;
 import net.co.java.model.Model;
+import net.co.java.npc.dialogs.NPC_Dialog;
 import net.co.java.packets.Character_Creation_Packet;
 import net.co.java.packets.GeneralData;
 import net.co.java.packets.IncomingPacket;
@@ -101,7 +102,14 @@ public class GameServerClient extends AbstractClient {
 			new NPC_Initial_Packet(incomingPacket).handle(this);
 			break; 
 		case NPC_DIALOG_PACKET:
-			player.getActiveDialog().build();
+			NPC_Dialog packet = player.getActiveDialog();
+			if(packet != null)
+			{
+				int input = incomingPacket.readUnsignedByte(10);
+				packet.setInput(input); 
+				packet.handle(this);
+			}
+			break;
 		default: 	
 			System.out.println("Unimplemented " + incomingPacket.getPacketType().toString());
 			break;
