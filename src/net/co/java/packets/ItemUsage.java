@@ -117,23 +117,23 @@ public class ItemUsage implements PacketHandler {
 					{
 						case 1060020: // // tc gate 1002, 439, 383
 							client.getPlayer().setLocation(new Location(Map.CentralPlain, 439, 383)); 
-							sendLocation(client); // need to send more data.
+							new GeneralData(SubType.LOCATION, client.getPlayer()).handle(client);
 							break;
 						case 1060021: //desert
 							client.getPlayer().setLocation(new Location(Map.Desert, 491, 647)); // 491, 
-							sendLocation(client); // might have to change this method soon.
+							new GeneralData(SubType.LOCATION, client.getPlayer()).handle(client);
 							break;
 						case 1060022: // ape
 							client.getPlayer().setLocation(new Location(Map.ApeMoutain, 567, 563));
-							sendLocation(client); // might have to change this method soon.
+							new GeneralData(SubType.LOCATION, client.getPlayer()).handle(client);
 							break;
 						case 1060023: // castle
 							client.getPlayer().setLocation(new Location(Map.PhoenixCastle, 190, 262));
-							sendLocation(client); // might have to change this method soon.
+							new GeneralData(SubType.LOCATION, client.getPlayer()).handle(client);
 							break;
 						case 1060024: //bi
 							client.getPlayer().setLocation(new Location(Map.BirdIsland, 716, 572));
-							sendLocation(client); // might have to change this method soon.
+							new GeneralData(SubType.LOCATION, client.getPlayer()).handle(client);
 							break;
 					
 					}
@@ -198,18 +198,4 @@ public class ItemUsage implements PacketHandler {
 			return null;
 		}
 	}   
-	
-	/**
-	 * Perhaps we have to move this later on ;) 
-	 * @param c
-	 */
-	void sendLocation(GameServerClient c)
-	{
-		new GeneralData(SubType.LOCATION, c.getPlayer())
-		.setDwParam(c.getPlayer().getLocation().getMap().getMapID())
-		.setwParam1(c.getPlayer().getLocation().getxCord())
-		.setwParam2(c.getPlayer().getLocation().getyCord())
-		.build().send(c);
-	}
-
 }

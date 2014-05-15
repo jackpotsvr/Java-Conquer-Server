@@ -27,6 +27,7 @@ import net.co.java.skill.Skill;
 import net.co.java.skill.WeaponProficiency;
 import net.co.java.skill.WeaponType;
 import net.co.java.entity.NPC.Interaction;
+import net.co.java.entity.Player.Profession;
 
 /**
  * The PostgreSQL model is to use the Java Conquer Server with PostgreSQL databases
@@ -185,7 +186,7 @@ public class PostgreSQL extends AbstractModel {
 	protected void fetchNPCs() throws AccessException {
 		try(Connection conn = getConnection();
 			PreparedStatement stmt = conn.prepareStatement("SELECT npc_uid, npc_name, npc_map, npc_x, npc_y, "
-					+ "npc_type, npc_flags, npc_interaction, npc_direction FROM npcs WHERE npc_map = 1002;")) /* don't load maps that aren't in enum yet.. */ 
+					+ "npc_type, npc_flags, npc_interaction, npc_direction FROM npcs WHERE npc_map = 1002 OR npc_map = 1004;")) /* don't load maps that aren't in enum yet.. */ 
 		{
 			
 			ResultSet rs = stmt.executeQuery();	
@@ -263,7 +264,7 @@ public class PostgreSQL extends AbstractModel {
 				player.setDexterity(rs.getInt("character_agility"));
 				player.setVitality(rs.getInt("character_vitality"));
 				player.setSpirit(rs.getInt("character_spirit"));
-				player.setProfession(rs.getInt("character_profession"));
+				player.setProfession(Profession.valueOf(rs.getInt("character_profession")));
 				player.setMesh(rs.getInt("character_mesh"));
 				player.setGold(rs.getInt("character_gold"));
 				player.setCps(rs.getInt("character_cps"));

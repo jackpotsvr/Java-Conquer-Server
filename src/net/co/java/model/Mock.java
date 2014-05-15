@@ -9,6 +9,7 @@ import java.util.Scanner;
 import net.co.java.entity.Location;
 import net.co.java.entity.Monster;
 import net.co.java.entity.Player;
+import net.co.java.entity.Player.Profession;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemPrototype.EquipmentPrototype;
@@ -64,7 +65,7 @@ public class Mock extends AbstractModel {
 			player.setDexterity(1);
 			player.setSpirit(1);
 			player.setVitality(1);
-			player.setProfession(15);
+			player.setProfession(Profession.TrojanMaster);
 			player.setMesh((38000 + 1003));
 			player.setGold(0);
 			player.setCps(0);
@@ -87,7 +88,7 @@ public class Mock extends AbstractModel {
 		player.setDexterity(1);
 		player.setSpirit(1);
 		player.setVitality(1);
-		player.setProfession(ip.getProffession());
+		player.setProfession(Profession.valueOf(ip.getProffession()));
 		player.setMesh((38000 + ip.getBody()));
 		player.setGold(0);
 		player.setCps(0);
@@ -110,7 +111,7 @@ public class Mock extends AbstractModel {
 		player.setSpirit(50);
 		player.setHP(5000);
 		player.setLevel(130);
-		player.setProfession(15);
+		player.setProfession(Profession.TrojanMaster);
 		return player;
 	}
 

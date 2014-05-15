@@ -183,7 +183,7 @@ public class GeneralData implements PacketHandler {
 					.putUnsignedInteger(0x0000) // Map status
 				.send(client);
 			}
-			
+		
 			new UpdatePacket(hero)
 				.setAttribute(UpdatePacket.Mode.RaiseFlag, hero.getFlags())
 				.setAttribute(UpdatePacket.Mode.Stamina, (long) hero.getStamina())
@@ -195,7 +195,6 @@ public class GeneralData implements PacketHandler {
 				.setAttribute(UpdatePacket.Mode.Level, (long) hero.getLevel())
 				.setAttribute(UpdatePacket.Mode.LocationPoint, 0l)
 				.build().send(client);
-			
 			// Retrieve weather TODO : Weather from MAP
 			new PacketWriter(PacketType.WEATHER_PACKET, 20)
 				.putUnsignedByte(3) // Map effect

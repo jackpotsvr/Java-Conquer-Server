@@ -2,6 +2,7 @@ package net.co.java.entity;
 
 import java.util.HashMap;
 
+import net.co.java.entity.NPC.Interaction;
 import net.co.java.guild.Guild;
 import net.co.java.guild.GuildRank;
 import net.co.java.item.ItemInstance;
@@ -26,8 +27,10 @@ public class Player extends Entity {
 	private NPC_Dialog activeDialog;
 	
 	private int gold = 0, cps = 0,
-			experience = 0, pkPoints = 0, profession = 15, rebornCount = 0, stamina = 100, action = 0,
+			experience = 0, pkPoints = 0, rebornCount = 0, stamina = 100, action = 0,
 			strength = 1, dexterity = 1, vitality = 1, spirit = 1;
+	
+	private Profession profession; 
 			
 	protected Guild guild = null;	                
 	protected GuildRank guildRank = GuildRank.None; 
@@ -174,12 +177,19 @@ public class Player extends Entity {
 		this.pkPoints = pkPoints;
 	}
 
-	public int getProfession() {
+	public Profession getProfession() {
 		return profession;
 	}
 
-	public void setProfession(int profession) {
+	public void setProfession(Profession profession) {
 		this.profession = profession;
+	}
+	
+	/**
+	 * Player profession will be increased with 1, if the player wasn't promoted to 'Master' yet.
+	 */
+	public void promote()	{
+		this.profession = (profession.value%10 != 5) ? Profession.valueOf(profession.value + 1) : profession;
 	}
 
 	public int getRebornCount() {
@@ -221,7 +231,7 @@ public class Player extends Entity {
 		hp += dexterity * 3;
 		hp += spirit * 3;
 		
-		if(profession >= 10 && profession <= 15) {
+		if(profession.value >= 10 && profession.value <= 15) {
 			if ( level >= 110 ) {
 				hp *= 1.15;
 			} else if ( level >= 100 ) {
@@ -245,7 +255,7 @@ public class Player extends Entity {
 	@Override
 	public int getMaxMana() {
 		int mana = spirit * 5;
-		if(profession >= 100) {
+		if(profession.value >= 100) {
 			if ( level >= 110 ) {
 				mana *= 6;
 			} else if ( level >= 100 ) {
@@ -502,7 +512,7 @@ public class Player extends Entity {
 		.putUnsignedShort(this.mana)
 		.putUnsignedShort(this.pkPoints)
 		.putUnsignedByte(this.level)
-		.putUnsignedByte(this.profession)
+		.putUnsignedByte(this.profession.value)
 		.setOffset(65)
 		.putUnsignedByte(this.rebornCount)
 		.putBoolean(true) // Display names
@@ -530,6 +540,54 @@ public class Player extends Entity {
 	@Override
 	public void notify(PacketWriter writer) {
 		writer.send(client);
+	}
+	
+	public enum Profession
+	{
+		InternTrojan                  (10),
+		Trojan                        (11),
+		VeteranTrojan                 (12),
+		TigerTrojan                   (13),
+		DragonTrojan                  (14),
+		TrojanMaster                  (15),
+		InternWarrior                 (20),
+		Warrior                       (21),
+		BrassWarrior                  (22),
+		SilverWarrior                 (23),
+		GoldWarrior                   (24),
+		WarriorMaster                 (25),
+		InternArcher                  (40),
+		Archer                        (41),
+		EagleArcher                   (42),
+		TigerArcher                   (43),
+		DragonArcher                  (44),
+		ArcherMaster                  (45),
+		InternTaoist                 (100),
+		Taoist                       (101),
+		WaterTaoist                  (132),
+		WaterWizard                  (133),
+		WaterMaster                  (134),
+		WaterSaint                   (135),
+		FireTaoist                   (142),
+		FireWizard                   (143),
+		FireMaster                   (144),
+		FireSaint                    (145);
+		
+		public int value; 
+		
+		private Profession(int value)
+		{
+			this.value = value;
+		}
+		
+		public static Profession valueOf(int value){
+			for ( Profession prof : Profession.values() ) {
+				if ( prof.value == value )
+					return prof;
+			}
+			return null;
+		}
+
 	}
 	
 }

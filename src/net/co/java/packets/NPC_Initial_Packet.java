@@ -4,6 +4,7 @@ import net.co.java.entity.Entity;
 import net.co.java.entity.NPC;
 import net.co.java.npc.dialogs.TC_Conductress;
 import net.co.java.npc.dialogs.NPC_Dialog;
+import net.co.java.npc.dialogs.TrojanStar;
 import net.co.java.packets.MessagePacket.MessageType;
 import net.co.java.server.GameServerClient;
 
@@ -44,6 +45,9 @@ public class NPC_Initial_Packet implements PacketHandler
 			
 			switch(npcUID)
 			{
+				case 17:
+					dialog = new TrojanStar(npc);
+					break;
 				case 103: // tc conductress
 					dialog = new TC_Conductress(npc);
 					break;

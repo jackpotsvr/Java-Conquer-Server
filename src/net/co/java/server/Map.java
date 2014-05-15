@@ -20,6 +20,7 @@ public enum Map {
 	/* http://www.elitepvpers.com/forum/co2-programming/177758-request-map-id-complete-list.html */
 	Desert(1000),
 	CentralPlain(1002),
+	PromotionCenter(1004),
 	PhoenixCastle(1011),
 	BirdIsland(1015),
 	ApeMoutain(1020);
