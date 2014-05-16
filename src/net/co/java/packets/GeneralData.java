@@ -3,6 +3,7 @@ package net.co.java.packets;
 import net.co.java.entity.Entity;
 import net.co.java.entity.Location;
 import net.co.java.entity.Player;
+import net.co.java.packets.MessagePacket.MessageType;
 import net.co.java.server.GameServerClient;
 import net.co.java.server.Map;
 
@@ -151,7 +152,23 @@ public class GeneralData implements PacketHandler {
 			hero.spawn();
 			break;
 		case JUMP:
-			hero.jump((int) (dwParam & 0xFFFF), (int) (dwParam >> 16), wParam3, ip);
+			if(System.currentTimeMillis() - client.getPlayer().getLastMovement() > 550) 
+			{
+				hero.jump((int) (dwParam & 0xFFFF), (int) (dwParam >> 16), wParam3, ip);
+				client.getPlayer().setLastMovement(System.currentTimeMillis());
+			}
+			else
+			{
+				new MessagePacket(MessagePacket.SYSTEM, client.getPlayer().getName(), "Sorry, you can't jump yet.")
+					.setMessageType(MessageType.TOPLEFT)
+					.setARGB(0xFFFF0000)
+					.build().send(client);
+				new GeneralData(SubType.LOCATION, hero)
+					.setDwParam(hero.getLocation().getMap().getMapID())
+					.setwParam1(hero.getLocation().getxCord())
+					.setwParam2(hero.getLocation().getyCord())
+					.build().send(client);
+			}
 			break;
 		case LOCATION:
 			{ // Update location
@@ -279,9 +296,22 @@ public class GeneralData implements PacketHandler {
 		/** just resend the packet, like change direction, though in future you might want to set something
 		 * for increased stamina regen.
 		 */
-		case CHANGE_ACTION: 
+		case CHANGE_ACTION:
+		{
+			for(Player p : client.getPlayer().view.getPlayers())
+			{
+				if(client.getPlayer() == p)
+					continue; 
+				build().send(p.getClient());
+			}
+			break;
+		}
 		case CHANGE_DIRECTION:
 		{
+			Location oldLocation = client.getPlayer().getLocation();
+			client.getPlayer().setLocation(new Location(oldLocation.map, oldLocation.xCord, 
+										   oldLocation.yCord, wParam3)); 
+			
 			for(Player p : client.getPlayer().view.getPlayers())
 			{
 				if(client.getPlayer() == p)

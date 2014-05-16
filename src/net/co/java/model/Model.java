@@ -1,5 +1,7 @@
 package net.co.java.model;
 
+import java.util.Map;
+
 import net.co.java.entity.Player;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
@@ -56,6 +58,12 @@ public interface Model {
 	 * @return Player
 	 */
 	Player getPlayer(Long identity);
+	
+	
+	/**
+	 * @return all the players on the server.
+	 */
+	public Map<Long, Player> getPlayers();
 	
 	/**
 	 * Add a new character in the model

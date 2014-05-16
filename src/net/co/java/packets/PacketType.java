@@ -113,6 +113,9 @@ public  enum PacketType {
 	 */
 	INTERACT_PACKET(0x3FE),	
 	
+	/** for if a player loots more than 1k gold. */ 
+	REWARD_PACKET(0x405),
+	
 	/**
 	 * The Skill Packet is sent during login and when you learn a new skill.
 	 */
@@ -159,7 +162,7 @@ public  enum PacketType {
 	
 	private final int type;
 	
-	PacketType(int type) {
+	private PacketType(int type) {
 		this.type = type;
 	}
 	

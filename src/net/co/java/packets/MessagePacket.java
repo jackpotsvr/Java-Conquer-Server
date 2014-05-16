@@ -21,6 +21,9 @@ public class MessagePacket implements PacketHandler {
 	private MessageType type = MessageType.TALK;
 	private long chatID = 0L;
 	
+	private long send_avatar = 0;
+	private long recv_avatar = 0; 
+	
 	private final String from;
 	private final String to;
 	private final String message;
@@ -146,8 +149,8 @@ public class MessagePacket implements PacketHandler {
 		.putUnsignedInteger(aRGB)
 		.putUnsignedInteger(type.type)
 		.putUnsignedInteger(chatID)
-		.putUnsignedInteger(0) // Receiver avatar.
-		.putUnsignedInteger(0) // Sender avatar.
+		.putUnsignedInteger(recv_avatar) // Receiver avatar.
+		.putUnsignedInteger(send_avatar) // Sender avatar.
 		.putUnsignedByte(4) // always 4, with suffix.
 		.putUnsignedByte(from.length())
 		.putString(from)
@@ -210,6 +213,19 @@ public class MessagePacket implements PacketHandler {
 					if(client.getPlayer() == p)
 						continue; 
 					this.build().send(p.getClient());
+				}
+				break;
+			}
+			case WHISPER:
+			{
+				for(Player p : client.getModel().getPlayers().values())
+				{
+					if(p.getName().equals(to))
+					{
+						this.recv_avatar = 2;
+						this.send_avatar = 2<<31;
+						this.build().send(p.getClient());
+					}
 				}
 				break;
 			}

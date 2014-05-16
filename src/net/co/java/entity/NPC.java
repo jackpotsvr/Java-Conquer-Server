@@ -128,7 +128,7 @@ public class NPC extends Entity implements Spawnable {
 		public final int value;
 		
 		private Interaction(int value) { this.value = value; }
-		
+			
 		public static Interaction valueOf(int value)
 		{
 			for ( Interaction in : Interaction.values() ) {

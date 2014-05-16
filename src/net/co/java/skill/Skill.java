@@ -13,6 +13,7 @@ public abstract class Skill {
 	
 	public static final MagicSkill FAST_BLADE = new FastBlade();
 	public static final MagicSkill SCENT_SWORD = new FastBlade.ScentSword();
+	public static final MagicSkill HERCULES = new Hercules();
 	public static final PassiveSkill PHOENIX = new Phoenix();
 	public static final PassiveSkill WIDE_STRIKE = new WideStrike();
 	public static final PassiveSkill BOREAS = new WideStrike.Boreas();
@@ -36,6 +37,7 @@ public abstract class Skill {
 		switch(skillID) {
 		case 1045: return FAST_BLADE;
 		case 1046: return SCENT_SWORD;
+		case 1115: return HERCULES;
 		case 1250: return WIDE_STRIKE;
 		case 1260: return SPEED_GUN;
 		case 1290: return PENETRATION;

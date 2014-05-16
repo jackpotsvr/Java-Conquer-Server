@@ -81,6 +81,13 @@ public abstract class AbstractModel implements Model {
 		return players.get(id);
 	}
 	
+	/**
+	 * @return the players
+	 */
+	public Map<Long, Player> getPlayers() {
+		return players;
+	}
+
 	@Override
 	public Player loadPlayer(AuthorizationPromise promise) throws AccessException {
 		Player hero = fetchPlayer(promise);

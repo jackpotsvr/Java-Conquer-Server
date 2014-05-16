@@ -16,6 +16,8 @@ import net.co.java.packets.ItemUsage;
 import net.co.java.packets.MessagePacket;
 import net.co.java.packets.MessagePacket.MessageType;
 import net.co.java.packets.NPC_Initial_Packet;
+import net.co.java.packets.PacketType;
+import net.co.java.packets.PacketWriter;
 import net.co.java.server.Server.GameServer;
 
 public class GameServerClient extends AbstractClient {
@@ -72,8 +74,9 @@ public class GameServerClient extends AbstractClient {
 		case ITEM_USAGE_PACKET:
 			new ItemUsage(incomingPacket).handle(this);
 			break;
-		case MESSAGE_PACKET:
+		case MESSAGE_PACKET:			
 			MessagePacket mp = new MessagePacket(incomingPacket);
+			
 			if(mp.getMessage().startsWith("/")) {
 				new Command(mp).handle(this);
 			} else {

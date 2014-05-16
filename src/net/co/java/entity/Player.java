@@ -40,6 +40,7 @@ public class Player extends Entity {
 	private final HashMap<WeaponType, WeaponProficiency> proficiencies = new HashMap<WeaponType, WeaponProficiency>();
 	private final HashMap<Skill, SkillProficiency> skills = new HashMap<Skill, SkillProficiency>();
 
+	private long lastMovement = 0;
 
 	public Player(Long identity, String name, Location location, int HP) {
 		super(identity, 223, 315, name, location, HP);
@@ -256,7 +257,7 @@ public class Player extends Entity {
 	public int getMaxMana() {
 		int mana = spirit * 5;
 		if(profession.value >= 100) {
-			if ( level >= 110 ) {
+			if ( level >= 110 ) { 
 				mana *= 6;
 			} else if ( level >= 100 ) {
 				mana *= 5;
@@ -269,6 +270,20 @@ public class Player extends Entity {
 		return mana;
 	}
 	
+	/**
+	 * @return the lastMovement
+	 */
+	public long getLastMovement() {
+		return lastMovement;
+	}
+
+	/**
+	 * @param l the lastMovement to set
+	 */
+	public void setLastMovement(long l) {
+		this.lastMovement = l;
+	}
+
 	/**
 	 * @return the {@code Client} instance for this {@code User},
 	 * or null if the player is not online 

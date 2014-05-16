@@ -1,6 +1,7 @@
 package net.co.java.packets;
 
 import net.co.java.entity.Location;
+import net.co.java.entity.Player;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.model.AccessException;
@@ -109,8 +110,17 @@ public class ItemUsage implements PacketHandler {
 			try {
 				ItemInstance item = client.getModel().getItemInstance(identity);
 				if(item instanceof EquipmentInstance)
+				{
 					client.getPlayer().inventory.equip((int) parameter, (EquipmentInstance) client.getModel().getItemInstance(identity));
 				
+					for(Player p : client.getPlayer().view.getPlayers())
+					{
+						if(client.getPlayer() == p)
+							continue; 
+						new SpawnPacket(client.getPlayer()).send(p.getClient());
+					}
+				}
+					
 				if(parameter == 0) // parameter 0 is for no equips, for instance usage of TwinCity gates and Windscrolls
 				{
 					switch (client.getModel().getItemInstance(identity).itemPrototype.identifier.intValue()) // should get item_sid from identity before switch.
