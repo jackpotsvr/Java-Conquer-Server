@@ -87,11 +87,17 @@ public abstract class AbstractModel implements Model {
 		return players.get(id);
 	}
 	
+	
+	
 	/**
 	 * @return the players
 	 */
 	public Map<Long, Player> getPlayers() {
 		return players;
+	}
+	
+	public List<Guild> getGuilds() {
+		return guilds;
 	}
 
 	@Override

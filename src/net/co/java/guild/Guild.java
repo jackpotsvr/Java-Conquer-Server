@@ -10,6 +10,7 @@ public class Guild {
 	
 	private String name; 
 	private int fund; 
+	private int uid; 
 	
 	/** All the allies and enemies guilds. (CAPPED at 5). */ 
 	private Guild[] allies = {null, null, null, null, null};
@@ -21,9 +22,10 @@ public class Guild {
 	 */
 	private final List<GuildMember> members = new CopyOnWriteArrayList<GuildMember>();
 	
-	public Guild(String guildName, int fund) {
+	public Guild(String guildName, int fund, int uid) {
 		this.name = guildName; 
 		this.fund = fund; 
+		this.uid = uid; 
 	}
 	
 	/**
@@ -142,5 +144,9 @@ public class Guild {
 	
 	public List<GuildMember> getMembers() {
 		return members;
+	}
+	
+	public int getUID(){
+		return uid; 
 	}
 }

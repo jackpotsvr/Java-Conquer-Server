@@ -104,14 +104,15 @@ public class PostgreSQL extends AbstractModel {
 	
 	protected void fetchGuilds() throws AccessException {
 		try(Connection conn = getConnection();
-				PreparedStatement stmt = conn.prepareStatement("SELECT guild_name, guild_fund FROM guilds;");) {
+				PreparedStatement stmt = conn.prepareStatement("SELECT guild_name, guild_fund, guild_uid FROM guilds;");) {
 			
 			ResultSet rs = stmt.executeQuery(); 
 			
 			while(rs.next())
 			{
 				Guild g = new Guild(rs.getString("guild_name"),
-									rs.getInt("guild_fund")); 		
+									rs.getInt("guild_fund"), 
+									rs.getInt("guild_uid")); 		
 				
 				fetchGuildMembers(g); 
 				// fetch guild relations // Should be after all guilds are fetched... Else the ene

@@ -4,6 +4,7 @@ import net.co.java.entity.Entity;
 import net.co.java.entity.Location;
 import net.co.java.entity.Player;
 import net.co.java.guild.GuildMember;
+import net.co.java.packets.Guild_Request_Packet.GuildRequestType;
 import net.co.java.packets.MessagePacket.MessageType;
 import net.co.java.server.GameServerClient;
 import net.co.java.server.Map;
@@ -237,16 +238,19 @@ public class GeneralData implements PacketHandler {
 			
 			// Send guilds
 			GuildMember gm = client.getPlayer().getGuildMember();
-			new PacketWriter(PacketType.STRING_PACKET, 11 + gm.getGuild().getGuildName().length())
-				.putUnsignedInteger(10324) // Guild  TODO
+			/** 
+			new PacketWriter(PacketType.STRING_PACKET, 11 + 1 + gm.getGuild().getGuildName().length())
+				.putUnsignedInteger(gm.getGuild().getUID()) // Guild  TODO
 				.putUnsignedByte(3) // TYPE: GuildName 
 				.putUnsignedByte(1) // String count
 				.putUnsignedByte(gm.getGuild().getGuildName().length()) // Str length
 				.putString(gm.getGuild().getGuildName())
-				.send(client);
-
+				.send(client); */ 
+			
+			//new String_Packet(GuildRequestType.RequestName, gm.getGuild().getUID()).handle(client);
+			
 			new PacketWriter(PacketType.GUILD_INFORMATION, 40)
-				.putUnsignedInteger(10324) // Guild ID
+				.putUnsignedInteger(gm.getGuild().getUID()) // Guild ID
 				.putUnsignedInteger(gm.getDonation()) // Donation
 				.putUnsignedInteger(gm.getGuild().getFund()) // Fund
 				.putUnsignedInteger(gm.getGuild().getMemberCount()) // Members count
@@ -254,9 +258,11 @@ public class GeneralData implements PacketHandler {
 				.putString(gm.getGuild().getGuildLeaderName(), 16) // leader
 				.send(client);
 			
+			new String_Packet(GuildRequestType.RequestName, gm.getGuild().getUID()).handle(client);
+
 			
 			new MessagePacket(MessagePacket.SYSTEM, hero.getName(), "Guild bulletin!")
-				.setMessageType(MessagePacket.MessageType.GUILDBULLETIN).build().send(client);;
+				.setMessageType(MessagePacket.MessageType.GUILDBULLETIN).build().send(client);
 			new GeneralData(SubType.CONFIRM_GUILD, hero).build().send(client);
 			
 			// Send animations

@@ -38,6 +38,7 @@ public class GameServerClient extends AbstractClient {
 	protected void handle(IncomingPacket incomingPacket) throws AccessException,
 			IOException {
 		Player player = this.getPlayer();
+				
 		switch(incomingPacket.getPacketType()) {
 		case AUTH_LOGIN_RESPONSE:
 			// Read the identity and token from the packet

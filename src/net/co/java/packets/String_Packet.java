@@ -3,20 +3,27 @@ package net.co.java.packets;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.co.java.guild.Guild;
 import net.co.java.guild.GuildMember;
+import net.co.java.packets.Guild_Request_Packet.GuildRequestType;
 import net.co.java.server.GameServerClient;
 
 public class String_Packet implements PacketHandler{
 
 	private StringPacketType type; 
-	private IncomingPacket ip;
+	private long guild_id; 
 	
 	
-	public String_Packet(IncomingPacket ip){
+	public String_Packet(IncomingPacket ip) {
 		type = StringPacketType.valueOf(ip.readUnsignedByte(8));
-		this.ip = ip;
 	}
 	
+	public String_Packet(GuildRequestType type, long guild_id){
+		if(type == GuildRequestType.RequestName)
+			this.type = StringPacketType.GuildName;
+		this.guild_id = guild_id; 
+	}
+
 	@Override
 	public PacketWriter build() {
 		return null;
@@ -54,10 +61,22 @@ public class String_Packet implements PacketHandler{
 				packet.send(client);
 
 				break;
-			case AllyGuild:
-				//client.getPlayer().getGuildMember().getGuild().getAllies()
-				break;
-					
+			case GuildName:
+				//String guildName = client.getPlayer().getGuildMember().getGuild().getGuildName();
+				String guildName; 
+				for(Guild g : client.getModel().getGuilds())
+						if(g.getUID() == guild_id)	
+						{
+							guildName = g.getGuildName();
+							new PacketWriter(PacketType.STRING_PACKET, 11 + 1 + guildName.length())
+								.putUnsignedInteger(g.getUID())
+								.putUnsignedByte(type.type)
+								.putUnsignedByte(1)
+								.putUnsignedByte(guildName.length())
+								.putString(guildName)
+								.send(client);
+						}
+				 break;
 			default:
 				System.out.println("String packet with type: " + type + " not implemented.");
 		}

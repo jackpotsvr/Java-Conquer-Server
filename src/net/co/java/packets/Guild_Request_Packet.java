@@ -1,14 +1,19 @@
 package net.co.java.packets;
 
 import net.co.java.guild.GuildMember;
+import net.co.java.packets.String_Packet.StringPacketType;
 import net.co.java.server.GameServerClient;
 
 public class Guild_Request_Packet implements PacketHandler{
 	
 	private GuildRequestType type; 
+	private IncomingPacket ip;
+	private long parameter_a;
 	
 	public Guild_Request_Packet(IncomingPacket ip){
 		type = GuildRequestType.valueOf(ip.readUnsignedByte(4));
+		parameter_a = ip.readUnsignedInt(8);
+		this.ip = ip;
 	}
 
 	@Override
@@ -20,10 +25,13 @@ public class Guild_Request_Packet implements PacketHandler{
 	@Override
 	public void handle(GameServerClient client) {
 		switch(type){
+			case RequestName:
+				new String_Packet(type, parameter_a).handle(client);
+				break;
 			case RequestInfo:
 				GuildMember gm = client.getPlayer().getGuildMember();
 				new PacketWriter(PacketType.GUILD_INFORMATION, 40)
-					.putUnsignedInteger(10324) // Guild ID
+					.putUnsignedInteger(gm.getGuild().getUID()) // Guild ID
 					.putUnsignedInteger(gm.getDonation()) // Donation
 					.putUnsignedInteger(gm.getGuild().getFund()) // Fund
 					.putUnsignedInteger(gm.getGuild().getMemberCount()) // Members count
@@ -37,6 +45,25 @@ public class Guild_Request_Packet implements PacketHandler{
 	}
 	
 	
+	
+	
+	/**
+	 * @return the type
+	 */
+	public GuildRequestType getType() {
+		return type;
+	}
+
+	/**
+	 * @return the ip
+	 */
+	public IncomingPacket getIncomingPacket() {
+		return ip;
+	}
+
+
+
+
 	public enum GuildRequestType
 	{
 		RequestJoin		(1),

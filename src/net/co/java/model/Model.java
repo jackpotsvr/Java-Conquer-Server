@@ -1,8 +1,10 @@
 package net.co.java.model;
 
+import java.util.List;
 import java.util.Map;
 
 import net.co.java.entity.Player;
+import net.co.java.guild.Guild;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemPrototype;
@@ -65,6 +67,12 @@ public interface Model {
 	 */
 	public Map<Long, Player> getPlayers();
 	
+	
+	/**
+	 * @return all guilds
+	 */
+	public List<Guild> getGuilds(); 
+	
 	/**
 	 * Add a new character in the model
 	 * @param ip
@@ -106,5 +114,7 @@ public interface Model {
 	 * @throws AccessException
 	 */
 	void setProficiency(Player hero, WeaponProficiency wp) throws AccessException;
+	
+	
 	
 }
