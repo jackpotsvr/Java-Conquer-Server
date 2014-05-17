@@ -28,6 +28,9 @@ import net.co.java.skill.WeaponProficiency;
 import net.co.java.skill.WeaponType;
 import net.co.java.entity.NPC.Interaction;
 import net.co.java.entity.Player.Profession;
+import net.co.java.guild.Guild;
+import net.co.java.guild.GuildMember;
+import net.co.java.guild.GuildRank;
 
 /**
  * The PostgreSQL model is to use the Java Conquer Server with PostgreSQL databases
@@ -95,6 +98,58 @@ public class PostgreSQL extends AbstractModel {
 		
 	}
 	
+	protected void fetchGuilds() throws AccessException {
+		try(Connection conn = getConnection();
+				PreparedStatement stmt = conn.prepareStatement("SELECT guild_name, guild_fund FROM guilds;");) {
+			
+			ResultSet rs = stmt.executeQuery(); 
+			
+			while(rs.next())
+			{
+				Guild g = new Guild(rs.getString("guild_name"),
+									rs.getInt("guild_fund")); 		
+				
+				fetchGuildMembers(g);
+				// fetch guild relations
+				guilds.add(g);
+			}	
+			
+			
+			
+			rs.close();
+			
+		} catch (SQLException e) {
+			throw new AccessException(e);
+		}
+	}
+	
+	protected void fetchGuildMembers(Guild g) throws AccessException{
+		try(Connection conn = getConnection();
+				PreparedStatement stmt = conn.prepareStatement("SELECT guild_member_name, "
+																+ "guild_member_rank, guild_member_donation "
+																+ "FROM guilds WHERE guild_name = ?;");) {
+			
+			stmt.setString(1, g.getGuildName());
+			ResultSet rs = stmt.executeQuery();
+			
+			while(rs.next())
+			{
+				GuildMember gm = new GuildMember(
+													rs.getString("guild_member_name"),
+													GuildRank.valueOf(rs.getInt("guild_member_rank")),
+													rs.getInt("guild_member_donation")
+												);
+				g.addGuildMember(gm);
+			}
+			
+			
+			rs.close();
+		} catch (SQLException e) {
+			throw new AccessException(e);
+		}
+	}
+	
+	
 	@Override
 	protected ItemPrototype fetchItemPrototype(long item_sid) throws AccessException {
 		try(Connection conn = getConnection();
@@ -132,6 +187,8 @@ public class PostgreSQL extends AbstractModel {
 						rs.getInt("item_agility")
 					);
 			}
+			
+		rs.close();
 			
 		} catch (SQLException e) {
 			throw new AccessException(e);
@@ -241,6 +298,7 @@ public class PostgreSQL extends AbstractModel {
 		this.authPromises.put(identity, promise);
 		return promise;
 	}
+	
 
 	@Override
 	protected Player fetchPlayer(AuthorizationPromise promise)
@@ -281,6 +339,9 @@ public class PostgreSQL extends AbstractModel {
 			throw new AccessException(e);
 		}
 	}
+	
+	
+	
 
 	@Override
 	protected void fetchInventory(Player hero) throws AccessException {

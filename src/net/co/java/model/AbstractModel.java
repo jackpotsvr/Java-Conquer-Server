@@ -2,11 +2,15 @@ package net.co.java.model;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.simpleframework.xml.Root;
 
 import net.co.java.entity.Player;
+import net.co.java.guild.Guild;
+import net.co.java.guild.GuildMember;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemPrototype;
@@ -33,6 +37,8 @@ public abstract class AbstractModel implements Model {
 	
 	/** AuthorizationPromises */
 	protected final Map<Long, AuthorizationPromise> authPromises = Collections.synchronizedMap(new HashMap<Long, AuthorizationPromise>());
+	
+	protected final List<Guild> guilds = new CopyOnWriteArrayList<Guild>();
 	
 	private volatile long INCREMENTING_IDENTITY = 0;
 	

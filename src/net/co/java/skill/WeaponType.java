@@ -32,4 +32,10 @@ public enum WeaponType {
 		}
 		return null; 
 	}
+	
+	public static boolean equals(long item1_id, long item2_id)
+	{
+		return ((item1_id / 1000) == (item2_id / 1000));
+	}
+	
 }

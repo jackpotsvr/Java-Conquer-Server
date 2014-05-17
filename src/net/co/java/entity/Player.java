@@ -33,7 +33,7 @@ public class Player extends Entity {
 	private Profession profession; 
 			
 	protected Guild guild = null;	                
-	protected GuildRank guildRank = GuildRank.None; 
+	protected GuildRank guildRank = GuildRank.NONE; 
 	private String spouse;
 	
 	public final Inventory inventory = new Inventory();	
@@ -557,6 +557,22 @@ public class Player extends Entity {
 		writer.send(client);
 	}
 	
+	public boolean isPromotable()
+	{
+		if(level > 15 && profession.value < 11)
+			return true;
+		if(level > 40 && profession.value < 12)
+			return true;
+		if(level > 70 && profession.value < 13)
+			return true;
+		if(level > 100 && profession.value < 14)
+			return true;
+		if(level > 110 && profession.value < 15)
+			return true;
+		return false; 
+	}
+	
+	
 	public enum Profession
 	{
 		InternTrojan                  (10),
@@ -601,6 +617,52 @@ public class Player extends Entity {
 					return prof;
 			}
 			return null;
+		}
+		
+		/** 
+		 * Computes the profession of the player regardless of promotions, and see whether it is
+		 * the profession number of an interntrojan. 
+		 */
+		public boolean isTrojan(){
+			return (value - (value%10)) == InternTrojan.value;
+		}
+		
+		/** 
+		 * Computes the profession of the player regardless of promotions, and see whether it is
+		 * the profession number of an internwarrior. 
+		 */
+		public boolean isWarrior(){
+			return (value - (value%10)) == InternWarrior.value;
+		}
+		
+		/** 
+		 * Computes the profession of the player regardless of promotions, and see whether it is
+		 * the profession number of an internarcher. 
+		 */
+		public boolean isArcher(){
+			return (value - (value%10)) == InternArcher.value;
+		}
+		
+		/** 
+		 * Checks whether the person is a taoist or not. 
+		 */
+		public boolean isTaoist(){
+			switch(this)
+			{
+				case InternTaoist:
+				case Taoist:
+				case WaterTaoist:
+				case WaterWizard:
+				case WaterMaster:
+				case WaterSaint:
+				case FireTaoist:
+				case FireWizard:
+				case FireMaster:
+				case FireSaint: 
+					return true;
+				default:
+					return false;
+			}
 		}
 
 	}

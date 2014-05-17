@@ -41,7 +41,8 @@ public class Hercules extends MagicSkill
 		
 		SkillProficiency prof = hero.getSkillProficiency(this);
 		
-		if ( /* check whether the caster has 2 equivalent weapon types. */
+		/** Hercules requires two weapons of the same items bare. */ 
+		if ( 	WeaponType.equals(Player.Inventory.LEFT_HAND, Player.Inventory.RIGHT_HAND) &&
 				prof!=null && stamina >= 30 ) {
 			int range = range(prof.level);			
 			TargetBuilder tb = new TargetBuilder(hero).inCircle(range);

@@ -1,19 +1,27 @@
 package net.co.java.guild;
 
 public enum GuildRank {
-	None(0),
-	Member(50),
-	InternManager(60),
-	DeputyManager(70),
-	BranchManager(80),
-	DeputyLeader(90),
-	Leader(100);
+	NONE 				(0),
+	MEMBER				(50),
+	INTERNMANAGER 		(60),
+	DEPUTYMANAGER 		(70),
+	BRANCHMANAGER 		(80),
+	DEPUTYLEADER 		(90),
+	GUILDLEADER 		(100);
 	
-	final int rank;
+	public final int rank;
 	
 	private GuildRank(int rank) {
 		this.rank = rank;
 	}
+	
+	public static GuildRank valueOf(int rank)  {
+		for ( GuildRank gr : GuildRank.values() ) {
+			if ( gr.rank == rank )
+				return gr;
+		}
+		return null; 
+	}		
 	
 	public int getRank() {
 		return rank;
