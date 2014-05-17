@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import net.co.java.entity.NPC.Interaction;
 import net.co.java.guild.Guild;
+import net.co.java.guild.GuildMember;
 import net.co.java.guild.GuildRank;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
@@ -33,7 +34,8 @@ public class Player extends Entity {
 	private Profession profession; 
 			
 	protected Guild guild = null;	                
-	protected GuildRank guildRank = GuildRank.NONE; 
+	//protected GuildRank guildRank = GuildRank.NONE;  // TO be replaced with guild member v
+	protected GuildMember guildMember; // 
 	private String spouse;
 	
 	public final Inventory inventory = new Inventory();	
@@ -46,6 +48,23 @@ public class Player extends Entity {
 		super(identity, 223, 315, name, location, HP);
 	}
 	
+
+	/**
+	 * @return the guildMember
+	 */
+	public GuildMember getGuildMember() {
+		return guildMember;
+	}
+
+	/**
+	 * @param guildMember the guildMember to set
+	 */
+	public void setGuildMember(GuildMember guildMember) {
+		this.guildMember = guildMember;
+	}
+
+
+
 	public void setClient(AbstractClient client) {
 		this.client = client;
 	}
@@ -71,19 +90,11 @@ public class Player extends Entity {
 	}
 
 	public Guild getGuild() {
-		return guild;
+		return guildMember.getGuild();
 	}
 
 	public void setGuild(Guild guild) {
 		this.guild = guild;
-	}
-
-	public int getGuildRank() {
-		return guildRank.getRank();
-	}
-
-	public void setGuildRank(GuildRank guildRank) {
-		this.guildRank = guildRank;
 	}
 	
 	public int getExperience() {

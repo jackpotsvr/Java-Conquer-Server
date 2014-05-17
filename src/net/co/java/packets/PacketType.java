@@ -135,6 +135,10 @@ public  enum PacketType {
 	
 	GUILD_INFORMATION(0x452),
 	
+	GUILD_REQUEST(0x453),
+	
+	GUILD_MEMBER_INFORMATION(0x458),
+	
 	/**
 	 * The Weapon Proficiency Packet is sent during login and when you learn a
 	 * new Proficiency.

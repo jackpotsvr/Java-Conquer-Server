@@ -10,6 +10,8 @@ import net.co.java.model.Model;
 import net.co.java.npc.dialogs.NPC_Dialog;
 import net.co.java.packets.Character_Creation_Packet;
 import net.co.java.packets.GeneralData;
+import net.co.java.packets.Guild_Member_Information_Packet;
+import net.co.java.packets.Guild_Request_Packet;
 import net.co.java.packets.IncomingPacket;
 import net.co.java.packets.InteractPacket;
 import net.co.java.packets.ItemUsage;
@@ -18,6 +20,7 @@ import net.co.java.packets.MessagePacket.MessageType;
 import net.co.java.packets.NPC_Initial_Packet;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
+import net.co.java.packets.String_Packet;
 import net.co.java.server.Server.GameServer;
 
 public class GameServerClient extends AbstractClient {
@@ -112,6 +115,15 @@ public class GameServerClient extends AbstractClient {
 				packet.setInput(input); 
 				packet.handle(this);
 			}
+			break;
+		case GUILD_MEMBER_INFORMATION:
+			new Guild_Member_Information_Packet(incomingPacket).handle(this);
+			break;
+		case GUILD_REQUEST:
+			new Guild_Request_Packet(incomingPacket).handle(this);
+			break;	
+		case STRING_PACKET:
+			new String_Packet(incomingPacket).handle(this);
 			break;
 		default: 	
 			System.out.println("Unimplemented " + incomingPacket.getPacketType().toString());

@@ -70,7 +70,7 @@ public class SpawnPacket extends PacketWriter {
 			.setOffset(12).putUnsignedInteger(player.getFlags())
 			.setOffset(20).putUnsignedShort(0) // Guild ID
 			.setOffset(23)
-			.putUnsignedByte((short) player.getGuildRank()) // Guild rank
+			.putUnsignedByte((short) player.getGuildMember().getRank().rank) // Guild rank
 			.putUnsignedInteger(player.inventory.getEquipmentSID(Inventory.GARMENT)) // garment 24
 			.putUnsignedInteger(player.inventory.getEquipmentSID(Inventory.HELM)) // helm 28
 			.putUnsignedInteger(player.inventory.getEquipmentSID(Inventory.ARMOR)) // arm 32

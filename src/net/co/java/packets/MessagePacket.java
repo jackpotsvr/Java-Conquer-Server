@@ -1,6 +1,7 @@
 package net.co.java.packets;
 
 import net.co.java.entity.Player;
+import net.co.java.guild.GuildMember;
 import net.co.java.server.GameServerClient;
 
 
@@ -219,14 +220,15 @@ public class MessagePacket implements PacketHandler {
 			case WHISPER:
 			{
 				for(Player p : client.getModel().getPlayers().values())
-				{
 					if(p.getName().equals(to))
-					{
-						this.recv_avatar = 2;
-						this.send_avatar = 2<<31;
 						this.build().send(p.getClient());
-					}
-				}
+				break;
+			}
+			case GUILD:
+			{
+				for(GuildMember gm : client.getPlayer().getGuild().getMembers())
+					if(gm.getPlayer() != null && gm.getPlayer().getClient() != client)
+						this.build().send(gm.getPlayer().getClient());
 				break;
 			}
 			default:

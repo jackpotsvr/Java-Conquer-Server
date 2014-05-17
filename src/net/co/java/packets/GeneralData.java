@@ -3,6 +3,7 @@ package net.co.java.packets;
 import net.co.java.entity.Entity;
 import net.co.java.entity.Location;
 import net.co.java.entity.Player;
+import net.co.java.guild.GuildMember;
 import net.co.java.packets.MessagePacket.MessageType;
 import net.co.java.server.GameServerClient;
 import net.co.java.server.Map;
@@ -235,22 +236,22 @@ public class GeneralData implements PacketHandler {
 			new GeneralData(SubType.CONFIRM_FRIENDS, hero).build().send(client);
 			
 			// Send guilds
-			String guildname = "Yakmelk"; 
-			new PacketWriter(PacketType.STRING_PACKET, 11 + guildname.length())
-				.putUnsignedInteger(10324) // Guild ID
+			GuildMember gm = client.getPlayer().getGuildMember();
+			new PacketWriter(PacketType.STRING_PACKET, 11 + gm.getGuild().getGuildName().length())
+				.putUnsignedInteger(10324) // Guild  TODO
 				.putUnsignedByte(3) // TYPE: GuildName 
 				.putUnsignedByte(1) // String count
-				.putUnsignedByte(guildname.length()) // Str length
-				.putString(guildname)
+				.putUnsignedByte(gm.getGuild().getGuildName().length()) // Str length
+				.putString(gm.getGuild().getGuildName())
 				.send(client);
 
 			new PacketWriter(PacketType.GUILD_INFORMATION, 40)
 				.putUnsignedInteger(10324) // Guild ID
-				.putUnsignedInteger(1000000) // Donation
-				.putUnsignedInteger(1250000) // Fund
-				.putUnsignedInteger(134) // Members count
-				.setOffset(20).putUnsignedByte(90) // position
-				.putString("Jackpotsvr", 16) // leader
+				.putUnsignedInteger(gm.getDonation()) // Donation
+				.putUnsignedInteger(gm.getGuild().getFund()) // Fund
+				.putUnsignedInteger(gm.getGuild().getMemberCount()) // Members count
+				.setOffset(20).putUnsignedByte(gm.getRank().rank) // position
+				.putString(gm.getGuild().getGuildLeaderName(), 16) // leader
 				.send(client);
 			
 			

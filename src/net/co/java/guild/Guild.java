@@ -120,15 +120,27 @@ public class Guild {
 		members.add(gm);
 	}
 	
-	public void addOnlineMember(Player p) { 
+	public GuildMember addOnlineMember(Player p) { 
 		for(GuildMember gm : members)
 			if(!gm.isOnline() && gm.getName().equals(p.getName()))
+			{
 				gm.setPlayer(p);
+				return gm;
+			}
+		return null; // shouldn't get here.
 	}
 	
 	public void removeOnlineMember(Player p){
 		for(GuildMember gm : members)
 			if(gm.getPlayer() == p)
 				gm.goOffline();
+	}
+	
+	public int getMemberCount(){
+		return members.size();
+	}
+	
+	public List<GuildMember> getMembers() {
+		return members;
 	}
 }

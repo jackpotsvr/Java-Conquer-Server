@@ -8,17 +8,21 @@ public class GuildMember {
 	private String name = null;  // if player is not online, there is no player object, else there is. 
 	private GuildRank rank; // e.g. Guild Leader 
 	private int donation; 
+	private Guild guild;
+	private String bulletin; 
 	
 	/** Not entirely sure if this one is actually ever needed. */ 
-	public GuildMember(Player player, GuildRank rank, int donation)
+	public GuildMember(Guild guild, Player player, GuildRank rank, int donation)
 	{
+		this.guild = guild;
 		this.player = player;
 		this.rank = rank;
 		this.donation = donation; 
 	}
 	
-	public GuildMember(String name, GuildRank rank, int donation)
+	public GuildMember(Guild guild, String name, GuildRank rank, int donation)
 	{
+		this.guild = guild; 
 		this.name = name;
 		this.rank = rank;
 		this.donation = donation; 
@@ -70,5 +74,9 @@ public class GuildMember {
 	 */
 	public int getDonation() {
 		return donation;
+	}
+	
+	public Guild getGuild(){
+		return guild; 
 	}
 }

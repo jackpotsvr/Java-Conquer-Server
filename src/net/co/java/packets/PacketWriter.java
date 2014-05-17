@@ -117,6 +117,11 @@ public class PacketWriter {
 		return this;
 	}
 	
+	public PacketWriter putSignedInteger(int sint) {
+		buffer.putInt(sint);
+		return this;
+	}
+	
 	/**
 	 * Pushes an unsigned long to the packet. Since unsigned longs can grow
 	 * up to 2^64-1, and Java integers can only grow up to 2^64-1 we supply the

@@ -58,6 +58,10 @@ public class PostgreSQL extends AbstractModel {
 		this.PASSWORD = password;
 		createSomeStuff();
 		fetchNPCs();
+		fetchGuilds();
+		
+		for(Guild g : guilds)
+			fetchGuildRelations(g);
 	}
 	
 	private void createSomeStuff() throws FileNotFoundException{
@@ -109,8 +113,8 @@ public class PostgreSQL extends AbstractModel {
 				Guild g = new Guild(rs.getString("guild_name"),
 									rs.getInt("guild_fund")); 		
 				
-				fetchGuildMembers(g);
-				// fetch guild relations
+				fetchGuildMembers(g); 
+				// fetch guild relations // Should be after all guilds are fetched... Else the ene
 				guilds.add(g);
 			}	
 			
@@ -123,27 +127,74 @@ public class PostgreSQL extends AbstractModel {
 		}
 	}
 	
-	protected void fetchGuildMembers(Guild g) throws AccessException{
+	protected void fetchGuildMembers(Guild guild) throws AccessException {
 		try(Connection conn = getConnection();
 				PreparedStatement stmt = conn.prepareStatement("SELECT guild_member_name, "
 																+ "guild_member_rank, guild_member_donation "
-																+ "FROM guilds WHERE guild_name = ?;");) {
+																+ "FROM guild_membership WHERE guild_name = ?;");) {
 			
-			stmt.setString(1, g.getGuildName());
+			stmt.setString(1, guild.getGuildName());
 			ResultSet rs = stmt.executeQuery();
 			
 			while(rs.next())
 			{
 				GuildMember gm = new GuildMember(
+													guild,
 													rs.getString("guild_member_name"),
 													GuildRank.valueOf(rs.getInt("guild_member_rank")),
 													rs.getInt("guild_member_donation")
 												);
-				g.addGuildMember(gm);
+				guild.addGuildMember(gm);
 			}
 			
 			
 			rs.close();
+		} catch (SQLException e) {
+			throw new AccessException(e);
+		}
+	}
+	
+	protected void fetchGuildRelations(Guild g) throws AccessException {
+		try(Connection conn = getConnection();
+				PreparedStatement stmt = conn.prepareStatement("SELECT guild_a, guild_b, guild_isfriendly FROM "
+															+ "guild_relations WHERE guild_a = ? OR guild_b = ?");) {
+			stmt.setString(1, g.getGuildName());
+			stmt.setString(2, g.getGuildName());
+			ResultSet rs = stmt.executeQuery();
+			
+			while(rs.next())
+			{
+				String guild_A = rs.getString("guild_a");
+				String guild_B = rs.getString("guild_b");
+				boolean guildIsFriendly = rs.getBoolean("guild_isfriendly");
+				
+				
+				// if our guild is guild_a, and the other guild is guild_b, add it as an ally , if it is an ally,
+				// or add it as an enemy if it is an enemy. else, the opposite.
+				if(g.getGuildName().equals(guild_A))
+				{
+					for(Guild relative : guilds)
+						if(relative.getGuildName().equals(guild_B))
+						{
+							if(guildIsFriendly)
+								g.addAlly(relative);
+							else
+								g.addEnemy(relative);
+						}
+				} else {
+					for(Guild relative : guilds)
+						if(relative.getGuildName().equals(guild_A))
+						{
+							if(guildIsFriendly)
+								g.addAlly(relative);
+							else
+								g.addEnemy(relative);
+						}
+				}
+				
+			}
+			
+			rs.close();	
 		} catch (SQLException e) {
 			throw new AccessException(e);
 		}
@@ -306,7 +357,9 @@ public class PostgreSQL extends AbstractModel {
 		Player player = null;
 		
 		try(Connection conn = getConnection();
-			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM characters WHERE character_name = ? AND account_username = ?")) {
+			PreparedStatement stmt = conn.prepareStatement("SELECT * FROM characters "
+														+ "JOIN guild_membership ON (character_name = guild_member_name)"
+														+ " WHERE character_name = ? AND account_username = ?")) {
 			
 			stmt.setString(1, promise.getCharacterName());
 			stmt.setString(2, promise.getAccountName());
@@ -329,9 +382,22 @@ public class PostgreSQL extends AbstractModel {
 				player.setHairstyle(rs.getInt("character_hair"));
 				player.setRebornCount(rs.getInt("character_reborn"));
 				player.setHP(rs.getInt("character_curhp"));
-				player.setMana(rs.getInt("character_curmp"));		
+				player.setMana(rs.getInt("character_curmp"));	
+				
+				
+				String guildName = rs.getString("guild_name");
+				
+				// binds the GuildMember to the Player, and adds it to the online members.
+				for(Guild g : guilds)
+					if(g.getGuildName().equals(guildName))
+					{	
+						player.setGuildMember(g.addOnlineMember(player));
+					}
 			}
 			
+	
+				
+
 			rs.close();
 			return player;
 			
