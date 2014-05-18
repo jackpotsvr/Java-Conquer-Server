@@ -31,6 +31,7 @@ public class PhysicalAttack implements PacketWrapper {
 	}
 
 	// Computes if target is in range etc
+	// TODO CHECK FOR TIME 
 	public boolean validateHit(){
 		TargetBuilder tb = new TargetBuilder(client.getPlayer()).inCircle(getRange());
 		
@@ -156,7 +157,7 @@ public class PhysicalAttack implements PacketWrapper {
 		long damage = (long) (computeDamage()*skill.damageMutiplier(client.getPlayer().getSkillLevel(skill)));
 		
 		target.setHP((int) (target.getHP()-damage));
-		
+	
 		PacketWriter pw = new PacketWriter(PacketType.SKILL_ANIMATION_PACKET, 20 + tb.size() * 8)
 			.putUnsignedInteger(client.getIdentity())
 				.putUnsignedShort(client.getPlayer().getLocation().xCord)

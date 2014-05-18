@@ -211,7 +211,7 @@ public class GeneralData implements PacketHandler {
 				.setAttribute(UpdatePacket.Mode.Mana, (long) hero.getMana())
 				.setAttribute(UpdatePacket.Mode.MaxHP, (long) hero.getMaxHP())
 				.setAttribute(UpdatePacket.Mode.MaxMana, (long) hero.getMaxMana())
-				.setAttribute(UpdatePacket.Mode.XPCircle, 60l)
+				.setAttribute(UpdatePacket.Mode.XPCircle, 0L)
 				.setAttribute(UpdatePacket.Mode.Level, (long) hero.getLevel())
 				.setAttribute(UpdatePacket.Mode.LocationPoint, 0l)
 				.build().send(client);
@@ -332,6 +332,13 @@ public class GeneralData implements PacketHandler {
 			}
 			break;
 		}
+		case END_XP_LIST:
+		{
+			client.getPlayer().setXPON(false);
+			client.getPlayer().setXpRing(0);
+			this.build().send(client);
+		}
+		
 		default:
 			System.out.println("Unimplemented " + subType.toString());
 			break;

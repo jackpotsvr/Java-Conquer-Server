@@ -29,7 +29,9 @@ public class Player extends Entity {
 	
 	private int gold = 0, cps = 0,
 			experience = 0, pkPoints = 0, rebornCount = 0, stamina = 100, action = 0,
-			strength = 1, dexterity = 1, vitality = 1, spirit = 1;
+			strength = 1, dexterity = 1, vitality = 1, spirit = 1, xpRing;
+	
+	private boolean xpON; 
 	
 	private Profession profession; 
 			
@@ -62,7 +64,14 @@ public class Player extends Entity {
 	public void setGuildMember(GuildMember guildMember) {
 		this.guildMember = guildMember;
 	}
-
+	
+	public boolean isXPON() {
+		return xpON;
+	}
+	
+	public void setXPON(boolean xpON) {
+		this.xpON = xpON;
+	}
 
 
 	public void setClient(AbstractClient client) {
@@ -82,7 +91,7 @@ public class Player extends Entity {
 	}
 	
 	public int getSkillLevel(Skill skill) {
-		return 2;
+		return skills.get(skill).level;
 	}
 
 	public void setCps(int cps) {
@@ -136,6 +145,24 @@ public class Player extends Entity {
 	public void setSpirit(int spirit) {
 		this.spirit = spirit;
 	}
+	
+	
+
+	/**
+	 * @return the xpRing
+	 */
+	public int getXpRing() {
+		return xpRing;
+	}
+
+
+	/**
+	 * @param xpRing the xpRing to set
+	 */
+	public void setXpRing(int xpRing) {
+		this.xpRing = xpRing;
+	}
+
 
 	/**
 	 * @return the amount of remaining attribute points.

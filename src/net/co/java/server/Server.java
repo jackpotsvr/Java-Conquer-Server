@@ -171,6 +171,7 @@ public class Server implements Closeable {
 		 */
 		public GameServer() throws IOException {
 			super(DEFAULT_PORT);
+			new GameServerTicks(model);
 		}
 
 		@Override
