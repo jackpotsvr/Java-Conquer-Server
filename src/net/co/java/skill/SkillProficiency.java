@@ -71,7 +71,7 @@ public class SkillProficiency {
 		.send(player);
 	}
 	
-	void sendUpdateSkill() {
+	public void sendUpdateSkill() {
 		new PacketWriter(PacketType.SKILL_UPDATE_PACKET, 12)
 		.putUnsignedInteger(exp)
 		.putUnsignedShort(skill.getSkillID())

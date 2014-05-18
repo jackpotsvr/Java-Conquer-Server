@@ -61,7 +61,7 @@ public class UpdatePacket implements PacketWrapper {
 		HP(0), MaxHP(1), Mana(2), MaxMana(3), Money(4), Experience(5), PKPoints(6), Job(7), Stamina(
 				9), StatPoints(11), Model(12), Level(13), Spirit(14), Vitality(
 				15), Strength(16), Agility(17), GuildDonation(20), KOSeconds(22), RaiseFlag(
-				26), Hairstyle(27), XPCircle(28), LocationPoint(255);
+				26), Hairstyle(27), XPCircle(28), LuckyTime(29),  LocationPoint(255);
 		
 		public final int mode;
 		private Mode(int i) { mode = i; }

@@ -33,6 +33,10 @@ public class Player extends Entity {
 	
 	private boolean xpON; 
 	
+	private long blessTime = 0; 
+	
+	private Player prayerHost;
+	
 	private Profession profession; 
 			
 	protected Guild guild = null;	                
@@ -51,12 +55,40 @@ public class Player extends Entity {
 	}
 	
 
-	/**
-	 * @return the guildMember
-	 */
+
 	public GuildMember getGuildMember() {
 		return guildMember;
 	}
+	
+	public Player getPrayerHost() {
+		return prayerHost;
+	}
+
+
+
+	public void setPrayerHost(Player prayerHost) {
+		this.prayerHost = prayerHost;
+	}
+
+
+
+	public boolean isBlessing() {
+		return hasFlag(Flag.LUCKYTIME);
+	}
+
+	public boolean isPraying() {
+		return hasFlag(Flag.PRAY);
+	}
+
+	public long getBlessTime() {
+		return blessTime;
+	}
+
+
+	public void setBlessTime(long blessTime) {
+		this.blessTime = blessTime;
+	}
+
 
 	/**
 	 * @param guildMember the guildMember to set
@@ -340,7 +372,7 @@ public class Player extends Entity {
 	}
 
 	public void setSkill(Skill s, int level, long exp) {
-		if ( level > 0 || exp > 0 )
+		if ( level >= 0 || exp >= 0 )
 			skills.put(s, new SkillProficiency(this, s, level, exp));
 	}
 	
@@ -593,7 +625,11 @@ public class Player extends Entity {
 	
 	public void sendSkills(){
 		for ( SkillProficiency skill : skills.values() )
+		{
+			System.out.println(skill.getSkill());
 			skill.sendSkill();
+		}
+		
 	}
 	
 	public void sendStamina() {

@@ -12,6 +12,7 @@ import net.co.java.packets.MessagePacket;
 import net.co.java.packets.UpdatePacket;
 import net.co.java.packets.MessagePacket.MessageType;
 import net.co.java.packets.UpdatePacket.Mode;
+import net.co.java.skill.Bless;
 
 public class GameServerTicks 
 {
@@ -69,7 +70,7 @@ public class GameServerTicks
 	
 	public void xpIncrease() { 
 		long delay = 3000;
-		long period = 50; 
+		long period = 3000; 
 		
 		timer.scheduleAtFixedRate(new TimerTask() {
 	        public void run() {
@@ -97,6 +98,14 @@ public class GameServerTicks
 				}
 	        }
 		}, delay, period);
+	}
+	
+	public static Timer calculateBless(final Bless bless){
+		Timer tm = new Timer();
+		tm.scheduleAtFixedRate(new TimerTask() {
+	        public void run(){ bless.addBless(); } 
+	        },Bless.BLESS_PERIOD, Bless.BLESS_PERIOD);
+		return tm;
 	}
 	
 }

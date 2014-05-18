@@ -337,6 +337,7 @@ public class GeneralData implements PacketHandler {
 			client.getPlayer().setXPON(false);
 			client.getPlayer().setXpRing(0);
 			this.build().send(client);
+			break;
 		}
 		
 		default:

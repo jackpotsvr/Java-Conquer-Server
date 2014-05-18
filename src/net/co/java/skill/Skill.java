@@ -15,6 +15,7 @@ public abstract class Skill {
 	public static final MagicSkill FAST_BLADE = new FastBlade();
 	public static final MagicSkill SCENT_SWORD = new FastBlade.ScentSword();
 	public static final MagicSkill HERCULES = new Hercules();
+	public static final MagicSkill BLESS = new Bless(); 
 	public static final MagicSkill CYCLONE = new Cyclone();
 	public static final PassiveSkill PHOENIX = new Phoenix();
 	public static final PassiveSkill WIDE_STRIKE = new WideStrike();
@@ -56,6 +57,7 @@ public abstract class Skill {
 		case 7030: return CELESTIAL;
 		case 7040: return ROAMER;
 		case 1110: return CYCLONE;
+		case 9876: return BLESS;
 		}
 		return null;
 	}

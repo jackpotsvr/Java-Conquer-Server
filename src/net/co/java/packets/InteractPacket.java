@@ -21,7 +21,7 @@ public class InteractPacket implements PacketHandler {
 	private final int x;
 	private final int y;
 	private final Mode mode;
-	private final Skill skill;
+	private Skill skill;
 	
 	/**
 	 * Construct a new {@code InteractPacket} based on a {@code IncomingPacket}
@@ -39,7 +39,14 @@ public class InteractPacket implements PacketHandler {
 		skillid ^= identity & 0xFFFF;
 		skillid = (skillid << 0x3 | skillid >> 0xd ) & 0xFFFF;
 		skillid -= 0xeb42;
+		
 		this.skill = Skill.valueOf(skillid);
+		
+		// something seems to go wrong with high skill ids e.g. bless = 9876, that makes me have to do this weird conversion.
+		if(this.skill == null)
+		{
+			this.skill = Skill.valueOf(skillid + (1 << 16));
+		}
 		
 		long x = ip.readUnsignedShort(16);
 		x = x ^ ( identity & 0xFFFF ) ^ 0x2ed6;
