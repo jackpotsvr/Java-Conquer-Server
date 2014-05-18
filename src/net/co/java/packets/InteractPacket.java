@@ -125,7 +125,12 @@ public class InteractPacket implements PacketHandler {
 		case AcceptMarriage:
 			break;
 		case ArcherAttack:
+		{
+			PacketWriter packet = new PhysicalAttack.ArcherAttack(player, this).build();
+			if(packet != null)
+				packet.sendTo(player.getPlayer().view.getPlayers());
 			break;
+		}
 		case DashEffect:
 			break;
 		case Death:
@@ -139,12 +144,12 @@ public class InteractPacket implements PacketHandler {
 		case None:
 			break;
 		case PhysicalAttack:
+		{
 			PacketWriter packet = new PhysicalAttack(player, this).build();
-			if(packet != null) {
+			if(packet != null)
 				packet.sendTo(player.getPlayer().view.getPlayers());
-			}
-	
 			break;
+		}
 		case RequestMarriage:
 			break;
 		case RushAttack:

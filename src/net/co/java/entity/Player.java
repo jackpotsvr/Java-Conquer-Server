@@ -317,6 +317,16 @@ public class Player extends Entity {
 			skills.put(s, new SkillProficiency(this, s, level, exp));
 	}
 	
+	
+	
+	/**
+	 * @return the skills
+	 */
+	public HashMap<Skill, SkillProficiency> getSkills() {
+		return skills;
+	}
+
+
 	public SkillProficiency getSkillProficiency(Skill skill) {
 		return skills.get(skill);
 	}

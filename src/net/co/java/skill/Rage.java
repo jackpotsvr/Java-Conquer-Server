@@ -1,5 +1,6 @@
 package net.co.java.skill;
 
+import net.co.java.server.GameServerClient;
 import net.co.java.skill.Skill.AbstractPassiveSkill;
 
 class Rage extends AbstractPassiveSkill {
@@ -31,4 +32,8 @@ class Rage extends AbstractPassiveSkill {
 		return WeaponType.CLUB;
 	}
 
+	@Override
+	public TargetBuilder getHittedEntities(GameServerClient client, int level) {
+		return new TargetBuilder(client.getPlayer()).inCircle(range(level));
+	}
 }

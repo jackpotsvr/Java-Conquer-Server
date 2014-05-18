@@ -1,5 +1,6 @@
 package net.co.java.skill;
 
+import net.co.java.server.GameServerClient;
 import net.co.java.skill.Skill.AbstractPassiveSkill;
 
 class Roamer extends AbstractPassiveSkill {
@@ -28,6 +29,12 @@ class Roamer extends AbstractPassiveSkill {
 	@Override
 	public WeaponType getWeaponType() {
 		return WeaponType.WHIP;
+	}
+
+	@Override
+	public TargetBuilder getHittedEntities(GameServerClient client, int level) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

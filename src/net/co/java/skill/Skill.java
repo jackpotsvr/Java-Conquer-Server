@@ -1,5 +1,6 @@
 package net.co.java.skill;
 
+import net.co.java.entity.Entity;
 import net.co.java.packets.InteractPacket;
 import net.co.java.server.GameServerClient;
 
@@ -27,6 +28,8 @@ public abstract class Skill {
 	public static final PassiveSkill RAGE = new Rage();
 	public static final PassiveSkill CELESTIAL = new Celestial();
 	public static final PassiveSkill ROAMER = new Roamer();
+	public static final PassiveSkill HALT = new Halt();
+	
 	
 	/**
 	 * Get a {@code Skill} by SkillID
@@ -53,6 +56,29 @@ public abstract class Skill {
 		case 7040: return ROAMER;
 		}
 		return null;
+	}
+	
+	public static PassiveSkill passiveSkillOf(WeaponType weaponType){
+		if(weaponType == null) return null;
+		switch(weaponType)
+		{
+			case SWORD:	return PHOENIX; 
+			case BACKSWORD: return PHOENIX;
+			case GLAIVE: return WIDE_STRIKE;
+			case POLEAXE: return BOREAS;
+			case WAND: return SNOW; 
+			case HALBERT: return STRANDED_MONSTER;
+			case SPEAR: return SPEED_GUN;
+			case DAGGER: return PENETRATION;
+			case HAMMER: return BOOM;
+			case LONGHAMMER: return HALT;
+			case HOOK: return SEIZER;
+			case AXE: return EARTHQUAKE;
+			case CLUB: return RAGE;
+			case SCEPTER: return CELESTIAL;
+			case WHIP: return ROAMER;
+			default: return null;
+		}
 	}
 	
 	@Override
@@ -118,6 +144,13 @@ public abstract class Skill {
 	 */
 	public static abstract class PassiveSkill extends Skill {
 		
+		protected Entity target; 
+		
+		public void setTarget(Entity target)
+		{
+			this.target = target;
+		}
+		
 		/**
 		 * @param level
 		 * @return the chance for this skill to occur
@@ -146,6 +179,11 @@ public abstract class Skill {
 		 * @return the WeaponType required for this Skill
 		 */
 		public abstract WeaponType getWeaponType();
+		
+		/**
+		 * @return the entities taking damage from the hit. 
+		 */
+		public abstract TargetBuilder getHittedEntities(GameServerClient client, int level);
 	}
 	
 	/**
@@ -156,7 +194,7 @@ public abstract class Skill {
 	static abstract class AbstractPassiveSkill extends PassiveSkill {
 		
 		private final static int[] exps = { 20243, 37056, 66011, 116140, 192800, 418030, 454350, 491200, 520030 };
-
+		
 		@Override
 		public int getTargetExp(int level) {
 			if(level<exps.length){
@@ -178,7 +216,6 @@ public abstract class Skill {
 		@Override
 		public int distance(int level) {
 			return 9;
-		}
-		
+		}				
 	}
 }

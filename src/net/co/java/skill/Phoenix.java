@@ -1,5 +1,7 @@
 package net.co.java.skill;
 
+import net.co.java.entity.Entity;
+import net.co.java.server.GameServerClient;
 import net.co.java.skill.Skill.AbstractPassiveSkill;
 
 class Phoenix extends AbstractPassiveSkill {
@@ -32,6 +34,19 @@ class Phoenix extends AbstractPassiveSkill {
 	@Override
 	public WeaponType getWeaponType() {
 		return WeaponType.SWORD;
+	}
+
+	@Override
+	public TargetBuilder getHittedEntities(GameServerClient client, int level) {
+		//return new TargetBuilder();
+		for(Entity e : client.getPlayer().getLocation().getMap().getEntities())
+		{
+			if(e == target)
+			{
+				return new TargetBuilder(e);
+			}
+		}
+		return null;
 	}
 
 }

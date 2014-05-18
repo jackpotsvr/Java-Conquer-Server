@@ -1,5 +1,6 @@
 package net.co.java.skill;
 
+import net.co.java.server.GameServerClient;
 import net.co.java.skill.Skill.AbstractPassiveSkill;
 
 class Earthquake extends AbstractPassiveSkill {
@@ -27,6 +28,12 @@ class Earthquake extends AbstractPassiveSkill {
 	@Override
 	public WeaponType getWeaponType() {
 		return WeaponType.AXE;
+	}
+
+	@Override
+	public TargetBuilder getHittedEntities(GameServerClient client, int level) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

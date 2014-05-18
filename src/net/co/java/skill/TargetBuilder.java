@@ -35,6 +35,16 @@ public class TargetBuilder implements Iterator<Entity>, Iterable<Entity> {
 		size = temp.length;
 	}
 	
+	/** for single target skills */ 
+	public TargetBuilder(Entity entity)
+	{
+		A = null;
+		temp = new Entity[1];
+		temp[0] = entity;
+		capacity = temp.length;
+		size = temp.length;
+	}
+	
 	/**
 	 * Filter the entities. Entities on a line between the current location
 	 * and a given point remain in the result.
