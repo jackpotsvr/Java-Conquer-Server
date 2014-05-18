@@ -1,6 +1,7 @@
 package net.co.java.packets;
 
 import net.co.java.server.GameServerClient;
+import net.co.java.skill.PhysicalAttack;
 import net.co.java.skill.Skill;
 import net.co.java.skill.Skill.MagicSkill;
 
@@ -12,6 +13,7 @@ import net.co.java.skill.Skill.MagicSkill;
  * @author Thomas Gmelig Meyling
  */
 public class InteractPacket implements PacketHandler {
+	private IncomingPacket ip; 
 	
 	private final long timestamp;
 	private final long identity;
@@ -26,6 +28,8 @@ public class InteractPacket implements PacketHandler {
 	 * @param ip
 	 */
 	public InteractPacket(IncomingPacket ip) {
+		this.ip = ip ;
+		
 		this.timestamp = ip.readUnsignedInt(4);
 		this.identity = ip.readUnsignedInt(8);
 		this.mode = Mode.valueOf(ip.readUnsignedByte(20));
@@ -44,7 +48,7 @@ public class InteractPacket implements PacketHandler {
         x -= 0xffff22ee;
         this.x = (int) x;
         
-        long y = ip.readUnsignedShort(18);
+        long y = ip.readUnsignedShort(18);;
         y = y ^ (identity & 0xffff) ^ 0xb99b;
         y = ((y << 5) | ((y & 0xF800) >> 11)) & 0xffff;
         y |= 0xffff0000;
@@ -135,6 +139,11 @@ public class InteractPacket implements PacketHandler {
 		case None:
 			break;
 		case PhysicalAttack:
+			PacketWriter packet = new PhysicalAttack(player, this).build();
+			if(packet != null) {
+				packet.sendTo(player.getPlayer().view.getPlayers());
+			}
+	
 			break;
 		case RequestMarriage:
 			break;
