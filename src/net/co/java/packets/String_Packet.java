@@ -11,22 +11,48 @@ import net.co.java.server.GameServerClient;
 public class String_Packet implements PacketHandler{
 
 	private StringPacketType type; 
-	private long guild_id; 
+	private long identity; 
+	private String string = null; 
 	
 	
 	public String_Packet(IncomingPacket ip) {
 		type = StringPacketType.valueOf(ip.readUnsignedByte(8));
 	}
 	
+	public String_Packet(StringPacketType type) {
+		this.type = type;
+	}
+	
+	public String_Packet(StringPacketType type, String string, long identity) {
+		this(type);
+		this.string = string;
+		this.identity = identity;
+	}
+	
 	public String_Packet(GuildRequestType type, long guild_id){
 		if(type == GuildRequestType.RequestName)
 			this.type = StringPacketType.GuildName;
-		this.guild_id = guild_id; 
+		this.identity = guild_id; 
 	}
 
 	@Override
 	public PacketWriter build() {
-		return null;
+		switch(type) {
+			case Effect:
+			{
+				if(string != null)
+				{
+					return new PacketWriter(PacketType.STRING_PACKET, 11 + 1 + string.length())
+						.putUnsignedInteger(identity)
+						.putUnsignedByte(type.type)
+						.putUnsignedByte(1)
+						.putUnsignedByte(string.length())
+						.putString(string);
+				}
+			}
+		default:
+			return null;
+		}
 	}
 
 	@Override
@@ -34,6 +60,7 @@ public class String_Packet implements PacketHandler{
 		switch(type)
 		{
 			case GuildMemberList:
+			{
 				List <GuildMember> members = client.getPlayer().getGuildMember().getGuild().getMembers();
 				int totalstrlength = 0;
 				ArrayList<String> memberNames = new ArrayList<String>();
@@ -61,11 +88,12 @@ public class String_Packet implements PacketHandler{
 				packet.send(client);
 
 				break;
+			}
 			case GuildName:
 				//String guildName = client.getPlayer().getGuildMember().getGuild().getGuildName();
 				String guildName; 
 				for(Guild g : client.getModel().getGuilds())
-						if(g.getUID() == guild_id)	
+						if(g.getUID() == identity)	
 						{
 							guildName = g.getGuildName();
 							new PacketWriter(PacketType.STRING_PACKET, 11 + 1 + guildName.length())
@@ -76,7 +104,63 @@ public class String_Packet implements PacketHandler{
 								.putString(guildName)
 								.send(client);
 						}
-				 break;
+				break;
+			case EnemyGuild: 
+			{
+				Guild g = client.getPlayer().getGuildMember().getGuild();
+				int totalstrlength = 0; 
+				int strcount = 0;
+				
+				for(int i = 0; i < g.getEnemies().length; i++)
+					if(g.getEnemies()[i] != null) {
+						totalstrlength += g.getEnemies()[i].getGuildName().length();
+						strcount++; 
+					}
+				
+				PacketWriter packet = new PacketWriter(PacketType.STRING_PACKET, 11 + strcount + totalstrlength)
+					.putUnsignedInteger(client.getIdentity())
+					.putUnsignedByte(type.type)
+					.putUnsignedByte(strcount);
+				
+				for(Guild enemy : g.getEnemies())
+					if(enemy != null)
+					{
+						packet.putUnsignedByte(enemy.getGuildName().length());
+						packet.putString(enemy.getGuildName());
+					}
+				
+				packet.send(client);
+				
+				break;
+			}
+			case AllyGuild:
+			{
+				Guild g = client.getPlayer().getGuildMember().getGuild();
+				int totalstrlength = 0; 
+				int strcount = 0;
+				
+				for(int i = 0; i < g.getAllies().length; i++)
+					if(g.getAllies()[i] != null) {
+						totalstrlength += g.getAllies()[i].getGuildName().length();
+						strcount++; 
+					}
+				
+				PacketWriter packet = new PacketWriter(PacketType.STRING_PACKET, 11 + strcount + totalstrlength)
+					.putUnsignedInteger(client.getIdentity())
+					.putUnsignedByte(type.type)
+					.putUnsignedByte(strcount);
+				
+				for(Guild enemy : g.getAllies())
+					if(enemy != null)
+					{
+						packet.putUnsignedByte(enemy.getGuildName().length());
+						packet.putString(enemy.getGuildName());
+					}
+				
+				packet.send(client);
+				
+				break;
+			}
 			default:
 				System.out.println("String packet with type: " + type + " not implemented.");
 		}

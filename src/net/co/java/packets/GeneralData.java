@@ -6,6 +6,7 @@ import net.co.java.entity.Player;
 import net.co.java.guild.GuildMember;
 import net.co.java.packets.Guild_Request_Packet.GuildRequestType;
 import net.co.java.packets.MessagePacket.MessageType;
+import net.co.java.packets.String_Packet.StringPacketType;
 import net.co.java.server.GameServerClient;
 import net.co.java.server.Map;
 
@@ -257,13 +258,17 @@ public class GeneralData implements PacketHandler {
 				.setOffset(20).putUnsignedByte(gm.getRank().rank) // position
 				.putString(gm.getGuild().getGuildLeaderName(), 16) // leader
 				.send(client);
-			
+						
 			new String_Packet(GuildRequestType.RequestName, gm.getGuild().getUID()).handle(client);
-
 			
 			new MessagePacket(MessagePacket.SYSTEM, hero.getName(), "Guild bulletin!")
 				.setMessageType(MessagePacket.MessageType.GUILDBULLETIN).build().send(client);
 			new GeneralData(SubType.CONFIRM_GUILD, hero).build().send(client);
+			
+			
+			// TODO figure when to send this.. 
+			new String_Packet(StringPacketType.EnemyGuild).handle(client);
+			new String_Packet(StringPacketType.AllyGuild).handle(client);
 			
 			// Send animations
 			/* 2NDMetempsychosis   for 2nd RB light of vigor

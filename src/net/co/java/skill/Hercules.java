@@ -2,9 +2,12 @@ package net.co.java.skill;
 
 import net.co.java.entity.Entity;
 import net.co.java.entity.Player;
+import net.co.java.packets.GemEffect;
 import net.co.java.packets.InteractPacket;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
+import net.co.java.packets.String_Packet;
+import net.co.java.packets.String_Packet.StringPacketType;
 import net.co.java.server.GameServerClient;
 import net.co.java.skill.Skill.MagicSkill;
 
@@ -58,6 +61,8 @@ public class Hercules extends MagicSkill
 			
 			for( Entity e : tb )
 				pw.putUnsignedInteger(e.getIdentity()).putUnsignedInteger(1);
+			
+			new GemEffect().handle(client);
 			
 			pw.sendTo(hero.view.getPlayers());
 			hero.setStamina(stamina - 30);
