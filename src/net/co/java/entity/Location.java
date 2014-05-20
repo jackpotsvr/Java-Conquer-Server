@@ -25,6 +25,35 @@ public class Location {
 	public Location(Map map, int xCord, int yCord) {
 		this(map, xCord, yCord, 0);
 	}
+	
+	public int getDistanceFrom(Location l) {
+		return 1;
+	}
+	
+	public int getDirection(Location l) {
+		if(this.yCord > l.yCord)
+		{
+			if(this.xCord > l.xCord)
+				return 5;
+			else if (this.xCord == l.xCord)
+				return 4;
+			else
+				return 3;
+		} else if(this.yCord == l.yCord)
+		{
+			if(this.xCord > l.xCord)
+				return 2;
+			else
+				return 6;
+		} else {
+			if(this.xCord > l.xCord)
+				return 1;
+			else if (this.xCord == l.xCord)
+				return 0;
+			else
+				return 7;
+		}
+	}
 
 	/**
 	 * Construct a new Location in this Map

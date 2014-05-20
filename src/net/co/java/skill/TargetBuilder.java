@@ -6,6 +6,7 @@ import java.util.List;
 
 import net.co.java.entity.Entity;
 import net.co.java.entity.Location;
+import net.co.java.entity.Monster;
 import net.co.java.entity.Player;
 
 /**
@@ -35,11 +36,32 @@ public class TargetBuilder implements Iterator<Entity>, Iterable<Entity> {
 		size = temp.length;
 	}
 	
+	public TargetBuilder(Monster m) {
+		A = m.getLocation();
+		temp = new Entity[1];
+		List<Entity> entities = m.view.getEntities();
+		entities.remove(m);
+		
+		// Monster only target players.
+		for(Entity e : entities)
+			if(!(e instanceof Player))
+				entities.remove(e);
+		
+		temp = new Entity[entities.size()];
+		temp = entities.toArray(temp);
+		
+		capacity = temp.length;
+		size = temp.length;
+	}
+	
 	/** for single target skills */ 
 	public TargetBuilder(Entity entity)
 	{
-		A = null;
+		A = null; 
 		temp = new Entity[1];
+		List<Entity> entities = entity.view.getEntities();
+		//entities.remove(entity);
+		
 		temp[0] = entity;
 		capacity = temp.length;
 		size = temp.length;

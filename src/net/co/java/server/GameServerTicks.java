@@ -3,7 +3,11 @@ package net.co.java.server;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.sun.javafx.scene.traversal.Direction;
+
+import net.co.java.entity.Entity;
 import net.co.java.entity.Entity.Flag;
+import net.co.java.entity.Monster;
 import net.co.java.entity.Player;
 import net.co.java.model.Model;
 import net.co.java.packets.GeneralData;
@@ -13,6 +17,7 @@ import net.co.java.packets.UpdatePacket;
 import net.co.java.packets.MessagePacket.MessageType;
 import net.co.java.packets.UpdatePacket.Mode;
 import net.co.java.skill.Bless;
+import net.co.java.skill.TargetBuilder;
 
 public class GameServerTicks 
 {
@@ -25,6 +30,7 @@ public class GameServerTicks
 		addWarnPlayerTask();
 		staminaIncrease();
 		xpIncrease();
+		monsterAI();
 	}
 	
 	public void addWarnPlayerTask(){
@@ -45,6 +51,54 @@ public class GameServerTicks
 	    }, delay, period);
 
 	}
+	
+	
+	public void monsterAI() {
+		long delay = 500;
+		long period = 500;
+		
+		timer.scheduleAtFixedRate(new TimerTask() {
+			
+	        public void run() {
+				for(Map m : Map.values()) {
+					for(Entity e : m.getEntities())
+					{
+						if(e instanceof Monster)
+						{
+							Monster mob = (Monster)e;
+							//mob.walk(5, null);
+							if(mob.getTarget() == null) 
+							{
+								TargetBuilder tb = new TargetBuilder(mob).inCircle(6);
+								Entity[] possibleTargets = tb.getEntities();
+								if(possibleTargets.length >= 1)
+								{
+									// should also calculate closest player... 
+									mob.setTarget((Player) possibleTargets[0]);
+								}
+							} else {
+								TargetBuilder tb = new TargetBuilder(mob).inCircle(6);
+								boolean stillcontains = false;
+								for(Entity other : tb.getEntities())
+									if(other == mob.getTarget())
+									{
+										stillcontains = true;
+										break;
+									}
+								if(stillcontains)
+								{
+									mob.walk(mob.getLocation().getDirection(mob.getTarget().getLocation()), null);
+								}
+							}
+							
+	
+						} 
+					}
+				}
+	        }
+		}, delay, period);
+	}
+	
 	
 	public void staminaIncrease() {
 		long delay = 1000;

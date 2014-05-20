@@ -244,7 +244,8 @@ public abstract class Entity implements Spawnable, Serializable {
 				+ mesh + ", hairstyle=" + hairstyle + ", location=" + location
 				+ ", HP=" + HP + ", mana=" + mana + ", level=" + level + "]";
 	}
-
+	
+	
 	/**
 	 * Types for Flags
 	 * 
