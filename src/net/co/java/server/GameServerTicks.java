@@ -3,15 +3,11 @@ package net.co.java.server;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import com.sun.javafx.scene.traversal.Direction;
-
 import net.co.java.entity.Entity;
 import net.co.java.entity.Entity.Flag;
 import net.co.java.entity.Monster;
 import net.co.java.entity.Player;
 import net.co.java.model.Model;
-import net.co.java.packets.GeneralData;
-import net.co.java.packets.GeneralData.SubType;
 import net.co.java.packets.MessagePacket;
 import net.co.java.packets.UpdatePacket;
 import net.co.java.packets.MessagePacket.MessageType;
@@ -30,7 +26,7 @@ public class GameServerTicks
 		addWarnPlayerTask();
 		staminaIncrease();
 		xpIncrease();
-		monsterAI();
+		//monsterAI();
 	}
 	
 	public void addWarnPlayerTask(){
@@ -45,14 +41,13 @@ public class GameServerTicks
 	        				"This message is being send very often, and is very annoying.")
 					.setMessageType(MessageType.CENTER)
 					.build().send(p.getClient());
-	        	   //p.getClient()
 	           }
 	        }
 	    }, delay, period);
 
 	}
 	
-	
+	/** 
 	public void monsterAI() {
 		long delay = 500;
 		long period = 500;
@@ -97,9 +92,9 @@ public class GameServerTicks
 				}
 	        }
 		}, delay, period);
-	}
+	} */ 
 	
-	
+
 	public void staminaIncrease() {
 		long delay = 1000;
 		long period = 1000;

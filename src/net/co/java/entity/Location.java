@@ -29,7 +29,7 @@ public class Location {
 	public int getDistanceFrom(Location l) {
 		return 1;
 	}
-	
+	/**
 	public int getDirection(Location l) {
 		if(this.yCord > l.yCord)
 		{
@@ -53,7 +53,15 @@ public class Location {
 			else
 				return 7;
 		}
+	} */ 
+	
+	public int getDirection(Location l) {
+		int dY = l.yCord - this.yCord;
+		int dX = l.xCord - this.xCord;
+		if(dY == dX && dY == 0) return 0;
+	    return (int) ((Math.atan2(dY, dX) / Math.PI * 180) + 270) % 360 / 40;
 	}
+	
 
 	/**
 	 * Construct a new Location in this Map

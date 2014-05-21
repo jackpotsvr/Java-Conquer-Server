@@ -625,11 +625,7 @@ public class Player extends Entity {
 	
 	public void sendSkills(){
 		for ( SkillProficiency skill : skills.values() )
-		{
-			System.out.println(skill.getSkill());
-			skill.sendSkill();
-		}
-		
+			skill.sendSkill();		
 	}
 	
 	public void sendStamina() {

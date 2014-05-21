@@ -15,16 +15,19 @@ public class PhysicalAttack implements PacketWrapper {
 	
 	private GameServerClient client;  
 	private Entity target; 
+	private TargetBuilder tb; 
 	private InteractPacket interactPacket;
 	
 	
-	private final static int MELEE_RANGE = 2; // for now
-	private final static int RANGED_RANGE = 13; // for now
+	public final static int MELEE_RANGE = 3; // for now
+	public final static int RANGED_RANGE = 13; // for now
 	
 	// Retreives the Entity object. 
 	public PhysicalAttack(GameServerClient player, InteractPacket interactPacket) {
 		this.client = player; 
 		this.interactPacket = interactPacket;
+		
+		// to obtain the entity object of a player.
 		for(Entity e : client.getPlayer().getLocation().getMap().getEntities())
 			if(e.getIdentity() == interactPacket.getTarget())
 				this.target = e; 
@@ -33,15 +36,12 @@ public class PhysicalAttack implements PacketWrapper {
 	// Computes if target is in range etc
 	// TODO CHECK FOR TIME 
 	public boolean validateHit(){
-		TargetBuilder tb = new TargetBuilder(client.getPlayer()).inCircle(getRange());
-		
-		if(target != null)
-		{
-			for(Entity e : tb.getEntities())
-				if(e == target)
-					return true;
-		}
-		
+		tb = new TargetBuilder(client.getPlayer())
+		.inCircle(getRange())
+		.targetEntity(target);
+
+		if(tb != null)
+			return true;		
 		return false;
 	}
 	
@@ -50,8 +50,7 @@ public class PhysicalAttack implements PacketWrapper {
 	}
 	
 	public boolean doPassive(){
-		//client.getPlayer().inventory.getEquipments()
-		
+		// divided by 1000 because weapon type is the first 3 digits of a Weapon SID.
 		WeaponType wt1 = WeaponType.valueOf((int) (client.getPlayer().inventory.getEquipmentSID(Inventory.RIGHT_HAND) / 1000));
 		WeaponType wt2 = WeaponType.valueOf((int) (client.getPlayer().inventory.getEquipmentSID(Inventory.LEFT_HAND) / 1000)); 
 		
@@ -150,27 +149,30 @@ public class PhysicalAttack implements PacketWrapper {
 	}
 	
 	public void passiveSkillHandle(PassiveSkill skill){
-		
-		skill.setTarget(target);
-		
-		TargetBuilder tb = skill.getHittedEntities(client, client.getPlayer().getSkillLevel(skill));
-		long damage = (long) (computeDamage()*skill.damageMutiplier(client.getPlayer().getSkillLevel(skill)));
-		
-		target.setHP((int) (target.getHP()-damage));
 	
-		PacketWriter pw = new PacketWriter(PacketType.SKILL_ANIMATION_PACKET, 20 + tb.size() * 8)
-			.putUnsignedInteger(client.getIdentity())
+		PacketWriter pw = null; 
+		
+		for(Entity target : tb.getEntities())
+		{
+			skill.setTarget(target);
+			long damage = (long) (computeDamage()*skill.damageMutiplier(client.getPlayer().getSkillLevel(skill)));
+			
+			target.setHP((int) (target.getHP()-damage));
+		
+			pw = new PacketWriter(PacketType.SKILL_ANIMATION_PACKET, 20 + tb.size() * 8)
+				.putUnsignedInteger(client.getIdentity())
 				.putUnsignedShort(client.getPlayer().getLocation().xCord)
-			.putUnsignedShort(client.getPlayer().getLocation().yCord)
-			.putUnsignedShort(skill.getSkillID())
-			.putUnsignedShort(client.getPlayer().getSkillLevel(skill))
-			.putUnsignedShort(tb.size())
-			.setOffset(20);
+				.putUnsignedShort(client.getPlayer().getLocation().yCord)
+				.putUnsignedShort(skill.getSkillID())
+				.putUnsignedShort(client.getPlayer().getSkillLevel(skill))
+				.putUnsignedShort(tb.size())
+				.setOffset(20);
+				pw.putUnsignedInteger(target.getIdentity()).putUnsignedInteger(damage);
+		}
 		
-		for( Entity e : tb )
-			pw.putUnsignedInteger(e.getIdentity()).putUnsignedInteger(damage);
 		
-		pw.sendTo(client.getPlayer().view.getPlayers());
+		if(pw != null)
+			pw.sendTo(client.getPlayer().view.getPlayers());
 	}
 	
 	public final static class ArcherAttack extends PhysicalAttack {

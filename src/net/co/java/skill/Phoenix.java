@@ -28,22 +28,23 @@ class Phoenix extends AbstractPassiveSkill {
 
 	@Override
 	public int range(int level) {
-		return 9;
+		return 3;
 	}
 
 	@Override
 	public WeaponType getWeaponType() {
 		return WeaponType.SWORD;
 	}
-
+	
 	@Override
 	public TargetBuilder getHittedEntities(GameServerClient client, int level) {
-		//return new TargetBuilder();
 		for(Entity e : client.getPlayer().getLocation().getMap().getEntities())
 		{
 			if(e == target)
 			{
-				return new TargetBuilder(e);
+				return new TargetBuilder(client.getPlayer())
+				.inCircle(range(PhysicalAttack.MELEE_RANGE))
+				.targetEntity(e);
 			}
 		}
 		return null;

@@ -36,37 +36,6 @@ public class TargetBuilder implements Iterator<Entity>, Iterable<Entity> {
 		size = temp.length;
 	}
 	
-	public TargetBuilder(Monster m) {
-		A = m.getLocation();
-		temp = new Entity[1];
-		List<Entity> entities = m.view.getEntities();
-		entities.remove(m);
-		
-		// Monster only target players.
-		for(Entity e : entities)
-			if(!(e instanceof Player))
-				entities.remove(e);
-		
-		temp = new Entity[entities.size()];
-		temp = entities.toArray(temp);
-		
-		capacity = temp.length;
-		size = temp.length;
-	}
-	
-	/** for single target skills */ 
-	public TargetBuilder(Entity entity)
-	{
-		A = null; 
-		temp = new Entity[1];
-		List<Entity> entities = entity.view.getEntities();
-		//entities.remove(entity);
-		
-		temp[0] = entity;
-		capacity = temp.length;
-		size = temp.length;
-	}
-	
 	/**
 	 * Filter the entities. Entities on a line between the current location
 	 * and a given point remain in the result.
@@ -116,6 +85,21 @@ public class TargetBuilder implements Iterator<Entity>, Iterable<Entity> {
 		}
 		return this;
 	}
+	
+	
+	public TargetBuilder targetEntity(Entity target) {
+		for(int i = 0; i < capacity && size > 0; i++ ) {
+			Entity e = temp[i];
+			if(e != null) {
+				if(e != target) {
+					temp[i] = null;
+					size--; 
+				}
+			}
+		}
+		return this; 
+	}
+	
 	
 	public int size() {
 		return size;
