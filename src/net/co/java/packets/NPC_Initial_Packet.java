@@ -2,9 +2,6 @@ package net.co.java.packets;
 
 import net.co.java.entity.Entity;
 import net.co.java.entity.NPC;
-import net.co.java.npc.dialogs.TC_Conductress;
-import net.co.java.npc.dialogs.NPC_Dialog;
-import net.co.java.npc.dialogs.TrojanStar;
 import net.co.java.packets.MessagePacket.MessageType;
 import net.co.java.server.GameServerClient;
 
@@ -23,7 +20,7 @@ public class NPC_Initial_Packet implements PacketHandler
 	}
 
 	@Override
-	public void handle(GameServerClient client) {
+	public void handle(GameServerClient client, Packet packet) {
 	
 		NPC npc = null; 
 		
@@ -41,26 +38,26 @@ public class NPC_Initial_Packet implements PacketHandler
 		if(npc != null)
 		{
 	
-			NPC_Dialog dialog = null;
+			//NPC_Dialog dialog = null;
 			
 			switch(npcUID)
 			{
 				case 17:
-					dialog = new TrojanStar(npc);
+					//dialog = new TrojanStar(npc);
 					break;
 				case 103: // tc conductress
-					dialog = new TC_Conductress(npc);
+					//dialog = new TC_Conductress(npc);
 					break;
 				default: 
 					System.out.println("This npc is yet to be implemented.");
 					break;
 			}
-			
-			if(dialog != null)
-			{
-				client.getPlayer().setActiveDialog(dialog);
-				dialog.handle(client);
-			}
+//			
+//			if(dialog != null)
+//			{
+//				client.getPlayer().setActiveDialog(dialog);
+//				dialog.handle(client);
+//			}
 		}
 	}
 

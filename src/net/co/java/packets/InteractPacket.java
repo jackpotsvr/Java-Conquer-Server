@@ -127,15 +127,15 @@ public class InteractPacket implements PacketHandler {
 	}
 
 	@Override
-	public void handle(GameServerClient player) {
+	public void handle(GameServerClient player, Packet packet) {
 		switch(mode){
 		case AcceptMarriage:
 			break;
 		case ArcherAttack:
 		{
-			PacketWriter packet = new PhysicalAttack.ArcherAttack(player, this).build();
-			if(packet != null)
-				packet.sendTo(player.getPlayer().view.getPlayers());
+			PacketWriter outgoingPacket = new PhysicalAttack.ArcherAttack(player, this).build();
+			if(outgoingPacket != null)
+				outgoingPacket.sendTo(player.getPlayer().view.getPlayers());
 			break;
 		}
 		case DashEffect:
@@ -152,9 +152,9 @@ public class InteractPacket implements PacketHandler {
 			break;
 		case PhysicalAttack:
 		{
-			PacketWriter packet = new PhysicalAttack(player, this).build();
-			if(packet != null)
-				packet.sendTo(player.getPlayer().view.getPlayers());
+			PacketWriter outgoingPacket = new PhysicalAttack(player, this).build();
+			if(outgoingPacket != null)
+				outgoingPacket.sendTo(player.getPlayer().view.getPlayers());
 			break;
 		}
 		case RequestMarriage:

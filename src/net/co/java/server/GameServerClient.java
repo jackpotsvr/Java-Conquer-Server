@@ -7,7 +7,6 @@ import net.co.java.entity.Player;
 import net.co.java.model.AccessException;
 import net.co.java.model.AuthorizationPromise;
 import net.co.java.model.Model;
-import net.co.java.npc.dialogs.NPC_Dialog;
 import net.co.java.packets.Character_Creation_Packet;
 import net.co.java.packets.GeneralData;
 import net.co.java.packets.Guild_Member_Information_Packet;
@@ -17,7 +16,12 @@ import net.co.java.packets.InteractPacket;
 import net.co.java.packets.ItemUsage;
 import net.co.java.packets.MessagePacket;
 import net.co.java.packets.MessagePacket.MessageType;
+import net.co.java.packets.serialization.DeserializationException;
+import net.co.java.packets.serialization.PacketDeserializer;
+import net.co.java.packets.serialization.PacketDeserializerFactory;
+import net.co.java.packets.serialization.PacketSerializerFactory;
 import net.co.java.packets.NPC_Initial_Packet;
+import net.co.java.packets.Packet;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
 import net.co.java.packets.String_Packet;
@@ -73,18 +77,25 @@ public class GameServerClient extends AbstractClient {
 			player.walk(incomingPacket.readUnsignedByte(8), incomingPacket);
 			break;
 		case GENERAL_DATA_PACKET:
-			new GeneralData(incomingPacket).handle(this);
+			try {
+				PacketDeserializer pd = PacketDeserializerFactory.valueOf(incomingPacket.getPacketType())
+					.getInstance(incomingPacket); 
+				pd.getHandlerStrategy().handle(this, pd.deserialize());
+				
+			} catch (DeserializationException e) {
+				e.printStackTrace();
+			} 
 			break;
 		case ITEM_USAGE_PACKET:
-			new ItemUsage(incomingPacket).handle(this);
+			new ItemUsage(incomingPacket).handle(this, null);
 			break;
 		case MESSAGE_PACKET:			
 			MessagePacket mp = new MessagePacket(incomingPacket);
 			
 			if(mp.getMessage().startsWith("/")) {
-				new Command(mp).handle(this);
+				new Command(mp).handle(this, null);
 			} else {
-				mp.handle(this);
+				mp.handle(this, null);
 			}
 			break;
 		case CHARACTER_CREATION_PACKET:
@@ -103,28 +114,28 @@ public class GameServerClient extends AbstractClient {
 			}
 			break;
 		case INTERACT_PACKET:
-			new InteractPacket(incomingPacket).handle(this);
+			new InteractPacket(incomingPacket).handle(this, null);
 			break;
 		case NPC_INITIAL_PACKET:
-			new NPC_Initial_Packet(incomingPacket).handle(this);
+			new NPC_Initial_Packet(incomingPacket).handle(this, null);
 			break; 
 		case NPC_DIALOG_PACKET:
-			NPC_Dialog packet = player.getActiveDialog();
-			if(packet != null)
-			{
-				int input = incomingPacket.readUnsignedByte(10);
-				packet.setInput(input); 
-				packet.handle(this);
-			}
+//			NPC_Dialog packet = player.getActiveDialog();
+//			if(packet != null)
+//			{
+//				int input = incomingPacket.readUnsignedByte(10);
+//				packet.setInput(input); 
+//				packet.handle(this);
+//			}
 			break;
 		case GUILD_MEMBER_INFORMATION:
-			new Guild_Member_Information_Packet(incomingPacket).handle(this);
+			//new Guild_Member_Information_Packet(incomingPacket).handle(this, null);
 			break;
 		case GUILD_REQUEST:
-			new Guild_Request_Packet(incomingPacket).handle(this);
+			new Guild_Request_Packet(incomingPacket).handle(this, null);
 			break;	
 		case STRING_PACKET:
-			new String_Packet(incomingPacket).handle(this);
+			new String_Packet(incomingPacket).handle(this, null);
 			break;
 		default: 	
 			System.out.println("Unimplemented " + incomingPacket.getPacketType().toString());

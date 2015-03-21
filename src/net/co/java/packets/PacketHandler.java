@@ -15,6 +15,5 @@ public interface PacketHandler extends PacketWrapper {
 	 * Delegate the Packet
 	 * @param client
 	 */
-	void handle(GameServerClient client);
-	
+	void handle(GameServerClient client, Packet packet);	
 }

@@ -7,7 +7,7 @@ public class Guild_Member_Information_Packet implements PacketHandler {
 
 	private String name; 
 	
-	public Guild_Member_Information_Packet(IncomingPacket ip) {
+	public Guild_Member_Information_Packet(IncomingPacket ip, Packet packet) {
 		this.name = ip.readString(9, 16);
 	}
 	
@@ -22,7 +22,7 @@ public class Guild_Member_Information_Packet implements PacketHandler {
 	}
 
 	@Override
-	public void handle(GameServerClient client) {
+	public void handle(GameServerClient client, Packet packet) {
 		for(GuildMember gm : client.getPlayer().getGuildMember().getGuild().getMembers())
 			if(gm.getName().equals(name))
 				new PacketWriter(PacketType.GUILD_MEMBER_INFORMATION, 25)

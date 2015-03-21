@@ -18,7 +18,7 @@ public class GemEffect implements PacketHandler
 	
 	/** should be called every time a player hits, chance division will be done from here */ 
 	@Override
-	public void handle(GameServerClient client) {
+	public void handle(GameServerClient client, Packet packet) {
 
 		for(EquipmentInstance eq : client.getPlayer().inventory.getEquipments())
 		{

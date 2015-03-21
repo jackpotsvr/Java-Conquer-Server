@@ -45,7 +45,7 @@ public class Hercules extends MagicSkill
 		SkillProficiency prof = hero.getSkillProficiency(this);
 		
 		/** Hercules requires two weapons of the same items bare. */ 
-		if ( 	WeaponType.equals(Player.Inventory.LEFT_HAND, Player.Inventory.RIGHT_HAND) &&
+		if (WeaponType.equals(Player.Inventory.LEFT_HAND, Player.Inventory.RIGHT_HAND) &&
 				prof!=null && stamina >= 30 ) {
 			int range = range(prof.level);			
 			TargetBuilder tb = new TargetBuilder(hero).inCircle(range);
@@ -62,7 +62,7 @@ public class Hercules extends MagicSkill
 			for( Entity e : tb )
 				pw.putUnsignedInteger(e.getIdentity()).putUnsignedInteger(1);
 			
-			new GemEffect().handle(client);
+			new GemEffect().handle(client, null);
 			
 			pw.sendTo(hero.view.getPlayers());
 			hero.setStamina(stamina - 30);

@@ -3,6 +3,7 @@ package net.co.java.server;
 import java.io.IOException;
 
 import net.co.java.packets.MessagePacket;
+import net.co.java.packets.Packet;
 import net.co.java.packets.PacketHandler;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
@@ -22,7 +23,7 @@ public class Command implements PacketHandler {
 	}
 
 	@Override
-	public void handle(GameServerClient client) {
+	public void handle(GameServerClient client, Packet packet) {
 		String command = args[0];
 		if(command.equalsIgnoreCase("exit"))
 			try {

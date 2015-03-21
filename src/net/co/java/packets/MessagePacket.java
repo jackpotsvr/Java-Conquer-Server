@@ -204,7 +204,7 @@ public class MessagePacket implements PacketHandler {
 	}
 
 	@Override
-	public void handle(GameServerClient client) {
+	public void handle(GameServerClient client, Packet packet) {
 		switch(type)
 		{
 			case TALK:

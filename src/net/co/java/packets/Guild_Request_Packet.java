@@ -23,10 +23,10 @@ public class Guild_Request_Packet implements PacketHandler{
 	}
 
 	@Override
-	public void handle(GameServerClient client) {
+	public void handle(GameServerClient client, Packet packet) {
 		switch(type){
 			case RequestName:
-				new String_Packet(type, parameter_a).handle(client);
+				new String_Packet(type, parameter_a).handle(client, packet);
 				break;
 			case RequestInfo:
 				GuildMember gm = client.getPlayer().getGuildMember();

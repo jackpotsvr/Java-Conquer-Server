@@ -56,7 +56,7 @@ public class String_Packet implements PacketHandler{
 	}
 
 	@Override
-	public void handle(GameServerClient client) {
+	public void handle(GameServerClient client, Packet packet) {
 		switch(type)
 		{
 			case GuildMemberList:
@@ -71,21 +71,21 @@ public class String_Packet implements PacketHandler{
 				}
 				
 				
-				PacketWriter packet = new PacketWriter(PacketType.STRING_PACKET, (11 + (totalstrlength + memberNames.size())))
+				PacketWriter outgoingPacket = new PacketWriter(PacketType.STRING_PACKET, (11 + (totalstrlength + memberNames.size())))
 					.putUnsignedInteger(client.getIdentity())
 					.putUnsignedByte(type.type)
 					.putUnsignedByte(memberNames.size());
 				
 				for(String s : memberNames)	{
-					packet.putUnsignedByte(s.length());
-					packet.putString(s);
+					outgoingPacket.putUnsignedByte(s.length());
+					outgoingPacket.putString(s);
 				}
 				
 				for(GuildMember gm : members){
-					new Guild_Member_Information_Packet(gm).handle(client);
+					new Guild_Member_Information_Packet(gm).handle(client, packet);
 				}
 				
-				packet.send(client);
+				outgoingPacket.send(client);
 
 				break;
 			}
@@ -117,7 +117,7 @@ public class String_Packet implements PacketHandler{
 						strcount++; 
 					}
 				
-				PacketWriter packet = new PacketWriter(PacketType.STRING_PACKET, 11 + strcount + totalstrlength)
+				PacketWriter outgoingPacket = new PacketWriter(PacketType.STRING_PACKET, 11 + strcount + totalstrlength)
 					.putUnsignedInteger(client.getIdentity())
 					.putUnsignedByte(type.type)
 					.putUnsignedByte(strcount);
@@ -125,11 +125,11 @@ public class String_Packet implements PacketHandler{
 				for(Guild enemy : g.getEnemies())
 					if(enemy != null)
 					{
-						packet.putUnsignedByte(enemy.getGuildName().length());
-						packet.putString(enemy.getGuildName());
+						outgoingPacket.putUnsignedByte(enemy.getGuildName().length());
+						outgoingPacket.putString(enemy.getGuildName());
 					}
 				
-				packet.send(client);
+				outgoingPacket.send(client);
 				
 				break;
 			}
@@ -145,7 +145,7 @@ public class String_Packet implements PacketHandler{
 						strcount++; 
 					}
 				
-				PacketWriter packet = new PacketWriter(PacketType.STRING_PACKET, 11 + strcount + totalstrlength)
+				PacketWriter outgoingPacket = new PacketWriter(PacketType.STRING_PACKET, 11 + strcount + totalstrlength)
 					.putUnsignedInteger(client.getIdentity())
 					.putUnsignedByte(type.type)
 					.putUnsignedByte(strcount);
@@ -153,11 +153,11 @@ public class String_Packet implements PacketHandler{
 				for(Guild enemy : g.getAllies())
 					if(enemy != null)
 					{
-						packet.putUnsignedByte(enemy.getGuildName().length());
-						packet.putString(enemy.getGuildName());
+						outgoingPacket.putUnsignedByte(enemy.getGuildName().length());
+						outgoingPacket.putString(enemy.getGuildName());
 					}
 				
-				packet.send(client);
+				outgoingPacket.send(client);
 				
 				break;
 			}

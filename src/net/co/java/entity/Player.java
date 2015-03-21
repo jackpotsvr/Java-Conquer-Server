@@ -9,7 +9,6 @@ import net.co.java.guild.GuildRank;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemInstance.Mode;
-import net.co.java.npc.dialogs.NPC_Dialog;
 import net.co.java.packets.ItemUsage;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
@@ -25,7 +24,7 @@ public class Player extends Entity {
 	private static final long serialVersionUID = 8357201473468302184L;
 
 	private AbstractClient client;
-	private NPC_Dialog activeDialog;
+	//private NPC_Dialog activeDialog;
 	
 	private int gold = 0, cps = 0,
 			experience = 0, pkPoints = 0, rebornCount = 0, stamina = 100, action = 0,
@@ -392,15 +391,6 @@ public class Player extends Entity {
 	
 	public WeaponProficiency getWeaponProficiency(WeaponType t) {
 		return proficiencies.get(t);
-	}
-
-	public NPC_Dialog getActiveDialog() {
-		return activeDialog;
-	}
-	
-	public void setActiveDialog(NPC_Dialog activeDialog)
-	{
-		this.activeDialog = activeDialog;
 	}
 
 	public class Inventory {

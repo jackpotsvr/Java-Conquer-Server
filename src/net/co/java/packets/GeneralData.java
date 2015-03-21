@@ -148,7 +148,7 @@ public class GeneralData implements PacketHandler {
 	}
 
 	@Override
-	public void handle(GameServerClient client) {
+	public void handle(GameServerClient client, Packet packet) {
 		Player hero = client.getPlayer();
 		switch(subType){
 		case GET_SURROUNDINGS:
@@ -259,7 +259,7 @@ public class GeneralData implements PacketHandler {
 				.putString(gm.getGuild().getGuildLeaderName(), 16) // leader
 				.send(client);
 						
-			new String_Packet(GuildRequestType.RequestName, gm.getGuild().getUID()).handle(client);
+			new String_Packet(GuildRequestType.RequestName, gm.getGuild().getUID()).handle(client, packet);
 			
 			new MessagePacket(MessagePacket.SYSTEM, hero.getName(), "Guild bulletin!")
 				.setMessageType(MessagePacket.MessageType.GUILDBULLETIN).build().send(client);
@@ -267,8 +267,8 @@ public class GeneralData implements PacketHandler {
 			
 			
 			// TODO figure when to send this.. 
-			new String_Packet(StringPacketType.EnemyGuild).handle(client);
-			new String_Packet(StringPacketType.AllyGuild).handle(client);
+			new String_Packet(StringPacketType.EnemyGuild).handle(client, packet);
+			new String_Packet(StringPacketType.AllyGuild).handle(client, packet);
 			
 			// Send animations
 			/* 2NDMetempsychosis   for 2nd RB light of vigor
