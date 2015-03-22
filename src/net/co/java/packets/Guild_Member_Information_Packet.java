@@ -22,7 +22,7 @@ public class Guild_Member_Information_Packet implements PacketHandler {
 	}
 
 	@Override
-	public void handle(GameServerClient client, Packet packet) {
+	public void handle(GameServerClient client) {
 		for(GuildMember gm : client.getPlayer().getGuildMember().getGuild().getMembers())
 			if(gm.getName().equals(name))
 				new PacketWriter(PacketType.GUILD_MEMBER_INFORMATION, 25)

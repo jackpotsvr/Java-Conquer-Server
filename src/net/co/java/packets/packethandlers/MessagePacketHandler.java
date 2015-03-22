@@ -6,20 +6,13 @@ import net.co.java.packets.PacketHandler;
 import net.co.java.packets.PacketWriter;
 import net.co.java.server.GameServerClient;
 
-public class NoPacketHandler extends AbstractPacketHandler {
-
-	public NoPacketHandler(Packet packet) {
+public class MessagePacketHandler extends AbstractPacketHandler {
+	public MessagePacketHandler(Packet packet) {
 		super(packet);
 	}
 
 	@Override
-	public PacketWriter build() {
-		return null;
-	}
-
-	@Override
-	public void handle(GameServerClient client) { 
+	public void handle(GameServerClient client) {
 		
 	}
-
 }

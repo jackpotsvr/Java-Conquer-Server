@@ -20,7 +20,7 @@ public class NPC_Initial_Packet implements PacketHandler
 	}
 
 	@Override
-	public void handle(GameServerClient client, Packet packet) {
+	public void handle(GameServerClient client) {
 	
 		NPC npc = null; 
 		

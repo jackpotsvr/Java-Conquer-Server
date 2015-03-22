@@ -10,6 +10,9 @@ public abstract class Packet {
 	
 	public Packet(IncomingPacket ip) { 
 		this.ip = ip; 
+		if(ip == null) { 
+			header = new PacketHeader(); 
+		}
 	}
 	
 	public PacketType getType() {

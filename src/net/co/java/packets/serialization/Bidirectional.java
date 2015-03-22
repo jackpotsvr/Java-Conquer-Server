@@ -5,6 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import net.co.java.packets.AbstractPacketHandler;
 import net.co.java.packets.PacketHandler;
 import net.co.java.packets.packethandlers.NoPacketHandler;
 
@@ -15,5 +16,5 @@ public @interface Bidirectional {
 	 * @return The handler for the packet. This is a NoPacketHandler by default, 
 	 * if the packet doesn't have a PacketHandler. 
 	 */
-	Class<? extends PacketHandler> handler() default NoPacketHandler.class; 
+	Class<? extends AbstractPacketHandler> handler() default NoPacketHandler.class; 
 }

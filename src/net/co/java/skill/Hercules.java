@@ -62,7 +62,7 @@ public class Hercules extends MagicSkill
 			for( Entity e : tb )
 				pw.putUnsignedInteger(e.getIdentity()).putUnsignedInteger(1);
 			
-			new GemEffect().handle(client, null);
+			new GemEffect().handle(client);
 			
 			pw.sendTo(hero.view.getPlayers());
 			hero.setStamina(stamina - 30);

@@ -101,7 +101,7 @@ public class ItemUsage implements PacketHandler {
 	}
 
 	@Override
-	public void handle(GameServerClient client, Packet packet) {
+	public void handle(GameServerClient client) {
 		switch(mode){
 		case Ping:
 			new ItemUsage(client.getIdentity(), 0, mode, timestamp).build().send(client);
@@ -127,23 +127,23 @@ public class ItemUsage implements PacketHandler {
 					{
 						case 1060020: // // tc gate 1002, 439, 383
 							client.getPlayer().setLocation(new Location(Map.CentralPlain, 439, 383)); 
-							new GeneralData(SubType.LOCATION, client.getPlayer()).handle(client, packet);
+							new GeneralData(SubType.LOCATION, client.getPlayer()).handle(client);
 							break;
 						case 1060021: //desert
 							client.getPlayer().setLocation(new Location(Map.Desert, 491, 647)); // 491, 
-							new GeneralData(SubType.LOCATION, client.getPlayer()).handle(client, packet);
+							new GeneralData(SubType.LOCATION, client.getPlayer()).handle(client);
 							break;
 						case 1060022: // ape
 							client.getPlayer().setLocation(new Location(Map.ApeMoutain, 567, 563));
-							new GeneralData(SubType.LOCATION, client.getPlayer()).handle(client, packet);
+							new GeneralData(SubType.LOCATION, client.getPlayer()).handle(client);
 							break;
 						case 1060023: // castle
 							client.getPlayer().setLocation(new Location(Map.PhoenixCastle, 190, 262));
-							new GeneralData(SubType.LOCATION, client.getPlayer()).handle(client, packet);
+							new GeneralData(SubType.LOCATION, client.getPlayer()).handle(client);
 							break;
 						case 1060024: //bi
 							client.getPlayer().setLocation(new Location(Map.BirdIsland, 716, 572));
-							new GeneralData(SubType.LOCATION, client.getPlayer()).handle(client, packet);
+							new GeneralData(SubType.LOCATION, client.getPlayer()).handle(client);
 							break;
 					
 					}

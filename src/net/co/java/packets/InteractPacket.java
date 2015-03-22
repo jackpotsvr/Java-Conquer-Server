@@ -127,7 +127,7 @@ public class InteractPacket implements PacketHandler {
 	}
 
 	@Override
-	public void handle(GameServerClient player, Packet packet) {
+	public void handle(GameServerClient player) {
 		switch(mode){
 		case AcceptMarriage:
 			break;

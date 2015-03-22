@@ -4,11 +4,11 @@ package net.co.java.packets.packethandlers;
 import net.co.java.entity.Location;
 import net.co.java.entity.Player;
 import net.co.java.guild.GuildMember;
+import net.co.java.packets.AbstractPacketHandler;
 import net.co.java.packets.GeneralData;
 import net.co.java.packets.GeneralDataPacket;
 import net.co.java.packets.MessagePacket;
 import net.co.java.packets.Packet;
-import net.co.java.packets.PacketHandler;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
 import net.co.java.packets.String_Packet;
@@ -20,20 +20,20 @@ import net.co.java.packets.String_Packet.StringPacketType;
 import net.co.java.server.GameServerClient;
 import net.co.java.server.Map;
 
-public class GeneralDataPacketHandler implements PacketHandler {
+public class GeneralDataPacketHandler extends AbstractPacketHandler {
+	
 
-	@Override
-	public PacketWriter build() {
-		// TODO Auto-generated method stub
-		return null;
+	public GeneralDataPacketHandler(Packet packet) {
+		super(packet);
 	}
 
 	@Override
-	public void handle(GameServerClient client, Packet packet) {
+	public void handle(GameServerClient client) {
 		if(!(packet instanceof GeneralDataPacket)) 
 			return; 
+		
 		GeneralDataPacket gpd = (GeneralDataPacket) packet; 
-
+		
 		Player hero = client.getPlayer();
 		switch(gpd.getSubType()){
 		case GET_SURROUNDINGS:
@@ -145,7 +145,7 @@ public class GeneralDataPacketHandler implements PacketHandler {
 				.putString(gm.getGuild().getGuildLeaderName(), 16) // leader
 				.send(client);
 						
-			new String_Packet(GuildRequestType.RequestName, gm.getGuild().getUID()).handle(client, packet);
+			new String_Packet(GuildRequestType.RequestName, gm.getGuild().getUID()).handle(client);
 			
 			new MessagePacket(MessagePacket.SYSTEM, hero.getName(), "Guild bulletin!")
 				.setMessageType(MessagePacket.MessageType.GUILDBULLETIN).build().send(client);
@@ -153,8 +153,8 @@ public class GeneralDataPacketHandler implements PacketHandler {
 			
 			
 			// TODO figure when to send this.. 
-			new String_Packet(StringPacketType.EnemyGuild).handle(client, packet);
-			new String_Packet(StringPacketType.AllyGuild).handle(client, packet);
+			new String_Packet(StringPacketType.EnemyGuild).handle(client);
+			new String_Packet(StringPacketType.AllyGuild).handle(client);
 			
 			// Send animations
 			/* 2NDMetempsychosis   for 2nd RB light of vigor

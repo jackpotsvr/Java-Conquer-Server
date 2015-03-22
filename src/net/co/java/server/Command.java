@@ -23,7 +23,7 @@ public class Command implements PacketHandler {
 	}
 
 	@Override
-	public void handle(GameServerClient client, Packet packet) {
+	public void handle(GameServerClient client) {
 		String command = args[0];
 		if(command.equalsIgnoreCase("exit"))
 			try {

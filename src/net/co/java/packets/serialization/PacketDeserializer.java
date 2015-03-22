@@ -68,6 +68,7 @@ public abstract class PacketDeserializer<T extends Packet> {
 			return packet;
 			
 		} catch (NoSuchMethodException e) {
+			//e.printStackTrace();
 			throw new DeserializationException("Couldn't construct the packet, cause it has no noparameter constructor.");
 		} catch (InstantiationException | InvocationTargetException e) {
 			throw new DeserializationException("Couldn't construct the packet, It's not instantiable.");
@@ -121,15 +122,15 @@ public abstract class PacketDeserializer<T extends Packet> {
 		totalStringLength += length; 
 	}
 	
-	public PacketHandler getHandlerStrategy() { 
+	public PacketHandler getHandlerStrategy(Packet packet) { 
 		try {
 			Class<?> clasz = GenericUtility.getClass(type);
 			if (clasz.isAnnotationPresent(Bidirectional.class)){ 
 				Bidirectional bidirectional = clasz.getAnnotation(Bidirectional.class);
-				return bidirectional.handler().getConstructor().newInstance();
+				return bidirectional.handler().getConstructor(Packet.class).newInstance(packet);
 			} else if (clasz.isAnnotationPresent(Incoming.class)) { 
 				Incoming incoming = clasz.getAnnotation(Incoming.class); 
-				return incoming.handler().getConstructor().newInstance();
+				return incoming.handler().getConstructor(Packet.class).newInstance(packet);
 			}
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | 
 				IllegalArgumentException | InvocationTargetException | 

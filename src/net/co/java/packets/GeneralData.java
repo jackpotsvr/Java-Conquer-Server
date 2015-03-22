@@ -37,7 +37,7 @@ public class GeneralData implements PacketHandler {
 	public GeneralData(IncomingPacket ip) {
 		this.timestamp = ip.readUnsignedInt(4);
 		this.identity = ip.readUnsignedInt(8);
-		this.subType = SubType.get(ip.readUnsignedShort(22));
+		this.subType = SubType.valueOf(ip.readUnsignedShort(22));
 		this.dwParam = ip.readUnsignedInt(12);
 		this.wParam1 = ip.readUnsignedShort(16);
 		this.wParam2 = ip.readUnsignedShort(18);
@@ -148,7 +148,7 @@ public class GeneralData implements PacketHandler {
 	}
 
 	@Override
-	public void handle(GameServerClient client, Packet packet) {
+	public void handle(GameServerClient client) {
 		Player hero = client.getPlayer();
 		switch(subType){
 		case GET_SURROUNDINGS:
@@ -166,11 +166,17 @@ public class GeneralData implements PacketHandler {
 					.setMessageType(MessageType.TOPLEFT)
 					.setARGB(0xFFFF0000)
 					.build().send(client);
-				new GeneralData(SubType.LOCATION, hero)
-					.setDwParam(hero.getLocation().getMap().getMapID())
-					.setwParam1(hero.getLocation().getxCord())
-					.setwParam2(hero.getLocation().getyCord())
-					.build().send(client);
+//				new GeneralData(SubType.LOCATION, hero)
+//					.setDwParam(hero.getLocation().getMap().getMapID())
+//					.setwParam1(hero.getLocation().getxCord())
+//					.setwParam2(hero.getLocation().getyCord())
+//					.build().send(client);
+				
+				new PacketBuilder(new GeneralDataPacket(SubType.LOCATION, hero)
+						.setDwParam(hero.getLocation().getMap().getMapID())
+						.setwParam1(hero.getLocation().getxCord())
+						.setwParam2(hero.getLocation().getyCord())
+				).build().send(client);
 			}
 			break;
 		case LOCATION:
@@ -259,7 +265,7 @@ public class GeneralData implements PacketHandler {
 				.putString(gm.getGuild().getGuildLeaderName(), 16) // leader
 				.send(client);
 						
-			new String_Packet(GuildRequestType.RequestName, gm.getGuild().getUID()).handle(client, packet);
+			new String_Packet(GuildRequestType.RequestName, gm.getGuild().getUID()).handle(client);
 			
 			new MessagePacket(MessagePacket.SYSTEM, hero.getName(), "Guild bulletin!")
 				.setMessageType(MessagePacket.MessageType.GUILDBULLETIN).build().send(client);
@@ -267,8 +273,8 @@ public class GeneralData implements PacketHandler {
 			
 			
 			// TODO figure when to send this.. 
-			new String_Packet(StringPacketType.EnemyGuild).handle(client, packet);
-			new String_Packet(StringPacketType.AllyGuild).handle(client, packet);
+			new String_Packet(StringPacketType.EnemyGuild).handle(client);
+			new String_Packet(StringPacketType.AllyGuild).handle(client);
 			
 			// Send animations
 			/* 2NDMetempsychosis   for 2nd RB light of vigor
@@ -413,7 +419,7 @@ public class GeneralData implements PacketHandler {
 			this.type = type;
 		}
 		
-		public static SubType get(int type) {
+		public static SubType valueOf(int type) {
 			for (SubType st : SubType.values()) {
 				if (st.type == type) {
 					return st;

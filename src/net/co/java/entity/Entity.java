@@ -5,7 +5,9 @@ import java.io.Serializable;
 import net.co.java.entity.view.View;
 import net.co.java.entity.view.ViewImpl;
 import net.co.java.packets.GeneralData;
+import net.co.java.packets.GeneralDataPacket;
 import net.co.java.packets.IncomingPacket;
+import net.co.java.packets.PacketBuilder;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
 import net.co.java.packets.GeneralData.SubType;
@@ -98,8 +100,11 @@ public abstract class Entity implements Spawnable, Serializable {
 	 * @param jumpPacket
 	 */
 	public void jump(int x, int y, int direction, IncomingPacket jumpPacket) {
-		PacketWriter pw = jumpPacket != null ? new PacketWriter(jumpPacket) : 
-			new GeneralData(GeneralData.SubType.JUMP, this).setDwParam(y << 16 | x).build();
+//		PacketWriter pw = jumpPacket != null ? new PacketWriter(jumpPacket) : 
+//			new GeneralData(GeneralData.SubType.JUMP, this).setDwParam(y << 16 | x).build();
+	
+		PacketWriter pw = new PacketBuilder(new GeneralDataPacket(SubType.JUMP, this)
+				.setDwParam(y << 16 | x)).build();
 		// Send jump packet to me and surroundings
 		for(Player player : view.getPlayers())
 			pw.send(player);
