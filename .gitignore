@@ -4,6 +4,7 @@
 *.war
 *.ear
 *.DS_Store
+*.iml
 /bin
 /Client
 /ref
