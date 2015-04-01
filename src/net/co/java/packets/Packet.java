@@ -16,9 +16,10 @@ public abstract class Packet {
 	}
 	
 	public PacketType getType() {
-		return header.type; 
-	}
-	
+        return (ip == null) ? header.type : ip.getPacketType();
+    };
+
+
 	public void setType(PacketType type) { 
 		header.type = type; 
 	}

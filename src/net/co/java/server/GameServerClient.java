@@ -8,8 +8,6 @@ import net.co.java.model.AccessException;
 import net.co.java.model.AuthorizationPromise;
 import net.co.java.model.Model;
 import net.co.java.packets.Character_Creation_Packet;
-import net.co.java.packets.GeneralData;
-import net.co.java.packets.Guild_Member_Information_Packet;
 import net.co.java.packets.Guild_Request_Packet;
 import net.co.java.packets.IncomingPacket;
 import net.co.java.packets.InteractPacket;
@@ -18,12 +16,7 @@ import net.co.java.packets.MessagePacket;
 import net.co.java.packets.MessagePacket.MessageType;
 import net.co.java.packets.serialization.DeserializationException;
 import net.co.java.packets.serialization.PacketDeserializer;
-import net.co.java.packets.serialization.PacketDeserializerFactory;
-import net.co.java.packets.serialization.PacketSerializerFactory;
 import net.co.java.packets.NPC_Initial_Packet;
-import net.co.java.packets.Packet;
-import net.co.java.packets.PacketType;
-import net.co.java.packets.PacketWriter;
 import net.co.java.packets.String_Packet;
 import net.co.java.server.Server.GameServer;
 
@@ -78,10 +71,14 @@ public class GameServerClient extends AbstractClient {
 			break;
 		case GENERAL_DATA_PACKET:
 			try {
-				PacketDeserializer pd = PacketDeserializerFactory.valueOf(incomingPacket.getPacketType())
-					.getInstance(incomingPacket); 
-				pd.getHandlerStrategy(pd.deserialize()).handle(this);
-				
+//				PacketDeserializer pd = PacketDeserializerFactory.valueOf(incomingPacket.getPacketType())
+//					.getInstance(incomingPacket);
+//				pd.getHandlerStrategy(pd.deserialize()).handle(this);
+
+                PacketDeserializer pd = new PacketDeserializer(incomingPacket);
+                pd.getHandlerStrategy( pd.deserialize()).handle(this);
+
+
 			} catch (DeserializationException e) {
 				e.printStackTrace();
 			} 
@@ -89,7 +86,7 @@ public class GameServerClient extends AbstractClient {
 		case ITEM_USAGE_PACKET:
 			new ItemUsage(incomingPacket).handle(this);
 			break;
-		case MESSAGE_PACKET:			
+		case MESSAGE_PACKET:
 			MessagePacket mp = new MessagePacket(incomingPacket);
 			
 			if(mp.getMessage().startsWith("/")) {
@@ -137,7 +134,7 @@ public class GameServerClient extends AbstractClient {
 		case STRING_PACKET:
 			new String_Packet(incomingPacket).handle(this);
 			break;
-		default: 	
+		default:
 			System.out.println("Unimplemented " + incomingPacket.getPacketType().toString());
 			break;
 		}

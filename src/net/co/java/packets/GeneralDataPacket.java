@@ -3,11 +3,7 @@ package net.co.java.packets;
 import net.co.java.entity.Entity;
 import net.co.java.packets.GeneralData.SubType;
 import net.co.java.packets.packethandlers.GeneralDataPacketHandler;
-import net.co.java.packets.serialization.Bidirectional;
-import net.co.java.packets.serialization.Offset;
-import net.co.java.packets.serialization.PacketLength;
-import net.co.java.packets.serialization.PacketValue;
-import net.co.java.packets.serialization.PacketValueType;
+import net.co.java.packets.serialization.*;
 
 /**
  * The General Data packet performs a variety of tasks for the client, these vary from
@@ -15,6 +11,7 @@ import net.co.java.packets.serialization.PacketValueType;
  * @author Thomas Gmelig Meyling
  * @author Jan-Willem Gmelig Meyling
  */
+@Type(type = PacketType.GENERAL_DATA_PACKET)
 @Bidirectional(handler = GeneralDataPacketHandler.class)
 @PacketLength(length = 24)
 public class GeneralDataPacket extends Packet {
@@ -27,8 +24,9 @@ public class GeneralDataPacket extends Packet {
 	public GeneralDataPacket(IncomingPacket ip) {
 		super(ip);
 	}
-	
-	/**
+
+
+    /**
 	 * Construct a GeneralData packet with given data
 	 * @param location
 	 * @param entity
@@ -68,8 +66,8 @@ public class GeneralDataPacket extends Packet {
 	@PacketValue(type = PacketValueType.UNSIGNED_SHORT)
 	@Offset(value = 20)
 	private int wParam3;
-	
-	
+
+
 		
 	public SubType getSubType() {
 		return subType;

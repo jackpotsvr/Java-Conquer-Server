@@ -8,22 +8,28 @@ import net.co.java.packets.IncomingPacket;
 import net.co.java.packets.Packet;
 import net.co.java.packets.PacketHandler;
 import net.co.java.packets.PacketType;
+import net.co.java.packets.packethandlers.NoPacketHandler;
+import net.co.java.server.Packets;
 
 
-public abstract class PacketDeserializer<T extends Packet> {
-	protected int totalStringLength; 
-	protected final Type type; 
+public class PacketDeserializer {
+	protected int totalStringLength;
 	protected final IncomingPacket ip; 
 	protected final Packet.PacketHeader ph; 
 	
 	protected PacketDeserializer(IncomingPacket ip, Packet.PacketHeader ph) {
 		this.ip = ip; 
 		this.ph = ph;
-		type = GenericUtility.getGenericType(this);
-	}	
-	
-	public static Packet.PacketHeader deserializeHeader(IncomingPacket ip) { 
-		Packet.PacketHeader ph = new Packet.PacketHeader(); 
+		//type = GenericUtility.getGenericType(this);
+	}
+
+    public PacketDeserializer(IncomingPacket ip) {
+        this(ip, deserializeHeader(ip));
+    }
+
+
+	private static Packet.PacketHeader deserializeHeader(IncomingPacket ip) {
+		Packet.PacketHeader ph = new Packet.PacketHeader();
 		ph.setLength(ip.readUnsignedShort(0));
 		ph.setType(PacketType.valueOf(ip.readUnsignedShort(2)));
 		return ph;  
@@ -31,7 +37,7 @@ public abstract class PacketDeserializer<T extends Packet> {
 	
 	public Packet deserialize() throws DeserializationException {
 		try {
-			Class<?> clasz = GenericUtility.getClass(type); 
+			Class<?> clasz = Packets.getInstance().getPacketClass(ip.getPacketType());
 			Packet packet = (Packet) clasz.getConstructor(IncomingPacket.class).newInstance(ip);
 			packet.header = ph; 
 			
@@ -74,8 +80,6 @@ public abstract class PacketDeserializer<T extends Packet> {
 			throw new DeserializationException("Couldn't construct the packet, It's not instantiable.");
 		} catch (IllegalAccessException e) { /* Shouldn't be thrown as we set the fields with annotations accessible. */
 			throw new RuntimeException("Coulnd't access the fields of the class. Use setAccessible()");
-		} catch (ClassNotFoundException e) { /* This error won't be thrown, as the class is derived from generic. */ 
-			throw new RuntimeException("Couldn't find the Packet's class in deserialization."); 
 		} catch (Exception e) {
 			throw new DeserializationException("Deserilization went wrong.");
 		}
@@ -124,20 +128,21 @@ public abstract class PacketDeserializer<T extends Packet> {
 	
 	public PacketHandler getHandlerStrategy(Packet packet) { 
 		try {
-			Class<?> clasz = GenericUtility.getClass(type);
+			Class<?> clasz = Packets.getInstance().getPacketClass(ip.getPacketType());
 			if (clasz.isAnnotationPresent(Bidirectional.class)){ 
 				Bidirectional bidirectional = clasz.getAnnotation(Bidirectional.class);
 				return bidirectional.handler().getConstructor(Packet.class).newInstance(packet);
 			} else if (clasz.isAnnotationPresent(Incoming.class)) { 
 				Incoming incoming = clasz.getAnnotation(Incoming.class); 
 				return incoming.handler().getConstructor(Packet.class).newInstance(packet);
-			}
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | 
+			} else {
+                return NoPacketHandler.class.getConstructor(Packet.class).newInstance(packet);
+            }
+		} catch (InstantiationException | IllegalAccessException |
 				IllegalArgumentException | InvocationTargetException | 
 				NoSuchMethodException | SecurityException e) {
 			throw new RuntimeException("Couldn't find the Packet's handler."); 
-		} 
-		return null;
+		}
 	}
 
 }

@@ -5,29 +5,23 @@ import java.lang.reflect.Type;
 
 import net.co.java.packets.Packet;
 import net.co.java.packets.PacketWriter;
+import net.co.java.server.Packets;
 
-public abstract class PacketSerializer<T extends Packet> {
+public class PacketSerializer {
 	protected int totalStringLength = 0; 
-	protected final Packet packet; 
-	protected final Type type; 
+	protected final Packet packet;
 	protected Class<?> clasz;
 	protected PacketWriter pw = null; 
 	
 	public PacketSerializer(Packet packet) { 
-		this.packet = packet; 
-		type = GenericUtility.getGenericType(this);
+		this.packet = packet;
 	
 		try {
-			clasz = GenericUtility.getClass(type);
+			clasz = Packets.getInstance().getPacketClass(packet.getType());
 			setTotalStringLength(packet);
 		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -90,16 +84,12 @@ public abstract class PacketSerializer<T extends Packet> {
 								break;
 						}	
 					} catch (IllegalArgumentException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IllegalAccessException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (NoSuchFieldException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (SecurityException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}

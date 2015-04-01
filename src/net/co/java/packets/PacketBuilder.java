@@ -1,6 +1,7 @@
 package net.co.java.packets;
 
-import net.co.java.packets.serialization.PacketSerializerFactory;
+
+import net.co.java.packets.serialization.PacketSerializer;
 
 public class PacketBuilder implements PacketWrapper {
 	private Packet packet; 
@@ -11,8 +12,6 @@ public class PacketBuilder implements PacketWrapper {
 
 	@Override
 	public PacketWriter build() {
-		return PacketSerializerFactory.valueOf(packet.getType())
-					.getInstance(packet)
-					.serialize(); 
+		return new PacketSerializer(packet).serialize();
 	}
 }
