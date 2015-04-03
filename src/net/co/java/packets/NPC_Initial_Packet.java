@@ -3,6 +3,7 @@ package net.co.java.packets;
 import net.co.java.entity.Entity;
 import net.co.java.entity.NPC;
 import net.co.java.packets.MessagePacket.MessageType;
+import net.co.java.packets.serialization.PacketSerializer;
 import net.co.java.server.GameServerClient;
 
 public class NPC_Initial_Packet implements PacketHandler
@@ -23,10 +24,12 @@ public class NPC_Initial_Packet implements PacketHandler
 	public void handle(GameServerClient client) {
 	
 		NPC npc = null; 
-		
-		new MessagePacket(MessagePacket.SYSTEM, client.getPlayer().getName(), "You tried to talk to the NPC with UID: " + npcUID)
-						.setMessageType(MessageType.TOPLEFT)
-						.build().send(client);
+
+        new PacketSerializer(
+            new MessagePacket(MessagePacket.SYSTEM, client.getPlayer().getName(),
+                    "You tried to talk to the NPC with UID: " + npcUID)
+                            .setMessageType(MessageType.TOPLEFT)
+        ).serialize().send(client);
 		
 		for(Entity e : 	client.getPlayer().getLocation().getMap().getEntities())
 		{

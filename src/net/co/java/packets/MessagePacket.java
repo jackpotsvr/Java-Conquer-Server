@@ -2,6 +2,9 @@ package net.co.java.packets;
 
 import net.co.java.entity.Player;
 import net.co.java.guild.GuildMember;
+import net.co.java.packets.packethandlers.GeneralDataPacketHandler;
+import net.co.java.packets.packethandlers.MessagePacketHandler;
+import net.co.java.packets.serialization.*;
 import net.co.java.server.GameServerClient;
 
 
@@ -13,21 +16,54 @@ import net.co.java.server.GameServerClient;
  * @author Jan-Willem Gmelig Meyling
  * @author Thomas Gmelig Meyling
  */
-public class MessagePacket implements PacketHandler {
+
+@Type(type = PacketType.MESSAGE_PACKET)
+@Bidirectional(handler = MessagePacketHandler.class)
+@PacketLength(length = 32)
+public class MessagePacket extends Packet /*implements PacketHandler*/ {
 
 	public final static String SYSTEM = "SYSTEM";
 	public final static String ALL_USERS = "ALLUSERS";
-	
+
+    @PacketValue(type = PacketValueType.UNSIGNED_INT)
+    @Offset(4)
 	private long aRGB = 0xFFFFFFFFL;
-	private MessageType type = MessageType.TALK;
+
+    @PacketValue(type = PacketValueType.ENUM_VALUE)
+    @Offset(8)
+   	private MessageType type = MessageType.TALK;
+
+    @PacketValue(type = PacketValueType.UNSIGNED_INT)
+    @Offset(12)
 	private long chatID = 0L;
-	
+
+    @PacketValue(type = PacketValueType.UNSIGNED_INT)
+    @Offset(16)
 	private long send_avatar = 0;
-	private long recv_avatar = 0; 
-	
-	private final String from;
-	private final String to;
-	private final String message;
+
+    @PacketValue(type = PacketValueType.UNSIGNED_INT)
+    @Offset(20)
+	private long recv_avatar = 0;
+
+    @PacketValue(type = PacketValueType.UNSIGNED_BYTE)
+    @Offset(24)
+    private short stringCount = 4; /** Always 4 with suffix  */
+
+    @PacketValue(type = PacketValueType.STRING_WITH_LENGTH)
+    @Offset(25)
+	private String from;
+
+    @PacketValue(type = PacketValueType.STRING_WITH_LENGTH)
+    @Offset(26)
+	private String to;
+
+    @PacketValue(type = PacketValueType.BYTE)
+    @Offset(27)
+    private short suffixLength = 0; // always an empty string.
+
+    @PacketValue(type = PacketValueType.STRING_WITH_LENGTH)
+    @Offset(28)
+	private String message;
 	
 	/**
 	 * Construct a new Message packet with the from, to and message
@@ -38,6 +74,8 @@ public class MessagePacket implements PacketHandler {
 	 * @param message
 	 */
 	public MessagePacket(String from, String to, String message) {
+        super(null);
+        this.setType(PacketType.MESSAGE_PACKET);
 		this.from = from;
 		this.to = to;
 		this.message = message;
@@ -48,15 +86,7 @@ public class MessagePacket implements PacketHandler {
 	 * @param ip
 	 */
 	public MessagePacket(IncomingPacket ip) {
-		this.aRGB = ip.readUnsignedInt(4);
-		this.type = MessageType.valueOf(ip.readUnsignedInt(8));
-		this.chatID = ip.readUnsignedInt(12);
-		int fromLength = ip.readUnsignedByte(25);
-		this.from = ip.readString(26, fromLength);
-		int toLength = ip.readUnsignedByte(26 + fromLength);
-		this.to = ip.readString(27 + fromLength, toLength);
-		int messageLength = ip.readUnsignedByte(28 + toLength + fromLength);
-		this.message = ip.readString(29 + toLength + fromLength, messageLength);
+        super(ip);
 	}
 	
 	/**
@@ -75,16 +105,7 @@ public class MessagePacket implements PacketHandler {
 	public long getARGB() {
 		return this.aRGB;
 	}
-	
-	/**
-	 * Set the MessageType for this message
-	 * @param type
-	 * @return this MessagePacket (builder pattern)
-	 */
-	public MessagePacket setMessageType(MessageType type) {
-		this.type = type;
-		return this;
-	}
+
 	
 	/**
 	 * @return MessageType for this message
@@ -102,8 +123,14 @@ public class MessagePacket implements PacketHandler {
 		this.chatID = chatID;
 		return this;
 	}
-	
-	public MessagePacket setType(MessageType mt) {
+
+
+    /**
+     * Set the MessageType for this message
+     * @param mt
+     * @return this MessagePacket (builder pattern)
+     */
+	public MessagePacket setMessageType(MessageType mt) {
 		this.type = mt;
 		return this;
 	}
@@ -135,36 +162,7 @@ public class MessagePacket implements PacketHandler {
 	public String getMessage() {
 		return message;
 	}
-	
-	/**
-	 * @return the total packet size based on all values
-	 * and total String length
-	 */
-	private int getPacketSize() {
-		return 32 + from.length() + to.length() + message.length();
-	}
 
-	@Override
-	public PacketWriter build() {
-		return new PacketWriter(PacketType.MESSAGE_PACKET, getPacketSize())
-		.putUnsignedInteger(aRGB)
-		.putUnsignedInteger(type.type)
-		.putUnsignedInteger(chatID)
-		.putUnsignedInteger(recv_avatar) // Receiver avatar.
-		.putUnsignedInteger(send_avatar) // Sender avatar.
-		.putUnsignedByte(4) // always 4, with suffix.
-		.putUnsignedByte(from.length())
-		.putString(from)
-		.putUnsignedByte(to.length())
-		.putString(to)
-		//  Suffix is now ignored, people were adding "[PM]" & "[GM]"
-		// to the end of their names in order to access admin commands
-		// which were built into the client, these commands have
-		// since been removed, but are still existing in the packets. 
-		.putUnsignedByte(0x00)
-		.putUnsignedByte(message.length())
-		.putString(message);
-	}
 
 	/**
 	 * An enumeration of various Message Types for the MessagePackets
@@ -180,13 +178,13 @@ public class MessagePacket implements PacketHandler {
 		FRIENDBOARD(2202), TEAMBOARD(2203), GUILDBOARD(2204), OTHERSBOARD(2205),
 		BROADCAST(2500);		
 		
-		final long type;
+		final int type;
 		
 		/**
 		 * Constructor for MessageType enum values
 		 * @param type
 		 */
-		private MessageType(long type) {
+		private MessageType(int type) {
 			this.type = type;
 		}
 		
@@ -195,47 +193,11 @@ public class MessagePacket implements PacketHandler {
 		 * @return {@code MessageType} for the given value
 		 * @throws RuntimeException when there is no such MessageType
 		 */
-		public static MessageType valueOf(long value) {
+		public static MessageType valueOf(int value) {
 			for ( MessageType mt : MessageType.values() )
 				if ( mt.type == value )
 					return mt;
 			throw new RuntimeException("Unimplemented MessageType for " + value);
 		}
 	}
-
-	@Override
-	public void handle(GameServerClient client) {
-		switch(type)
-		{
-			case TALK:
-			{
-				for(Player p : client.getPlayer().view.getPlayers())
-				{
-					if(client.getPlayer() == p)
-						continue; 
-					this.build().send(p.getClient());
-				}
-				break;
-			}
-			case WHISPER:
-			{
-				for(Player p : client.getModel().getPlayers().values())
-					if(p.getName().equals(to))
-						this.build().send(p.getClient());
-				break;
-			}
-			case GUILD:
-			{
-				for(GuildMember gm : client.getPlayer().getGuild().getMembers())
-					if(gm.getPlayer() != null && gm.getPlayer().getClient() != client)
-						this.build().send(gm.getPlayer().getClient());
-				break;
-			}
-			default:
-			{
-				break; // TODO
-			}
-		}
-	}
-	
 }

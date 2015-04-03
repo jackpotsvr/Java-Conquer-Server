@@ -10,7 +10,7 @@ import net.co.java.server.AbstractClient;
 
 public class PacketWriter {
 
-	private final ByteBuffer buffer;
+	public final ByteBuffer buffer;
 	private final PacketType packetType;
 	
 	/**

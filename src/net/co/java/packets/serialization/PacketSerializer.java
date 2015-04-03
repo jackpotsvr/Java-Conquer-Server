@@ -1,16 +1,15 @@
 package net.co.java.packets.serialization;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 
 import net.co.java.packets.Packet;
 import net.co.java.packets.PacketWriter;
-import net.co.java.server.Packets;
 
 public class PacketSerializer {
-	protected int totalStringLength = 0; 
+	protected int totalStringLength = 0;
+    protected int currentStringLength = 0;
 	protected final Packet packet;
-	protected Class<?> clasz;
+	protected Class<? extends Packet> clasz;
 	protected PacketWriter pw = null; 
 	
 	public PacketSerializer(Packet packet) { 
@@ -34,6 +33,7 @@ public class PacketSerializer {
 	protected void setTotalStringLength(Packet packet) throws IllegalArgumentException, IllegalAccessException {
 		for(Field field : clasz.getDeclaredFields()) {
 			if(field.isAnnotationPresent(PacketValue.class)) {
+                field.setAccessible(true);
 				PacketValue value = field.getAnnotation(PacketValue.class);
 				switch(value.type()) {
 					case STRING_WITH_LENGTH:
@@ -108,8 +108,10 @@ public class PacketSerializer {
 
 	private void setStringWithLength(Packet packet, Field field,
 			PacketValue value, Offset offset) throws IllegalArgumentException, IllegalAccessException {
-		pw.setOffset(offset.value());
+		pw.setOffset(offset.value() + currentStringLength);
 		pw.putUnsignedByte(((String) field.get(packet)).length());
+        pw.putString(((String) field.get(packet)));
+        currentStringLength += ((String) field.get(packet)).length();
 	}
 	
 

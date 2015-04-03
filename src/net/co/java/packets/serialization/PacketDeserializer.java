@@ -2,14 +2,10 @@ package net.co.java.packets.serialization;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Type;
 
 import net.co.java.packets.IncomingPacket;
 import net.co.java.packets.Packet;
-import net.co.java.packets.PacketHandler;
 import net.co.java.packets.PacketType;
-import net.co.java.packets.packethandlers.NoPacketHandler;
-import net.co.java.server.Packets;
 
 
 public class PacketDeserializer {
@@ -77,6 +73,7 @@ public class PacketDeserializer {
 			//e.printStackTrace();
 			throw new DeserializationException("Couldn't construct the packet, cause it has no noparameter constructor.");
 		} catch (InstantiationException | InvocationTargetException e) {
+            e.printStackTrace();
 			throw new DeserializationException("Couldn't construct the packet, It's not instantiable.");
 		} catch (IllegalAccessException e) { /* Shouldn't be thrown as we set the fields with annotations accessible. */
 			throw new RuntimeException("Coulnd't access the fields of the class. Use setAccessible()");
@@ -120,29 +117,9 @@ public class PacketDeserializer {
 	}
 	
 	protected void setStringWithLength(Object obj, Field field, PacketValue value, Offset offset) 
-			throws IllegalArgumentException, IllegalAccessException { 
-		int length = ip.readUnsignedByte(offset.value() + totalStringLength);
-		field.set(obj, ip.readString(offset.value() + totalStringLength + 1, length));
-		totalStringLength += length; 
-	}
-	
-	public PacketHandler getHandlerStrategy(Packet packet) { 
-		try {
-			Class<?> clasz = Packets.getInstance().getPacketClass(ip.getPacketType());
-			if (clasz.isAnnotationPresent(Bidirectional.class)){ 
-				Bidirectional bidirectional = clasz.getAnnotation(Bidirectional.class);
-				return bidirectional.handler().getConstructor(Packet.class).newInstance(packet);
-			} else if (clasz.isAnnotationPresent(Incoming.class)) { 
-				Incoming incoming = clasz.getAnnotation(Incoming.class); 
-				return incoming.handler().getConstructor(Packet.class).newInstance(packet);
-			} else {
-                return NoPacketHandler.class.getConstructor(Packet.class).newInstance(packet);
-            }
-		} catch (InstantiationException | IllegalAccessException |
-				IllegalArgumentException | InvocationTargetException | 
-				NoSuchMethodException | SecurityException e) {
-			throw new RuntimeException("Couldn't find the Packet's handler."); 
-		}
-	}
-
+			throws IllegalArgumentException, IllegalAccessException {
+        int length = ip.readUnsignedByte(offset.value() + totalStringLength);
+        field.set(obj, ip.readString(offset.value() + totalStringLength + 1, length));
+        totalStringLength += length;
+    }
 }

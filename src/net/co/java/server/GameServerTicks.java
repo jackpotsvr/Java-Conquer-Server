@@ -22,30 +22,10 @@ public class GameServerTicks
 	public GameServerTicks(Model model) {
 		this.model = model;
 		timer = new Timer();
-		addWarnPlayerTask();
-		staminaIncrease();
-		xpIncrease();
+//		staminaIncrease();
+//		xpIncrease();
 	}
-	
-	public void addWarnPlayerTask(){
-		long delay = 1000;
-		long period = 30000;
-		
-		timer.scheduleAtFixedRate(new TimerTask() {
-	        public void run() {
-	           for(Player p : model.getPlayers().values())
-	           {
-	        		new MessagePacket(MessagePacket.SYSTEM, p.getName(), 
-	        				"This message is being send very often, and is very annoying.")
-					.setMessageType(MessageType.CENTER)
-					.build().send(p.getClient());
-	        	   //p.getClient()
-	           }
-	        }
-	    }, delay, period);
 
-	}
-	
 	public void staminaIncrease() {
 		long delay = 1000;
 		long period = 1000;

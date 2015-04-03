@@ -7,6 +7,7 @@ import net.co.java.guild.GuildMember;
 import net.co.java.packets.Guild_Request_Packet.GuildRequestType;
 import net.co.java.packets.MessagePacket.MessageType;
 import net.co.java.packets.String_Packet.StringPacketType;
+import net.co.java.packets.serialization.PacketSerializer;
 import net.co.java.server.GameServerClient;
 import net.co.java.server.Map;
 
@@ -162,10 +163,11 @@ public class GeneralData implements PacketHandler {
 			}
 			else
 			{
-				new MessagePacket(MessagePacket.SYSTEM, client.getPlayer().getName(), "Sorry, you can't jump yet.")
-					.setMessageType(MessageType.TOPLEFT)
-					.setARGB(0xFFFF0000)
-					.build().send(client);
+                new PacketSerializer(
+			    	new MessagePacket(MessagePacket.SYSTEM, client.getPlayer().getName(), "Sorry, you can't jump yet.")
+				    	.setMessageType(MessageType.TOPLEFT)
+					    .setARGB(0xFFFF0000)
+                ).serialize().send(client);
 //				new GeneralData(SubType.LOCATION, hero)
 //					.setDwParam(hero.getLocation().getMap().getMapID())
 //					.setwParam1(hero.getLocation().getxCord())
@@ -266,9 +268,11 @@ public class GeneralData implements PacketHandler {
 				.send(client);
 						
 			new String_Packet(GuildRequestType.RequestName, gm.getGuild().getUID()).handle(client);
-			
-			new MessagePacket(MessagePacket.SYSTEM, hero.getName(), "Guild bulletin!")
-				.setMessageType(MessagePacket.MessageType.GUILDBULLETIN).build().send(client);
+
+            new PacketSerializer(
+		    	new MessagePacket(MessagePacket.SYSTEM, hero.getName(), "Guild bulletin!")
+				    .setMessageType(MessagePacket.MessageType.GUILDBULLETIN)
+            ).serialize().send(client);
 			new GeneralData(SubType.CONFIRM_GUILD, hero).build().send(client);
 			
 			
@@ -291,9 +295,10 @@ public class GeneralData implements PacketHandler {
 				.send(client);
 			
 			// Send default messages
-			new MessagePacket(MessagePacket.SYSTEM, hero.getName(), "Players online " + client.getGameServer().getAmountOfPlayers())
-				.setMessageType(MessagePacket.MessageType.SYSTEM)
-				.build().send(client);
+            new PacketSerializer(
+                new MessagePacket(MessagePacket.SYSTEM, hero.getName(), "Players online " + client.getGameServer().getAmountOfPlayers())
+                    .setMessageType(MessagePacket.MessageType.SYSTEM)
+            ).serialize().send(client);
 			
 			hero.inventory.send();
 

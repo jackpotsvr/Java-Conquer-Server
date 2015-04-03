@@ -6,11 +6,11 @@ import java.lang.reflect.Type;
 
 public class GenericUtility {
 	private static final String TYPE_NAME_PREFIX = "class ";
-	 
-	private static String getClassName(Type type) {
-	    if (type==null) {
-	        return "";
-	    }
+    private static Type type;
+
+    private static String getClassName(Type type) {
+        GenericUtility.type = type;
+        if (type==null) return "";
 	    String className = type.toString();
 	    if (className.startsWith(TYPE_NAME_PREFIX)) {
 	        className = className.substring(TYPE_NAME_PREFIX.length());

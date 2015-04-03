@@ -18,6 +18,8 @@ import net.co.java.packets.serialization.DeserializationException;
 import net.co.java.packets.serialization.PacketDeserializer;
 import net.co.java.packets.NPC_Initial_Packet;
 import net.co.java.packets.String_Packet;
+import net.co.java.packets.serialization.PacketSerializer;
+import net.co.java.packets.serialization.Packets;
 import net.co.java.server.Server.GameServer;
 
 public class GameServerClient extends AbstractClient {
@@ -53,40 +55,25 @@ public class GameServerClient extends AbstractClient {
 				player = model.loadPlayer(promise);
 				this.setPlayer(player);
 				player.setClient(this);
-				new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "ANSWER_OK")
-						.setMessageType(MessageType.LOGININFO)
-						.build().send(this);
+
+                new PacketSerializer(new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "ANSWER_OK")
+                        .setMessageType(MessageType.LOGININFO)).serialize().send(this);
 				// Send the character information packet
 				player.characterInformation().send(this);
 			}
 			else
 			{
-				new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "NEW_ROLE")
-					.setMessageType(MessageType.LOGININFO)
-					.build().send(this);
+                new PacketSerializer(new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "NEW_ROLE")
+                        .setMessageType(MessageType.LOGININFO)).serialize().send(this);
 			}
 			break;
 		case ENTITY_MOVE_PACKET:
 			player.walk(incomingPacket.readUnsignedByte(8), incomingPacket);
 			break;
-		case GENERAL_DATA_PACKET:
-			try {
-//				PacketDeserializer pd = PacketDeserializerFactory.valueOf(incomingPacket.getPacketType())
-//					.getInstance(incomingPacket);
-//				pd.getHandlerStrategy(pd.deserialize()).handle(this);
-
-                PacketDeserializer pd = new PacketDeserializer(incomingPacket);
-                pd.getHandlerStrategy( pd.deserialize()).handle(this);
-
-
-			} catch (DeserializationException e) {
-				e.printStackTrace();
-			} 
-			break;
 		case ITEM_USAGE_PACKET:
 			new ItemUsage(incomingPacket).handle(this);
 			break;
-		case MESSAGE_PACKET:
+		/*case MESSAGE_PACKET:
 			MessagePacket mp = new MessagePacket(incomingPacket);
 			
 			if(mp.getMessage().startsWith("/")) {
@@ -94,28 +81,26 @@ public class GameServerClient extends AbstractClient {
 			} else {
 				mp.handle(this);
 			}
-			break;
+			break; */
 		case CHARACTER_CREATION_PACKET:
 			if (model.createCharacter(new Character_Creation_Packet(incomingPacket)))
 			{
-				new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "ANSWER_OK")
-				.setMessageType(MessageType.LOGININFO)
-				.build().send(this);
+                new PacketSerializer(
+                    new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "ANSWER_OK")
+                    .setMessageType(MessageType.LOGININFO)).serialize().send(this);
 				this.close();
 			}
 			else
 			{
-				new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "Failed to create character. Character name already in use.")
-				.setMessageType(MessageType.DIALOG)
-				.build().send(this);
+                new PacketSerializer(
+                    new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "Failed to create character. Character name already in use.")
+                    .setMessageType(MessageType.DIALOG))
+                    .serialize().send(this);
 			}
 			break;
 		case INTERACT_PACKET:
 			new InteractPacket(incomingPacket).handle(this);
 			break;
-		case NPC_INITIAL_PACKET:
-			new NPC_Initial_Packet(incomingPacket).handle(this);
-			break; 
 		case NPC_DIALOG_PACKET:
 //			NPC_Dialog packet = player.getActiveDialog();
 //			if(packet != null)
@@ -135,7 +120,17 @@ public class GameServerClient extends AbstractClient {
 			new String_Packet(incomingPacket).handle(this);
 			break;
 		default:
-			System.out.println("Unimplemented " + incomingPacket.getPacketType().toString());
+            try {
+//				PacketDeserializer pd = PacketDeserializerFactory.valueOf(incomingPacket.getPacketType())
+//					.getInstance(incomingPacket);
+//				pd.getHandlerStrategy(pd.deserialize()).handle(this);
+                System.out.println("No old fashioned way of handling the packet, will use the "
+                + "PacketDeserializer and PacketHandler");
+                PacketDeserializer pd = new PacketDeserializer(incomingPacket);
+                Packets.getHandlerStrategy(pd.deserialize()).handle(this);
+            } catch (DeserializationException e) {
+                e.printStackTrace();
+            }
 			break;
 		}
 	}
