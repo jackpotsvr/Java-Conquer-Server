@@ -10,6 +10,7 @@ import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemPrototype;
 import net.co.java.item.ItemPrototype.EquipmentPrototype;
 import net.co.java.packets.Character_Creation_Packet;
+import net.co.java.server.GameServerTicks;
 import net.co.java.skill.WeaponProficiency;
 
 /**
@@ -116,5 +117,5 @@ public interface Model {
 	void setProficiency(Player hero, WeaponProficiency wp) throws AccessException;
 	
 	
-	
+	GameServerTicks getGameServerTicks();
 }

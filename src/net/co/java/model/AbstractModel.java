@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import net.co.java.server.GameServerTicks;
 import org.simpleframework.xml.Root;
 
 import net.co.java.entity.Player;
@@ -25,6 +26,8 @@ import net.co.java.item.ItemPrototype.EquipmentPrototype;
  */
 @Root
 public abstract class AbstractModel implements Model {
+    /** GameServer ticks  */
+    protected final GameServerTicks gameServerTicks = new GameServerTicks();
 
 	/** Identities mapped to players for auth -> game server redirection */
 	protected final Map<Long, Player> players = Collections.synchronizedMap(new HashMap<Long, Player>());
@@ -166,5 +169,10 @@ public abstract class AbstractModel implements Model {
 	 */
 	protected abstract ItemInstance fetchItemInstance(long id) throws AccessException;
 	
-	protected abstract void fetchNPCs() throws AccessException; 
+	protected abstract void fetchNPCs() throws AccessException;
+
+    @Override
+    public GameServerTicks getGameServerTicks() {
+        return gameServerTicks;
+    }
 }

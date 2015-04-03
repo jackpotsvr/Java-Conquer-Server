@@ -43,6 +43,7 @@ public class GeneralDataPacketHandler extends AbstractPacketHandler {
 		case JUMP:
 			if(System.currentTimeMillis() - client.getPlayer().getLastMovement() > 550) 
 			{
+                client.getModel().getGameServerTicks().didInteract(client.getPlayer());
 				hero.jump((int) (gpd.getDwParam() & 0xFFFF), (int) (gpd.getDwParam() >> 16), 
 						gpd.getwParam3(), packet.getIncomingPacket());
 				client.getPlayer().setLastMovement(System.currentTimeMillis());
@@ -178,7 +179,7 @@ public class GeneralDataPacketHandler extends AbstractPacketHandler {
             new PacketSerializer(
                 new MessagePacket(MessagePacket.SYSTEM, hero.getName(), "Players online " +
                         client.getGameServer().getAmountOfPlayers())
-                    .setMessageType(MessagePacket.MessageType.SYSTEM)
+                        .setMessageType(MessagePacket.MessageType.SYSTEM)
             ).serialize().send(client);
 			
 			hero.inventory.send();

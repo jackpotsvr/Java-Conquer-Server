@@ -9,11 +9,13 @@ import net.co.java.packets.UpdatePacket.Mode;
 import net.co.java.server.GameServerClient;
 import net.co.java.server.GameServerTicks;
 import net.co.java.skill.Skill.MagicSkill;
+import net.co.java.tasks.BlessTask;
 
 /** aka lucky time */
 public class Bless extends MagicSkill{
 	
-	private GameServerClient caster; 
+	private GameServerClient casterClient;
+    private Player caster;
 	public final static int BLESS_PERIOD = 2000;
 
 	@Override
@@ -33,54 +35,57 @@ public class Bless extends MagicSkill{
 	}
 
 	@Override
-	public void handle(GameServerClient player, InteractPacket ip) {
-		this.caster = player;
+	public void handle(GameServerClient client, InteractPacket ip) {
+		this.casterClient = client;
+        this.caster = client.getPlayer();
 		
-		player.getPlayer().setFlag(Flag.LUCKYTIME);
-		new UpdatePacket(player.getPlayer())
-			.setAttribute(Mode.RaiseFlag, player.getPlayer().getFlags())
-			.build().send(player);
+		client.getPlayer().setFlag(Flag.LUCKYTIME);
+		new UpdatePacket(client.getPlayer())
+			.setAttribute(Mode.RaiseFlag, client.getPlayer().getFlags())
+			.build().send(client);
 		
-		GameServerTicks.calculateBless(this);
+		//GameServerTicks.calculateBless(this);
+        BlessTask bt = new BlessTask(this, client.getPlayer());
+        client.getModel().getGameServerTicks().addTickTask(bt);
 	}
-	
-	public void addBless(){
-		
-		TargetBuilder tb = new TargetBuilder(caster.getPlayer()).inCircle(range(0));
-		
-		caster.getPlayer().setBlessTime(caster.getPlayer().getBlessTime() + (BLESS_PERIOD * 3));
-		
-		new UpdatePacket(caster.getPlayer())
-			.setAttribute(Mode.LuckyTime, caster.getPlayer().getBlessTime())
-			.build().send(caster);
-		
-		for(Entity e : tb.getEntities())
-		{
-			if(e instanceof Player)
-			{
-				Player p = (Player)e;
-				
-				if(p.isPraying())
-				{
-					if(p.getPrayerHost() == caster.getPlayer())
-					p.setBlessTime(p.getBlessTime() + BLESS_PERIOD);
-					
-					new UpdatePacket(p)
-						.setAttribute(Mode.LuckyTime,p.getBlessTime())
-						.build().send(p.getClient());
-				} else {
-					if(!p.hasFlag(Flag.LUCKYTIME)) 
-					{
-						p.setFlag(Flag.PRAY);
-						p.setPrayerHost(caster.getPlayer());
-						new UpdatePacket(p)
-							.setAttribute(Mode.RaiseFlag, p.getFlags())
-							.build().send(p);
-					}
-				}
-			}
-		}
-	}
+//
+//	public void addBless(){
+//
+//		TargetBuilder tb = new TargetBuilder(casterClient.getPlayer()).inCircle(range(0));
+//
+//		casterClient.getPlayer().setBlessTime(casterClient.getPlayer().getBlessTime() + (BLESS_PERIOD * 3));
+//
+//		new UpdatePacket(casterClient.getPlayer())
+//			.setAttribute(Mode.LuckyTime, casterClient.getPlayer().getBlessTime())
+//			.build().send(casterClient);
+//
+//		for(Entity e : tb.getEntities())
+//		{
+//			if(e instanceof Player)
+//			{
+//				Player p = (Player)e;
+//
+//				if(p.isPraying())
+//				{
+//					if(p.getPrayerHost() == casterClient.getPlayer())
+//					p.setBlessTime(p.getBlessTime() + BLESS_PERIOD);
+//
+//					new UpdatePacket(p)
+//						.setAttribute(Mode.LuckyTime,p.getBlessTime())
+//						.build().send(p.getClient());
+//				} else {
+//					if(!p.hasFlag(Flag.LUCKYTIME))
+//					{
+//						p.setFlag(Flag.PRAY);
+//						p.setPrayerHost(casterClient.getPlayer());
+//						new UpdatePacket(p)
+//							.setAttribute(Mode.RaiseFlag, p.getFlags())
+//							.build().send(p);
+//					}
+//				}
+//			}
+//		}
+//	}
 
 	@Override
 	public int getSkillID() {
@@ -101,5 +106,13 @@ public class Bless extends MagicSkill{
 	public int maxLevel() {
 		return 0;
 	}
+
+    public long getCasterId() {
+        return caster.getIdentity();
+    }
+
+    public Player getCaster() {
+        return caster;
+    }
 
 }

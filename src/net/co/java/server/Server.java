@@ -172,7 +172,7 @@ public class Server implements Closeable {
 		 */
 		public GameServer() throws IOException {
 			super(DEFAULT_PORT);
-			new GameServerTicks(model);
+			new GameServerTicks();
 		}
 
 		@Override
@@ -223,7 +223,7 @@ public class Server implements Closeable {
 		File source = new File("config.xml");
 		serializer.read(Server.class, source);
 		// For some reason the main thread needs to be maintained
-		while(true) Thread.sleep(10000000); 
+		while(true) Thread.sleep(Long.MAX_VALUE);
 	}
 
 	@Override

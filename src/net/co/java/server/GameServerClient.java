@@ -16,7 +16,6 @@ import net.co.java.packets.MessagePacket;
 import net.co.java.packets.MessagePacket.MessageType;
 import net.co.java.packets.serialization.DeserializationException;
 import net.co.java.packets.serialization.PacketDeserializer;
-import net.co.java.packets.NPC_Initial_Packet;
 import net.co.java.packets.String_Packet;
 import net.co.java.packets.serialization.PacketSerializer;
 import net.co.java.packets.serialization.Packets;
@@ -54,6 +53,7 @@ public class GameServerClient extends AbstractClient {
 				// the current identity and client thread
 				player = model.loadPlayer(promise);
 				this.setPlayer(player);
+                model.getGameServerTicks().addEntity(player);
 				player.setClient(this);
 
                 new PacketSerializer(new MessagePacket(MessagePacket.SYSTEM, MessagePacket.ALL_USERS, "ANSWER_OK")
@@ -69,6 +69,7 @@ public class GameServerClient extends AbstractClient {
 			break;
 		case ENTITY_MOVE_PACKET:
 			player.walk(incomingPacket.readUnsignedByte(8), incomingPacket);
+            model.getGameServerTicks().didInteract(player);
 			break;
 		case ITEM_USAGE_PACKET:
 			new ItemUsage(incomingPacket).handle(this);
