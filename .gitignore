@@ -9,4 +9,6 @@
 /Client
 /ref
 /.idea
+/target
 /jdoc
+config.xml
