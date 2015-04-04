@@ -5,10 +5,13 @@
 *.ear
 *.DS_Store
 *.iml
+*.classpath
+*.project
 /bin
 /Client
 /ref
 /.idea
 /target
 /jdoc
+/.settings
 config.xml
