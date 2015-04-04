@@ -4,6 +4,7 @@ import net.co.java.entity.Entity;
 import net.co.java.entity.Player;
 import net.co.java.packets.UpdatePacket;
 import net.co.java.skill.Bless;
+import net.co.java.skill.TargetBuilder;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,15 +23,26 @@ public class BlessTask extends EntityTickTask<Player> {
     @Override
     public Runnable getRunnable() {
         return () -> {
+            /** Noncasters should get the Pray effect instead */
             if(bless.getCasterId() == entity.getIdentity()) {
                 entity.setBlessTime(entity.getBlessTime() + 1);
                 sendUpdateBlessingPacket();
             }
-            else
-                if(tickCount++%3 != 0) {
-                    entity.setBlessTime(entity.getBlessTime() + 1);
-                    sendUpdateBlessingPacket();
+
+            if(tickCount++%3 != 0) {
+                TargetBuilder tb = new TargetBuilder(entity).inCircle(bless.range(0));
+                for(Entity e : tb.getEntities()) {
+                    if(!(e instanceof Player)) return;
+                    Player inPray = (Player)e;
+                    if(!(inPray.getPrayerHost() == null)) return;
+                    gameServerTicks.addTickTask(new PrayTask(inPray, entity));
                 }
+            }
+//            else
+//                if(tickCount++%3 != 0) {
+//                    entity.setBlessTime(entity.getBlessTime() + 1);
+//                    sendUpdateBlessingPacket();
+//                }
         };
     }
 

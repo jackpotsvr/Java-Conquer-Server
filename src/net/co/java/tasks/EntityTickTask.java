@@ -32,8 +32,6 @@ public abstract class EntityTickTask<E extends Entity> extends TickTask {
     public Runnable getInterruptedRunnable() {
         return () ->  {
             scheduledFuture.cancel(true);
-            gameServerTicks.getTasksForEntity(entity.getIdentity())
-                    .remove(this);
         };
     }
 

@@ -50,9 +50,12 @@ public class GameServerTicks {
     }
 
     public synchronized void didInteract(Entity e) {
+        List<EntityTickTask> toBeRemoved = new ArrayList<>();
         getTasksForEntity(e.getIdentity()).stream().filter(ett -> ett.isInterruptedByInteraction()).forEach(ett -> {
             ett.getScheduledFuture().cancel(true);
             scheduler.submit(ett.getInterruptedRunnable());
+            toBeRemoved.add(ett);
         });
+        getTasksForEntity(e.getIdentity()).removeAll(toBeRemoved);
     }
 }

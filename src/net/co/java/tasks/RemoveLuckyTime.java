@@ -35,6 +35,4 @@ public class RemoveLuckyTime extends EntityTickTask<Player> {
                 .setAttribute(UpdatePacket.Mode.LuckyTime, entity.getBlessTime() * 1000)
                 .build().send(entity);
     }
-
- 
 }
