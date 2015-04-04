@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<server>
-   <!-- <model class="net.co.java.model.Mock"/> -->
-   <model class="net.co.java.model.PostgreSQL" host="jdbc:postgresql://localhost:5432/coserver" username="postgres" password="J1]bB6_rF#3C"/> 
-</server>
