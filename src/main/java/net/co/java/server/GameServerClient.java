@@ -102,15 +102,6 @@ public class GameServerClient extends AbstractClient {
 		case INTERACT_PACKET:
 			new InteractPacket(incomingPacket).handle(this);
 			break;
-		case NPC_DIALOG_PACKET:
-//			NPC_Dialog packet = player.getActiveDialog();
-//			if(packet != null)
-//			{
-//				int input = incomingPacket.readUnsignedByte(10);
-//				packet.setInput(input); 
-//				packet.handle(this);
-//			}
-			break;
 		case GUILD_MEMBER_INFORMATION:
 			//new Guild_Member_Information_Packet(incomingPacket).handle(this, null);
 			break;

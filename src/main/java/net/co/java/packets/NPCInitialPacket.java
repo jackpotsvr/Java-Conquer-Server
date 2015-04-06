@@ -1,5 +1,6 @@
 package net.co.java.packets;
 
+import net.co.java.packets.packethandlers.NPCDialogHandler;
 import net.co.java.packets.packethandlers.NPCInitialPacketHandler;
 import net.co.java.packets.serialization.*;
 
@@ -7,7 +8,7 @@ import net.co.java.packets.serialization.*;
  * Created by Thomas on 02/04/2015.
  */
 @Type(type = PacketType.NPC_INITIAL_PACKET)
-@Bidirectional(handler = NPCInitialPacketHandler.class)
+@Bidirectional(handler = NPCDialogHandler.class)
 @PacketLength(length = 24)
 public class NPCInitialPacket extends Packet {
 

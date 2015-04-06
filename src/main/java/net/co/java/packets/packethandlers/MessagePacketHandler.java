@@ -1,6 +1,5 @@
 package net.co.java.packets.packethandlers;
 
-import com.sun.org.apache.xml.internal.security.algorithms.MessageDigestAlgorithm;
 import net.co.java.entity.Player;
 import net.co.java.guild.GuildMember;
 import net.co.java.packets.*;

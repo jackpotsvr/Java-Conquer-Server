@@ -18,7 +18,7 @@ public class TestLua {
     private ScriptEngine scriptEngine;
 
     public TestLua() throws Exception {
-        final String scriptText = new String(Files.readAllBytes(get("lua/npc/1.lua")));
+        final String scriptText = new String(Files.readAllBytes(get("lua/npc/103.lua")));
         final int INITIAL_DIALOG = -1;
         ScriptEngineManager sem = new ScriptEngineManager();
         scriptEngine = sem.getEngineByExtension(".lua");
@@ -30,7 +30,7 @@ public class TestLua {
         script.eval(bindings);
 
 
-        NPCDialogAggregrate npcDialogAggregrate = new NPCDialogAggregrate();
+        NPCDialogAggregrate npcDialogAggregrate = new NPCDialogAggregrate(null);
         LuaValue aggregrate = CoerceJavaToLua.coerce(npcDialogAggregrate);
 
 

@@ -1,5 +1,8 @@
 package net.co.java.npc.dialogs;
 
+import net.co.java.entity.NPC;
+import net.co.java.packets.NPCDialogPacket;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +13,45 @@ public class NPCDialogAggregrate {
 
     private final List<NPCDialog> dialogs;
 
-    public NPCDialogAggregrate() {
-        dialogs = new ArrayList<NPCDialog>();
+    private final static int INITIAL_DIALOG = -1;
+
+    private int currentDialogNumber;
+    private final NPC npc;
+
+
+    public NPCDialogAggregrate(NPC npc) {
+        dialogs = new ArrayList<>();
+        this.currentDialogNumber = INITIAL_DIALOG;
+        this.npc = npc;
+    }
+
+    protected NPCDialogAggregrate(NPC npc, int currentDialog) {
+        this(npc);
+        this.currentDialogNumber = currentDialog;
+    }
+
+    public void setCurrentDialogNumber(int currentDialogNumber) {
+        this.currentDialogNumber = currentDialogNumber;
+    }
+
+    public List<NPCDialog> getDialogs() {
+        return dialogs;
+    }
+
+    /**
+     * For the LUA scripts.
+     * @return
+     */
+    public int getNPCFace() {
+        return npc.getFace();
+    }
+
+    /**
+     * For the LUA Scripts.
+     * @return
+     */
+    public int getCurrentDialogNumber() {
+        return currentDialogNumber;
     }
 
     public void npcSay(final String message) {
@@ -49,9 +89,9 @@ public class NPCDialogAggregrate {
     }
 
     public static abstract class NPCDialog {
-        private final NPCDialogType type;
+        protected final NPCDialogType type;
 
-        private NPCDialog(NPCDialogType type) {
+        protected NPCDialog(NPCDialogType type) {
             this.type = type;
         }
 
@@ -67,7 +107,7 @@ public class NPCDialogAggregrate {
 
             @Override
             public NPCDialogPacket getPacket() {
-                return new NPCDialogPacket();
+                return NPCDialogPacket.npcSay(message);
             }
         }
 
@@ -83,7 +123,7 @@ public class NPCDialogAggregrate {
 
             @Override
             public NPCDialogPacket getPacket() {
-                return new NPCDialogPacket();
+                return NPCDialogPacket.npcLink1(dialogNumber, value);
             }
         }
 
@@ -99,7 +139,7 @@ public class NPCDialogAggregrate {
 
             @Override
             public NPCDialogPacket getPacket() {
-                return new NPCDialogPacket();
+                return NPCDialogPacket.npcLink2(dialogNumber, text);
             }
         }
 
@@ -113,7 +153,7 @@ public class NPCDialogAggregrate {
 
             @Override
             public NPCDialogPacket getPacket() {
-                return new NPCDialogPacket();
+                return NPCDialogPacket.npcSetFace(face);
             }
         }
 
@@ -124,12 +164,9 @@ public class NPCDialogAggregrate {
 
             @Override
             public NPCDialogPacket getPacket() {
-                return new NPCDialogPacket();
+                return NPCDialogPacket.npcFinish();
             }
         }
-
-
-
     }
 
 }

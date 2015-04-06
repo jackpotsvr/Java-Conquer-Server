@@ -2,7 +2,6 @@ package net.co.java.packets.packethandlers;
 
 import net.co.java.entity.Entity;
 import net.co.java.entity.NPC;
-import net.co.java.packets.AbstractPacketHandler;
 import net.co.java.packets.MessagePacket;
 import net.co.java.packets.NPCInitialPacket;
 import net.co.java.packets.Packet;

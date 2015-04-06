@@ -9,6 +9,7 @@ import net.co.java.guild.GuildRank;
 import net.co.java.item.ItemInstance;
 import net.co.java.item.ItemInstance.EquipmentInstance;
 import net.co.java.item.ItemInstance.Mode;
+import net.co.java.npc.dialogs.NPCDialogAggregrate;
 import net.co.java.packets.ItemUsage;
 import net.co.java.packets.PacketType;
 import net.co.java.packets.PacketWriter;
@@ -25,6 +26,7 @@ public class Player extends Entity {
 
 	private AbstractClient client;
 	//private NPC_Dialog activeDialog;
+    private NPCDialogAggregrate activeDialog;
 	
 	private int gold = 0, cps = 0,
 			experience = 0, pkPoints = 0, rebornCount = 0, stamina = 100, action = 0,
@@ -52,6 +54,14 @@ public class Player extends Entity {
 	public Player(Long identity, String name, Location location, int HP) {
 		super(identity, 223, 315, name, location, HP);
 	}
+
+    public NPCDialogAggregrate getActiveDialog() {
+        return activeDialog;
+    }
+
+    public void setActiveDialog(NPCDialogAggregrate activeDialog) {
+        this.activeDialog = activeDialog;
+    }
 	
 
 
@@ -176,6 +186,8 @@ public class Player extends Entity {
 	public void setSpirit(int spirit) {
 		this.spirit = spirit;
 	}
+
+
 	
 	
 

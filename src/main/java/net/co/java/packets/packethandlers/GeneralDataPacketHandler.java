@@ -4,7 +4,6 @@ package net.co.java.packets.packethandlers;
 import net.co.java.entity.Location;
 import net.co.java.entity.Player;
 import net.co.java.guild.GuildMember;
-import net.co.java.packets.AbstractPacketHandler;
 import net.co.java.packets.GeneralData;
 import net.co.java.packets.GeneralDataPacket;
 import net.co.java.packets.MessagePacket;

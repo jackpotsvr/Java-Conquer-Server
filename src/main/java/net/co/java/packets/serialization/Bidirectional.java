@@ -5,8 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import net.co.java.packets.AbstractPacketHandler;
-import net.co.java.packets.PacketHandler;
+import net.co.java.packets.packethandlers.AbstractPacketHandler;
 import net.co.java.packets.packethandlers.NoPacketHandler;
 
 @Retention(RetentionPolicy.RUNTIME)
