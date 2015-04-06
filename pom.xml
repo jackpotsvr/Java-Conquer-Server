@@ -38,6 +38,14 @@
             <version>0.9.8</version>
         </dependency>
 
+        <!-- Lua Scripting in Java -->
+        <dependency>
+            <groupId>org.luaj</groupId>
+            <artifactId>luaj-jse</artifactId>
+            <version>3.0</version>
+        </dependency>
+
+
 
 
 
