@@ -1,0 +1,4 @@
+<server gameport="5816" authport="9958">
+    <!-- <model class="net.co.java.model.Mock"/> --> 
+   <model class="net.co.java.model.PostgreSQL" host="jdbc:postgresql://host:port/database" username="username" password="password"/>
+</server>
